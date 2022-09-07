@@ -1,4 +1,4 @@
-.idea/*
+.idea/
 
 !.idea/codeStyles
 !.idea/runConfigurations
@@ -8,4 +8,7 @@
 
 *~$*
 
+target/
+project/
 build/
+.bsp/*
