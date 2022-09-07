@@ -1,1 +1,37 @@
 \section*{First Sprint Planning - 07/09/2022}
+Il team si è incontrato via Microsoft Teams per rivedere le specifiche del progetto e definire i task del primo sprint.\\
+L'incontro ha avuto una durata di 3 ore.
+
+\subsection*{Scelte ulteriori riguardo alle tecnologie}
+Il team ha valutato diverse opzioni per la componente grafica del progetto, e le principali sono:
+\item ScalaFX, è la più utilizzata e con più materiale associato;
+\item Indigo, specializzata per la creazione di giochi.
+
+Indigo consiste in un vero e proprio game engine, e ci darebbe meno flessibilità nelle scelte architetturali, perdendo un po' il goal principale di questo progetto/corso.\\
+
+Il team ha poi deciso di utilizzare Akka per implementare una gestione ad attori del sistema. Akka è un toolkit ormai maturo e che pensiamo ci possa portare beneficio
+durante le fasi di analisi e di sviluppo del progetto. Inoltre sfruttiamo le conoscenze acquisite su Akka durante il corso di Programmazione Concorrente e Distribuita.
+
+\subsection*{Obiettivi}
+\begin{itemize}
+  \item Setup del progetto con tecnologie selezionate (Github, Github actions, Trello, Sbt, Intellij IDEA);
+  \item Creazione del model basilare associato ad una torretta;
+  \item Creazione del model basilare associato ad un nemico;
+  \item Creazione della griglia di gioco in ScalaFX;
+  \item Creazione di un controller/game loop.
+\end{itemize}
+
+\subsection*{Planning}
+Incontro giornaliero (durata 10-15 minuti l'uno, si terrà la mattina).
+Deadline sprint: 15 settembre.
+
+\subsubsection*{Suddivisione del lavoro}
+\begin{itemize}
+  \item Alpi => Creazione della griglia di gioco in ScalaFX;
+  \item Foschini => Creazione del model basilare associato ad un nemico;
+  \item Parrinello => Creazione di un controller/game loop;
+  \item Penazzi => Creazione del model basilare associato ad una torretta;
+  \item All => Setup del progetto con tecnologie selezionate.
+\end{itemize}
+
+\newpage
