@@ -6,28 +6,16 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        include:
-          - os: ubuntu-latest
-            java: 11
-          - os: ubuntu-latest
-            java: 17
-          - os: windows-latest
-            java: 11
-          - os: windows-latest
-            java: 17
-          - os: macos-latest
-            java: 11
-          - os: macos-latest
-            java: 17
+          os: [ macos-latest, windows-latest, ubuntu-18.04 ]
+          java: [ adopt@1.11, adopt@1.17 ]
       runs-on: ${{ matrix.os }}
       steps:
         - name: Checkout
           uses: actions/checkout@v3
-        - name: Setup
-          uses: actions/setup-java@v3
+        - name: Setup Scala
+          uses: olafurpg/setup-scala@v13
           with:
-            distribution: 'temurin'
             java-version: ${{ matrix.java }}
         - name: Test
-          run: sbt test
+          run: sbt -v -Dfile.encoding=UTF-8 +test
           shell: bash
