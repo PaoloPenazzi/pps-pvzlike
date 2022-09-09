@@ -5,7 +5,7 @@ trait TurretMessages
 case class Update() extends TurretMessages
 
 object TurretActor:
-  def apply(turret: Turret): Behavior[TurretMessages] =
+  def apply(): Behavior[TurretMessages] =
     Behaviors.receive { (context, message) =>
       message match
         case _ =>
