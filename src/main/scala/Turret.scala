@@ -34,15 +34,19 @@ class Plant(override val position: (Int, Int)) extends Turret:
   override def boundary: (Int, Int) = (10, 10)
   override def bullet: Seed = new Seed(position)
 
+class Zombie(override val position: (Int, Int)) extends MovingEntity, AttackingEntity:
+  override def boundary: (Int, Int) = (10, 10)
+  override def velocity: Double = 1.0
+
 object DefaultTowerValues:
   val healthPoints: AttackingEntity => Int =
     case _: Plant => 100
-    // case _: Zombie => 100
+    case _: Zombie => 100
     case _ => 0
 
   val fireRates: AttackingEntity => Double =
     case _: Plant => 1.0
-    // case _: Zombie => 0.8
+    case _: Zombie => 0.8
     case _ => 0
 
   val costs: Turret => Int =
