@@ -1,33 +1,9 @@
 import DefaultTurretValues.*
 
 object Turrets:
-  trait Entity:
-    def boundary: (Int, Int)
-    def position: (Int, Int)
-
-  trait AttackingEntity extends Entity :
-    def hp: Int = healthPoints(this)
-    def fireRate: Double = fireRates(this)
-    def range: Double = ranges(this)
-
-  trait MovingEntity extends Entity :
-    def velocity: Double
-
   trait Turret extends Entity with AttackingEntity :
     def bullet: Bullet
     def cost: Int = costs(this)
-
-  trait Bullet extends MovingEntity :
-    def damage: Int = damages(this)
-
-  /**
-   * Basic bullet shot by a plant.
-   *
-   * @param position The initial position of the bullet.
-   */
-  class Seed(override val position: (Int, Int)) extends Bullet :
-    override def velocity: Double = 5.0
-    override def boundary: (Int, Int) = (2, 2)
 
   /**
    * Basic turret.
