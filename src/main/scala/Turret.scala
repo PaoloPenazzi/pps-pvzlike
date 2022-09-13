@@ -1,7 +1,7 @@
-import DefaultTurretValues.*
+import DefaultValues.*
 
 object Turrets:
-  trait Turret extends Entity with AttackingEntity :
+  trait Turret extends Entity with AttackingEntity:
     def bullet: Bullet
     def cost: Int = costs(this)
 
@@ -10,18 +10,16 @@ object Turrets:
    *
    * @param position The position in which the plant is placed by the player.
    */
-  class Plant(override val position: (Int, Int)) extends Turret :
+  class Plant(override val position: (Int, Int)) extends Turret:
     override def boundary: (Int, Int) = (10, 10)
     override def bullet: Seed = new Seed(position)
 
-  class Zombie(override val position: (Int, Int)) extends MovingEntity, AttackingEntity :
-    override def boundary: (Int, Int) = (10, 10)
-    override def velocity: Double = 1.0
+  
 
-object DefaultTurretValues:
+object DefaultValues:
   import Turrets.*
   val healthPoints: AttackingEntity => Int =
-    case _: Plant => 100
+    case _: Plant => 300
     case _: Zombie => 100
     case _ => 0
 

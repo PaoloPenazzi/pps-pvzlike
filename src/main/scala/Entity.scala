@@ -1,4 +1,4 @@
-import DefaultTurretValues.*
+import DefaultValues.*
 
 trait Entity:
   def boundary: (Int, Int)

@@ -8,7 +8,7 @@ import org.scalatest.BeforeAndAfterAll
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpecLike
 import Turrets.*
-import DefaultTurretValues.*
+import DefaultValues.*
 
 class TurretModelTest extends AnyFunSuite:
   test("Test default plant values") {
