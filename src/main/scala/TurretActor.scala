@@ -1,13 +1,22 @@
 import akka.actor.typed.*
 import akka.actor.typed.scaladsl.Behaviors
+import Turrets.*
 
 trait TurretMessages
-case class Update() extends TurretMessages
+case class CheckIfEnemyIsInRange() extends TurretMessages
 
 object TurretActor:
-  def apply(): Behavior[TurretMessages] =
-    Behaviors.receive { (context, message) =>
-      message match
-        case _ =>
+  def apply(turret: Turret): Behavior[TurretMessages] =
+    detecting(turret)
+
+  def detecting(turret: Turret): Behavior[TurretMessages] =
+    Behaviors.receiveMessage(msg => {
+      msg match
+        case CheckIfEnemyIsInRange() =>
+          ???
           Behaviors.same
-    }
+
+        case _ =>
+          ???
+          Behaviors.same
+    })
