@@ -11,13 +11,17 @@ object Turrets:
    * @param position The position in which the plant is placed by the player.
    */
   class Plant(override val position: (Int, Int)) extends Turret:
-    override def boundary: (Int, Int) = (10, 10)
     override def bullet: Seed = new Seed(position)
 
   
 
 object DefaultValues:
   import Turrets.*
+
+  val boundaries: Entity => Boundary =
+    case _: Bullet => Boundary(5, 5)
+    case _ => Boundary(20, 40)
+
   val healthPoints: AttackingEntity => Int =
     case _: Plant => 300
     case _: Zombie => 100

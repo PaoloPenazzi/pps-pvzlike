@@ -1,7 +1,15 @@
 import DefaultValues.*
 
+/**
+ * The boundary of the entity, thus the area where the entity is rendered by the view.
+ *
+ * @param x
+ * @param y
+ */
+case class Boundary(x: Double, y: Double)
+
 trait Entity:
-  def boundary: (Int, Int)
+  def boundary: Boundary = boundaries(this)
   def position: (Int, Int)
 
 trait AttackingEntity extends Entity :
