@@ -1,10 +1,12 @@
 import DefaultValues.*
 
 /**
- * The boundary of the entity, thus the area where the entity is rendered by the view.
+ * The Boundary class represent the entity's shape.
+ * Each entity is a rectangle with a specified dimension.
+ * The bottom left vertex of the rectangle correspond to the entity position.
  *
- * @param x
- * @param y
+ * @param x The length of the entity shape.
+ * @param y The height of the entity shape.
  */
 case class Boundary(x: Double, y: Double)
 
