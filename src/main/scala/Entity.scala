@@ -9,6 +9,7 @@ import DefaultValues.*
  * @param y The height of the entity shape.
  */
 case class Boundary(x: Double, y: Double)
+    
 
 trait Entity:
   def boundary: Boundary = boundaries(this)

@@ -4,6 +4,8 @@ object Turrets:
   trait Turret extends Entity with AttackingEntity:
     def bullet: Bullet
     def cost: Int = costs(this)
+    def isInRange(enemy: Enemy): Boolean =
+      ???
 
   /**
    * Basic turret.
