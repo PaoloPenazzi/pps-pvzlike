@@ -3,7 +3,6 @@ package controller
 import akka.actor.typed.*
 import akka.actor.typed.scaladsl.*
 import akka.actor.typed.scaladsl.adapter.*
-
 import scala.concurrent.duration.FiniteDuration
 
 object GameLoop:
@@ -14,8 +13,11 @@ object GameLoop:
 
     case class Start() extends GameLoopCommand
 
-    case class Stop() extends GameLoopCommand
+    // single entity and then update or will I await for ALL entities updated?
+    case class EntityUpdate(entity: Any) extends GameLoopCommand
 
+    case class Stop() extends GameLoopCommand
+  
   object GameLoopActor:
 
     import GameLoopCommands.*
@@ -37,6 +39,7 @@ object GameLoop:
             // start the view
             timer.startSingleTimer(Update(), FiniteDuration(10, "second"))
             Behaviors.same
-          case Stop() => ???
+          case EntityUpdate(entity) => {???; Behaviors.same}
+          case Stop() => Behaviors.stopped
       })
 
