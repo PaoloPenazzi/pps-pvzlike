@@ -5,7 +5,7 @@ object Turrets:
     def bullet: Bullet
     def cost: Int = costs(this)
     def isInRange(enemy: Enemy): Boolean =
-      ???
+      enemy.position._2 == position._2
 
   /**
    * Basic turret.
@@ -29,9 +29,9 @@ object DefaultValues:
     case _: Zombie => 100
     case _ => 0
 
-  val fireRates: AttackingEntity => Double =
-    case _: Plant => 1.0
-    case _: Zombie => 0.8
+  val fireRates: AttackingEntity => Int =
+    case _: Plant => 2
+    case _: Zombie => 3
     case _ => 0
 
   val costs: Turret => Int =
