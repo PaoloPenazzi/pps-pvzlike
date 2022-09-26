@@ -22,3 +22,4 @@ trait AttackingEntity extends Entity :
 
 trait MovingEntity extends Entity :
   def velocity: Double
+  def direction: String

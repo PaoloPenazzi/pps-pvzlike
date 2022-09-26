@@ -30,7 +30,7 @@ object TurretActor:
             Behaviors.same
 
           case Hit(damage) =>
-            turret.healthPoints - damage
+            turret.healthPoints = turret.healthPoints - damage
             turret.healthPoints match
               case 0 =>
                 // Notify controller that the turret is detroyed

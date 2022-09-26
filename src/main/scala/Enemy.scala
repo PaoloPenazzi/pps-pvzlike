@@ -4,3 +4,4 @@ trait Enemy extends Entity with MovingEntity with AttackingEntity:
 
 class Zombie(override val position: (Int, Int)) extends Enemy:
   override def boundary: Boundary = super.boundary
+  override def direction: String = "left"
