@@ -3,8 +3,10 @@ import akka.actor.typed.scaladsl.Behaviors
 import scala.concurrent.duration.DurationInt
 import Turrets.*
 
-trait TurretMessages
-case class Update(entities: List[Entity]) extends TurretMessages
+trait CommonMessages
+case class Update(timeElapsed: Double, entities: List[Entity]) extends CommonMessages
+
+trait TurretMessages extends CommonMessages
 case class Shoot(enemy: Enemy) extends TurretMessages
 case class Hit(damage: Int) extends TurretMessages
 
@@ -16,7 +18,7 @@ object TurretActor:
     Behaviors.withTimers(timer => {
       Behaviors.receiveMessage(msg => {
         msg match
-          case Update(entities) =>
+          case Update(_, entities) =>
             entities.collect { case enemy: Enemy => enemy }
               .sortWith((e1, e2) => e1.position._1 <= e2.position._1)
               .find(enemy => turret isInRange enemy) match

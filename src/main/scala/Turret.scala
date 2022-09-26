@@ -13,7 +13,7 @@ object Turrets:
    * @param position The position in which the plant is placed by the player.
    */
   class Plant(override val position: (Int, Int)) extends Turret:
-    override def bullet: Seed = new Seed(position)
+    override def bullet: Seed = new Seed()
 
   
 

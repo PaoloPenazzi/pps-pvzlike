@@ -21,5 +21,6 @@ trait AttackingEntity extends Entity :
   def range: Double = ranges(this)
 
 trait MovingEntity extends Entity :
+  var position: (Int, Int) = (0,0)
   def velocity: Double
   def direction: String

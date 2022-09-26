@@ -16,9 +16,4 @@ class TurretModelTest extends AnyFunSuite:
     val testPlantTurret = new Plant(testPosition)
     assert(testPlantTurret.cost == 100)
   }
-  
-  test("Test default zombie values") {
-    val testPosition: (Int, Int) = (0,0)
-    val testZombie = new Zombie(testPosition)
-  }
 
