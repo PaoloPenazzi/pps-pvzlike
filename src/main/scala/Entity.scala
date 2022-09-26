@@ -16,6 +16,7 @@ trait Entity:
   def position: (Int, Int)
 
 trait AttackingEntity extends Entity :
+  var healthPoints: Int = HP(this)
   def fireRate: Int = fireRates(this)
   def range: Double = ranges(this)
 

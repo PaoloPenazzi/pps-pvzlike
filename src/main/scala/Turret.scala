@@ -24,7 +24,7 @@ object DefaultValues:
     case _: Bullet => Boundary(5, 5)
     case _ => Boundary(20, 40)
 
-  val healthPoints: AttackingEntity => Int =
+  val HP: AttackingEntity => Int =
     case _: Plant => 300
     case _: Zombie => 100
     case _ => 0
