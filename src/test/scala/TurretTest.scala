@@ -15,12 +15,10 @@ class TurretModelTest extends AnyFunSuite:
     val testPosition: (Int, Int) = (0,0)
     val testPlantTurret = new Plant(testPosition)
     assert(testPlantTurret.cost == 100)
-    assert(testPlantTurret.fireRate == 1.0)
   }
   
   test("Test default zombie values") {
     val testPosition: (Int, Int) = (0,0)
     val testZombie = new Zombie(testPosition)
-    assert(testZombie.fireRate == 0.8)
   }
 
