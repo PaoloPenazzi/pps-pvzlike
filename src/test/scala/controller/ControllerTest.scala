@@ -1,3 +1,5 @@
+package controller
+
 import akka.actor.testkit.typed.Effect
 import akka.actor.testkit.typed.scaladsl.{BehaviorTestKit, TestInbox}
 import akka.actor.typed.scaladsl.Behaviors
