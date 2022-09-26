@@ -2,13 +2,15 @@ package controller
 
 import akka.actor.typed.*
 import akka.actor.typed.scaladsl.{ActorContext, Behaviors}
+import controller.GameLoop.GameLoopActor
+import controller.GameLoop.GameLoopCommands.GameLoopCommand
+import GameLoop.GameLoopCommands.*
 
 
 object Controller:
 
   object ControllerCommands:
-    sealed trait ControllerCommand
-    case class NewGame() extends ControllerCommand
+    sealed trait ControllerCommand extends Command
     case class StartGame() extends ControllerCommand
     case class FinishGame() extends ControllerCommand
 
@@ -22,8 +24,11 @@ object Controller:
     case class ControllerActor(ctx: ActorContext[ControllerCommand]):
       def standardBehavior(): Behavior[ControllerCommand] = Behaviors.receiveMessage(msg => {
         msg match
-          case NewGame() => ???
-          case StartGame() => ???
+          case StartGame() =>
+            // we will put in gameLoop object the model and the view
+            val gameLoop = ctx.spawnAnonymous(GameLoopActor())
+            gameLoop ! Start()
+            Behaviors.same
           case FinishGame() => ???
       })
 
