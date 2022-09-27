@@ -19,3 +19,9 @@ jobs:
       - name: Create jar
         run: sbt assembly
         shell: bash
+      - name: Upload jar
+        id: create_release
+        uses: actions/upload-artifact@v3
+        with:
+          name: pps-pvzlike
+          path: target/scala-3.2.0/*.jar
