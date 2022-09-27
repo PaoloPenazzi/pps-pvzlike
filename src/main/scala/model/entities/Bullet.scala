@@ -1,4 +1,6 @@
-import DefaultValues.*
+package model.entities
+
+import model.common.DefaultValues.*
 
 trait Bullet extends MovingEntity with Entity:
   def damage: Int = damages(this)

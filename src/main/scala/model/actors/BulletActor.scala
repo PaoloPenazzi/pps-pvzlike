@@ -1,5 +1,8 @@
+package model.actors
+
 import akka.actor.typed.Behavior
 import akka.actor.typed.scaladsl.Behaviors
+import model.entities.{Bullet, Enemy}
 
 trait BulletMessages extends CommonMessages
 case class Collision(enemy: Enemy) extends BulletMessages

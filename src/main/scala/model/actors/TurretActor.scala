@@ -1,7 +1,11 @@
+package model.actors
+
 import akka.actor.typed.*
 import akka.actor.typed.scaladsl.Behaviors
+import model.actors
+import model.entities.{Enemy, Entity}
 import scala.concurrent.duration.DurationInt
-import Turrets.*
+import model.entities.Turrets.*
 
 trait CommonMessages
 case class Update(timeElapsed: Double, entities: List[Entity], replyTo: ActorRef[CommonMessages]) extends CommonMessages
@@ -23,7 +27,7 @@ object TurretActor:
               .sortWith((e1, e2) => e1.position._1 <= e2.position._1)
               .find(enemy => turret canAttack enemy) match
               case Some(enemy) =>
-                timer.startSingleTimer(Shoot(enemy), turret.fireRate.seconds)
+                timer.startSingleTimer(actors.Shoot(enemy), turret.fireRate.seconds)
                 Behaviors.same
               case _ => Behaviors.same
 

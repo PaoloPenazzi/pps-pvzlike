@@ -1,7 +1,9 @@
-import DefaultValues.*
+package model.entities
+
+import model.common.DefaultValues.*
 
 /**
- * The Boundary class represent the entity's shape.
+ * The model.entities.Boundary class represent the entity's shape.
  * Each entity is a rectangle with a specified dimension.
  * The bottom left vertex of the rectangle correspond to the entity position.
  *
@@ -9,7 +11,7 @@ import DefaultValues.*
  * @param y The height of the entity shape.
  */
 case class Boundary(x: Double, y: Double)
-    
+
 
 trait Entity:
   def boundary: Boundary = boundaries(this)
