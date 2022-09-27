@@ -8,10 +8,6 @@ object DefaultValues:
     case _: Bullet => 5
     case _ => 20
 
-  val height: Entity => Int =
-    case _: Bullet => 5
-    case _ => 40
-
   val HP: AttackingEntity => Int =
     case _: Plant => 300
     case _: Zombie => 100

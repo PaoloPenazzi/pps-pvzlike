@@ -3,9 +3,11 @@ package model.actors
 import akka.actor.typed.*
 import akka.actor.typed.scaladsl.Behaviors
 import model.actors
-import model.entities.{Enemy, Entity}
+import model.entities.{Enemy, Entity, Seed}
+
 import scala.concurrent.duration.DurationInt
 import model.entities.Turrets.*
+import model.entities.Bullet
 
 trait CommonMessages
 case class Update(timeElapsed: Double, entities: List[Entity], replyTo: ActorRef[CommonMessages]) extends CommonMessages
@@ -20,7 +22,7 @@ object TurretActor:
 
   def detecting(turret: Turret): Behavior[TurretMessages] =
     Behaviors.withTimers(timer => {
-      Behaviors.receiveMessage(msg => {
+      Behaviors.receive((ctx, msg) => {
         msg match
           case Update(_, entities, _) =>
             entities.collect { case enemy: Enemy => enemy }
@@ -32,7 +34,7 @@ object TurretActor:
               case _ => Behaviors.same
 
           case Shoot() =>
-            ???
+            ctx.spawnAnonymous(BulletActor(new Seed))
             Behaviors.same
 
           case Hit(damage) =>
