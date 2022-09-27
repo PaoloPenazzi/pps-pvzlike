@@ -19,7 +19,9 @@ object BulletActor:
           // notify position change to controller
           Behaviors.same
 
-        case Collision(enemy: Enemy) => ???
+        case Collision(enemy: Enemy) => 
+          bullet checkCollisionAgainst enemy
+          Behaviors.same
 
         case _ => Behaviors.same
     })

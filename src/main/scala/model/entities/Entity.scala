@@ -2,19 +2,20 @@ package model.entities
 
 import model.common.DefaultValues.*
 
-/**
- * The model.entities.Boundary class represent the entity's shape.
- * Each entity is a rectangle with a specified dimension.
- * The bottom left vertex of the rectangle correspond to the entity position.
- *
- * @param x The length of the entity shape.
- * @param y The height of the entity shape.
- */
-case class Boundary(x: Double, y: Double)
+object ShapeBuilder:
+  def apply(position: (Int, Int), width: Int, height: Int): Shape =
+    Shape(
+      (position._1, position._2),
+      (position._1 + width, position._2),
+      (position._1, position._2 + height),
+      (position._1 + width, position._2 + height)
+    )
 
+  case class Shape(val x0: (Int, Int), val x1: (Int, Int), val y1:(Int, Int), val y2: (Int, Int))
 
 trait Entity:
-  def boundary: Boundary = boundaries(this)
+  def w: Int = width(this)
+  def h: Int = height(this)
 
 trait StationaryEntity extends Entity:
   def position: (Int, Int)

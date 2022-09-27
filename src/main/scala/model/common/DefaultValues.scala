@@ -1,12 +1,16 @@
 package model.common
 
 import model.entities.Turrets.{Plant, Turret}
-import model.entities.{AttackingEntity, Boundary, Bullet, Entity, Seed, Turrets, Zombie}
+import model.entities.{AttackingEntity, Bullet, Entity, Seed, Turrets, Zombie}
 
 object DefaultValues:
-  val boundaries: Entity => Boundary =
-    case _: Bullet => Boundary(5, 5)
-    case _ => Boundary(20, 40)
+  val width: Entity => Int =
+    case _: Bullet => 5
+    case _ => 20
+
+  val height: Entity => Int =
+    case _: Bullet => 5
+    case _ => 40
 
   val HP: AttackingEntity => Int =
     case _: Plant => 300

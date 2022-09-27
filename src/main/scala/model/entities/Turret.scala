@@ -2,7 +2,7 @@ package model.entities
 
 import model.common.DefaultValues.*
 import model.entities.Turrets.*
-import model.entities.{AttackingEntity, Boundary, Bullet, Enemy, Entity, Seed, StationaryEntity, Zombie}
+import model.entities.{AttackingEntity, Bullet, Enemy, Entity, Seed, StationaryEntity, Zombie}
 
 object Turrets:
   trait Turret extends Entity with AttackingEntity with StationaryEntity:
