@@ -1,21 +1,10 @@
 package model.entities
 
+import model.common.DefaultValues
 import model.common.DefaultValues.*
 
-object ShapeBuilder:
-  def apply(position: (Int, Int), width: Int, height: Int): Shape =
-    Shape(
-      (position._1, position._2),
-      (position._1 + width, position._2),
-      (position._1, position._2 + height),
-      (position._1 + width, position._2 + height)
-    )
-
-  case class Shape(val x0: (Int, Int), val x1: (Int, Int), val y1:(Int, Int), val y2: (Int, Int))
-
 trait Entity:
-  def w: Int = width(this)
-  def h: Int = height(this)
+  def width: Int = DefaultValues.width(this)
 
 trait StationaryEntity extends Entity:
   def position: (Int, Int)
