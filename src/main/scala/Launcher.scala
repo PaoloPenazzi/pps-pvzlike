@@ -3,8 +3,8 @@ import akka.actor.typed.scaladsl.Behaviors
 import akka.actor.typed.{ActorRef, ActorSystem, Behavior, Scheduler}
 import akka.util.Timeout
 import controller.Command
-import controller.Controller.ControllerActor
-import controller.Controller.ControllerCommands.{ControllerCommand, StartGame, FinishGame}
+import controller.GameController.GameControllerActor
+import controller.GameController.GameControllerCommands.{GameControllerCommand, StartGame, FinishGame}
 
 import scala.concurrent.duration.DurationInt
 import scala.concurrent.{ExecutionContext, Future}
@@ -14,7 +14,7 @@ object Launcher {
 
   @main
   def main() =
-    val controller: ActorSystem[ControllerCommand] = ActorSystem(ControllerActor(), name = "launcher")
+    val controller: ActorSystem[GameControllerCommand] = ActorSystem(GameControllerActor(), name = "launcher")
     controller ! StartGame()
 
 }

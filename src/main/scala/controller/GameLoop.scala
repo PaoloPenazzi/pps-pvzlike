@@ -3,7 +3,7 @@ package controller
 import akka.actor.typed.*
 import akka.actor.typed.scaladsl.*
 import akka.actor.typed.scaladsl.adapter.*
-import controller.Controller.ControllerCommands.ControllerCommand
+import controller.GameController.GameControllerCommands.GameControllerCommand
 import model.entities.Entity
 
 import scala.concurrent.duration.FiniteDuration

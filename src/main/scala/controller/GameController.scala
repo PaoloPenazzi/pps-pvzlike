@@ -13,22 +13,22 @@ import model.entities.Turrets.Turret
 * - Start next round
 * - Handle all response from model/view
 */
-object Controller:
+object GameController:
 
-  object ControllerCommands:
-    sealed trait ControllerCommand extends Command
-    case class StartGame() extends ControllerCommand
-    case class FinishGame() extends ControllerCommand
-    case class NewTurretAdded[T<:Turret](turret: T) extends ControllerCommand
+  object GameControllerCommands:
+    sealed trait GameControllerCommand extends Command
+    case class StartGame() extends GameControllerCommand
+    case class FinishGame() extends GameControllerCommand
+    case class NewTurretAdded[T<:Turret](turret: T) extends GameControllerCommand
 
-  object ControllerActor:
+  object GameControllerActor:
 
-    import ControllerCommands.*
+    import GameControllerCommands.*
 
     def apply(): Behavior[Command] =
-      Behaviors.setup { ctx => ControllerActor(ctx).standardBehavior() }
+      Behaviors.setup { ctx => GameControllerActor(ctx).standardBehavior() }
 
-    private case class ControllerActor(ctx: ActorContext[Command]):
+    private case class GameControllerActor(ctx: ActorContext[Command]):
       def standardBehavior(): Behavior[Command] = Behaviors.receiveMessage(msg => {
         msg match
           case StartGame() =>
