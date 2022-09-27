@@ -3,8 +3,20 @@ package controller
 import akka.actor.typed.*
 import akka.actor.typed.scaladsl.*
 import akka.actor.typed.scaladsl.adapter.*
+import controller.Controller.ControllerCommands.ControllerCommand
+import model.entities.Entity
+
 import scala.concurrent.duration.FiniteDuration
 
+/*
+* Essentially the GameLoop do three things (it works as router for the packet, so it only redirect the messages):
+* - Start loop
+* - Update the world (both model and view but the view response to controller)
+* - Stop loop
+* Beyond these things it can do:
+* - Eventually understand if the round is finished
+* - Eventually pause and resume the game/loop
+*/
 object GameLoop:
   object GameLoopCommands:
     sealed trait GameLoopCommand extends Command
@@ -13,8 +25,9 @@ object GameLoop:
 
     case class Start() extends GameLoopCommand
 
-    // single entity and then update or will I await for ALL entities updated?
-    case class EntityUpdate(entity: Any) extends GameLoopCommand
+    // the presence or not of an entity is defined by this message: if i receive i will update that entity otherwise the 
+    // entity is dead and so i don't have to update that one
+    case class EntityUpdate[E<:Entity](entity: E) extends GameLoopCommand
 
     case class Stop() extends GameLoopCommand
   
@@ -39,7 +52,9 @@ object GameLoop:
             // start the view
             timer.startSingleTimer(Update(), FiniteDuration(10, "second"))
             Behaviors.same
-          case EntityUpdate(entity) => {???; Behaviors.same}
+          case EntityUpdate(entity) =>
+            // pass the model to view
+            Behaviors.same
           case Stop() => Behaviors.stopped
       })
 
