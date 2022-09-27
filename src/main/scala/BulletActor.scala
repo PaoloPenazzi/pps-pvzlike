@@ -12,8 +12,9 @@ object BulletActor:
   def moving(bullet: Bullet): Behavior[BulletMessages] =
     Behaviors.receiveMessage(msg => {
       msg match
-        case Update(timeElapsed, _) =>
+        case Update(timeElapsed, _, replyTo) =>
           bullet.position = (bullet.position._1 + (timeElapsed * bullet.velocity).toInt, bullet.position._2)
+          // notify position change to controller
           Behaviors.same
 
         case Collision(enemy: Enemy) => ???

@@ -1,21 +1,25 @@
 import DefaultValues.*
 
 object Turrets:
-  trait Turret extends Entity with AttackingEntity:
-    def bullet: Bullet
+  trait Turret extends Entity with AttackingEntity with StationaryEntity:
     def cost: Int = costs(this)
-    def isInRange(enemy: Enemy): Boolean =
-      enemy.position._2 == position._2
+    
+    def canAttack(enemy: Enemy): Boolean =
+      isOnMyPath(enemy) && isInRange(enemy)
 
+    private def isOnMyPath(enemy: Enemy): Boolean =
+      enemy.position._2 == position._2
+      
+    private def isInRange(enemy: Enemy): Boolean =
+      enemy.position._1 <= range
+    
+    
   /**
    * Basic turret.
    *
    * @param position The position in which the plant is placed by the player.
    */
-  class Plant(override val position: (Int, Int)) extends Turret:
-    override def bullet: Seed = new Seed()
-
-  
+  class Plant(override val position: (Int, Int)) extends Turret
 
 object DefaultValues:
   import Turrets.*
@@ -42,7 +46,7 @@ object DefaultValues:
     case _: Seed => 25
     case _       => 0
 
-  val ranges: AttackingEntity => Double =
-    case _: Plant => 5.0
-    case _: Zombie => 1.0
+  val ranges: AttackingEntity => Int =
+    case _: Plant => 500
+    case _: Zombie => 10
     case _ => 0

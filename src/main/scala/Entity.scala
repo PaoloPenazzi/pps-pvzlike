@@ -13,14 +13,16 @@ case class Boundary(x: Double, y: Double)
 
 trait Entity:
   def boundary: Boundary = boundaries(this)
+
+trait StationaryEntity extends Entity:
   def position: (Int, Int)
+
+abstract class MovingEntity() extends Entity:
+  var position: (Int, Int) = _
+  def velocity: Double
+  def direction: String
 
 trait AttackingEntity extends Entity :
   var healthPoints: Int = HP(this)
   def fireRate: Int = fireRates(this)
-  def range: Double = ranges(this)
-
-trait MovingEntity extends Entity :
-  var position: (Int, Int) = (0,0)
-  def velocity: Double
-  def direction: String
+  def range: Int = ranges(this)

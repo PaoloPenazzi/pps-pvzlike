@@ -4,7 +4,7 @@ import scala.concurrent.duration.DurationInt
 import Turrets.*
 
 trait CommonMessages
-case class Update(timeElapsed: Double, entities: List[Entity]) extends CommonMessages
+case class Update(timeElapsed: Double, entities: List[Entity], replyTo: ActorRef[CommonMessages]) extends CommonMessages
 
 trait TurretMessages extends CommonMessages
 case class Shoot(enemy: Enemy) extends TurretMessages
@@ -18,10 +18,10 @@ object TurretActor:
     Behaviors.withTimers(timer => {
       Behaviors.receiveMessage(msg => {
         msg match
-          case Update(_, entities) =>
+          case Update(_, entities, _) =>
             entities.collect { case enemy: Enemy => enemy }
               .sortWith((e1, e2) => e1.position._1 <= e2.position._1)
-              .find(enemy => turret isInRange enemy) match
+              .find(enemy => turret canAttack enemy) match
               case Some(enemy) =>
                 timer.startSingleTimer(Shoot(enemy), turret.fireRate.seconds)
                 Behaviors.same
