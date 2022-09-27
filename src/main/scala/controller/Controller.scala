@@ -18,11 +18,11 @@ object Controller:
 
     import ControllerCommands.*
 
-    def apply(): Behavior[ControllerCommand] =
+    def apply(): Behavior[Command] =
       Behaviors.setup { ctx => ControllerActor(ctx).standardBehavior() }
 
-    case class ControllerActor(ctx: ActorContext[ControllerCommand]):
-      def standardBehavior(): Behavior[ControllerCommand] = Behaviors.receiveMessage(msg => {
+    case class ControllerActor(ctx: ActorContext[Command]):
+      def standardBehavior(): Behavior[Command] = Behaviors.receiveMessage(msg => {
         msg match
           case StartGame() =>
             // we will put in gameLoop object the model and the view

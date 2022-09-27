@@ -22,11 +22,11 @@ object GameLoop:
 
     import GameLoopCommands.*
 
-    def apply(): Behavior[GameLoopCommand] =
+    def apply(): Behavior[Command] =
       Behaviors.setup{ctx => Behaviors.withTimers { timer => GameLoopActor(ctx, timer).standardBehavior() }}
 
-    case class GameLoopActor(ctx: ActorContext[GameLoopCommand], timer: TimerScheduler[GameLoopCommand]):
-      def standardBehavior(): Behavior[GameLoopCommand] = Behaviors.receiveMessage(msg => {
+    case class GameLoopActor(ctx: ActorContext[Command], timer: TimerScheduler[Command]):
+      def standardBehavior(): Behavior[Command] = Behaviors.receiveMessage(msg => {
         msg match
           case Update() =>
             // update model
