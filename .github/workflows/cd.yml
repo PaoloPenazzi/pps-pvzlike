@@ -1,0 +1,27 @@
+name: CD
+on:
+  push:
+    branches: [ release ]
+jobs:
+  build:
+    name: Create JAR file
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Setup
+        uses: olafurpg/setup-scala@v13
+        with:
+          java-version: "adopt@1.15"
+      - name: Run Tests
+        run: sbt test
+        shell: bash
+      - name: Create jar
+        run: sbt assembly
+        shell: bash
+      - name: Upload jar
+        id: create_release
+        uses: actions/upload-artifact@v3
+        with:
+          name: pps-pvzlike
+          path: target/scala-3.2.0/*.jar

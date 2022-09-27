@@ -12,7 +12,7 @@ lazy val javaFxLibrary = for {
   os <- Seq("win", "mac", "linux")
 } yield "org.openjfx" % s"javafx-$module" % "15.0.1" classifier os
 
-val akkaVersion = "2.6.19"
+val akkaVersion = "2.6.20"
 
 libraryDependencies ++= Seq(
   "com.typesafe.akka" %% "akka-actor-typed" % akkaVersion,
@@ -22,5 +22,5 @@ libraryDependencies ++= Seq(
   "org.junit.jupiter" % "junit-jupiter-engine" % "5.9.0" % Test, // for org.junit.platform
   "org.junit.vintage" % "junit-vintage-engine" % "5.9.0" % Test,
   "org.junit.platform" % "junit-platform-launcher" % "1.9.0" % Test,
-  "org.scalatest" %% "scalatest" % "3.2.12" % Test
+  "org.scalatest" %% "scalatest" % "3.2.13" % Test
 )
