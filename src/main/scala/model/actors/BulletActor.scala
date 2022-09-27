@@ -7,7 +7,6 @@ import model.entities.{Bullet, Enemy}
 trait BulletMessages extends CommonMessages
 case class Collision(enemy: Enemy) extends BulletMessages
 
-
 object BulletActor:
   def apply(bullet: Bullet): Behavior[BulletMessages] =
     moving(bullet)
@@ -16,7 +15,7 @@ object BulletActor:
     Behaviors.receiveMessage(msg => {
       msg match
         case Update(timeElapsed, _, replyTo) =>
-          bullet.position = (bullet.position._1 + (timeElapsed * bullet.velocity).toInt, bullet.position._2)
+          bullet updatePosition timeElapsed
           // notify position change to controller
           Behaviors.same
 
