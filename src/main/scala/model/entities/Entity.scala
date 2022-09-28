@@ -12,7 +12,6 @@ trait StationaryEntity extends Entity:
 abstract class MovingEntity() extends Entity:
   var position: (Int, Int) = _
   def velocity: Double
-  def direction: String
 
 trait AttackingEntity extends Entity :
   var healthPoints: Int = HP(this)

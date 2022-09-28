@@ -13,4 +13,3 @@ trait Bullet extends MovingEntity with Entity:
 
 class Seed() extends Bullet:
   override def velocity: Double = 5.0
-  override def direction: String = "right"
