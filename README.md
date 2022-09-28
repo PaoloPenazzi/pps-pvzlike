@@ -2,6 +2,7 @@
 
 ![build](https://img.shields.io/github/workflow/status/PaoloPenazzi/pps-pvzlike/CI)
 ![license](https://img.shields.io/github/license/PaoloPenazzi/pps-pvzlike)
+[![Duplicated Lines (%)](https://sonarcloud.io/api/project_badges/measure?project=PaoloPenazzi_pps-pvzlike&metric=duplicated_lines_density)](https://sonarcloud.io/dashboard?id=PaoloPenazzi_pps-pvzlike)
 
 `pps-pvzlike` is a reprodution of the single-player game [Plants vs. Zombies](https://www.ea.com/it-it/games/plants-vs-zombies/plants-vs-zombies)
 In the game, players try to prevent zombies from reaching the end of a path by placing plants that can kill the zombies. The zombies' waves come in different rounds with increasing level of difficulty.
