@@ -5,7 +5,7 @@ import model.common.DefaultValues.*
 trait Bullet extends MovingEntity with Entity:
   def damage: Int = damages(this)
 
-  def updatePosition(timeElapsed: Double): Unit =
+  def updatePositionAfter(timeElapsed: Double): Unit =
     position = (position._1 + (timeElapsed * velocity).toInt, position._2)
 
   def checkCollisionAgainst(enemy: Enemy): Boolean =

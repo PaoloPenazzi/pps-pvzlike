@@ -15,8 +15,8 @@ object BulletActor:
     Behaviors.receiveMessage(msg => {
       msg match
         case Update(timeElapsed, _, replyTo) =>
-          bullet updatePosition timeElapsed
-          // notify position change to controller
+          bullet updatePositionAfter timeElapsed
+          replyTo ! EntityUpdate(bullet)
           Behaviors.same
 
         case Collision(enemy: Enemy) => 

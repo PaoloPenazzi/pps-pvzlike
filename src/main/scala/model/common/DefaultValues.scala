@@ -20,7 +20,7 @@ object DefaultValues:
 
   val costs: Turret => Int =
     case _: Plant => 100
-    case _        => 0
+    case _  => 0
 
   val damages: Bullet => Int =
     case _: Seed => 25
