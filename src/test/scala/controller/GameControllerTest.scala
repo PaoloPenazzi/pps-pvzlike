@@ -14,24 +14,17 @@ import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 
 class GameControllerTest extends AnyWordSpec with BeforeAndAfterAll with Matchers :
-  val testKit = ActorTestKit()
-  val controller = BehaviorTestKit(GameControllerActor())
+  val testKit: ActorTestKit = ActorTestKit()
+  val controller: BehaviorTestKit[Command] = BehaviorTestKit(GameControllerActor())
 
+  // with the future dsl we have to separate the integration test and behavior test (i.e. t
 
   override def afterAll(): Unit = testKit.shutdownTestKit()
 
-  "The Controller Actor" when {
+  "The GameController Actor" when {
     "created" should {
       "be alive" in {
         controller.isAlive must be(true)
       }
-
-      /*      "spawn a new game loop" in {
-        controller run StartGame()
-        val childBox = controller.childInbox[GameLoopCommand]("gameloop")
-        childBox.expectMessage(Start())
-        controller expectEffect Effect.Spawned(GameLoopActor(), "gameloop")
-        }
-    }*/
     }
   }
