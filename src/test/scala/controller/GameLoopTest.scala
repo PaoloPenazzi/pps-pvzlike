@@ -7,6 +7,7 @@ import akka.actor.typed.{ActorRef, Behavior}
 import org.scalatest.BeforeAndAfterAll
 import org.scalatest.funsuite.AnyFunSuite
 import org.scalatest.matchers.must.Matchers.must
+import org.scalatest.matchers.should.Matchers.shouldNot
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 
@@ -17,8 +18,8 @@ class GameLoopTest extends AnyWordSpec with BeforeAndAfterAll with Matchers :
   import controller.GameLoop.*
   import controller.GameLoop.GameLoopCommands.*
 
-  val testKit = ActorTestKit()
-  val gameLoopActor = BehaviorTestKit(GameLoopActor())
+  val testKit: ActorTestKit = ActorTestKit()
+  val gameLoopActor: BehaviorTestKit[Command] = BehaviorTestKit(GameLoopActor())
 
   override def afterAll(): Unit = testKit.shutdownTestKit()
 
@@ -28,9 +29,23 @@ class GameLoopTest extends AnyWordSpec with BeforeAndAfterAll with Matchers :
         gameLoopActor.isAlive must be(true)
       }
 
-      "start a new game" in {
+      "start a new timer" in {
         gameLoopActor run Start()
         gameLoopActor expectEffect Effect.TimerScheduled(Update(), Update(), FiniteDuration(10, "second"), Effect.TimerScheduled.SingleMode, false)(null)
+      }
+
+      "pause the loop" in {
+        gameLoopActor run Pause()
+        gameLoopActor run Start()
+        gameLoopActor.returnedBehavior shouldBe Behaviors.same
+      }
+
+      "resume the loop" in {
+        gameLoopActor run Pause()
+        val prevBehavior = gameLoopActor.currentBehavior
+        gameLoopActor run Resume()
+        val postBehavior = gameLoopActor.currentBehavior
+        prevBehavior should not be postBehavior
       }
 
       "stop its behavior" in {
