@@ -1,7 +1,6 @@
 package model.common
 
-import model.entities.Turrets.{Plant, Turret}
-import model.entities.{AttackingEntity, Bullet, Entity, Seed, Turrets, Zombie}
+import model.entities.{AttackingEntity, Bullet, Entity, Seed, Zombie, Plant, Turret}
 
 object DefaultValues:
   val width: Entity => Int =

@@ -6,8 +6,7 @@ import model.actors
 import model.entities.{Enemy, Entity, Seed}
 
 import scala.concurrent.duration.DurationInt
-import model.entities.Turrets.*
-import model.entities.Bullet
+import model.entities.{Bullet, Turret}
 
 trait CommonMessages
 case class Update(timeElapsed: Double, entities: List[Entity], replyTo: ActorRef[CommonMessages]) extends CommonMessages

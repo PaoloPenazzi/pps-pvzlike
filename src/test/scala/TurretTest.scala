@@ -7,7 +7,7 @@ import akka.actor.typed.scaladsl.Behaviors
 import org.scalatest.BeforeAndAfterAll
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpecLike
-import model.entities.Turrets.*
+import model.entities.{Turret, Plant}
 import model.common.DefaultValues.*
 
 class TurretModelTest extends AnyFunSuite:

@@ -5,7 +5,7 @@ import akka.actor.typed.scaladsl.{ActorContext, Behaviors}
 import controller.GameLoop.GameLoopActor
 import controller.GameLoop.GameLoopCommands.GameLoopCommand
 import GameLoop.GameLoopCommands.*
-import model.entities.Turrets.Turret
+import model.entities.{Turret}
 
 /*
 * Essentially the Controller is the controller of all games so for each important phase of a match it will something:
