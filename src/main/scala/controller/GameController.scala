@@ -29,28 +29,26 @@ object GameController:
 
   object GameControllerActor:
     var waveNumber = 1
-    var gameLoop: Option[ActorRef[Command]] = None
-    var waveController: Option[ActorRef[Command]] = None
     var enemiesWave: Option[List[Enemy]] = None
 
     import GameControllerCommands.*
 
-    def apply(): Behavior[Command] =
-      Behaviors.setup { _ => GameControllerActor().standardBehavior() }
+    def apply(gameLoop: ActorRef[Command],
+              waveController: ActorRef[Command]): Behavior[Command] =
+      Behaviors.setup { _ => GameControllerActor(gameLoop, waveController).standardBehavior() }
 
-    private case class GameControllerActor() extends Controller:
+    private case class GameControllerActor(gameLoop: ActorRef[Command],
+                                           waveController: ActorRef[Command]) extends Controller:
       override def standardBehavior(): Behavior[Command] = Behaviors.receive((ctx, msg) => {
         msg match
           case NewGame() =>
-            gameLoop = Some(ctx.spawnAnonymous(GameLoopActor()))
-            waveController = Some(ctx.spawnAnonymous(WaveControllerActor()))
-            waveController.get ! GenerateWave(waveNumber, enemiesNumber = 2, ctx.self)
+            waveController ! GenerateWave(waveNumber, enemiesNumber = 2, ctx.self)
             Behaviors.same
           case NewEnemiesWave(wave) => enemiesWave = Some(wave); Behaviors.same
           case StartGame() =>
             // we will put in gameLoop object the model and the view
             // lift up game field
-            gameLoop.get ! Start(enemiesWave.get)
+            gameLoop ! Start(enemiesWave.get)
             Behaviors.same
           case NewTurretAdded(turret) => ???
           case FinishGame() => ???
