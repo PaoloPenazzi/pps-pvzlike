@@ -36,10 +36,10 @@ object GameController:
     import GameControllerCommands.*
 
     def apply(): Behavior[Command] =
-      Behaviors.setup { _ => GameControllerActor().standardBehavior }
+      Behaviors.setup { _ => GameControllerActor().standardBehavior() }
 
     private case class GameControllerActor() extends Controller:
-      override def standardBehavior: Behavior[Command] = Behaviors.receive((ctx, msg) => {
+      override def standardBehavior(): Behavior[Command] = Behaviors.receive((ctx, msg) => {
         msg match
           case NewGame() =>
             gameLoop = Some(ctx.spawnAnonymous(GameLoopActor()))

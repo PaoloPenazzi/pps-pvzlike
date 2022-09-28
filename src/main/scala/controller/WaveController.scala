@@ -18,10 +18,10 @@ object WaveController:
     import WaveControllerCommands.*
 
     def apply(): Behavior[Command] =
-      Behaviors.setup { _ => WaveControllerActor().standardBehavior }
+      Behaviors.setup { _ => WaveControllerActor().standardBehavior() }
 
     private case class WaveControllerActor() extends Controller:
-      override def standardBehavior: Behavior[Command] = Behaviors.receive((ctx, msg) => {
+      override def standardBehavior(): Behavior[Command] = Behaviors.receive((ctx, msg) => {
         msg match
           case GenerateWave(waveNumber, enemiesNumber, replyTo) =>
             // for the moment this class create only similar zombies next with Prolog

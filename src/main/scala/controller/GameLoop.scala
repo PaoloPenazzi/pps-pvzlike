@@ -39,10 +39,10 @@ object GameLoop:
     import GameLoopCommands.*    
 
     def apply(): Behavior[Command] =
-      Behaviors.setup{ _ => Behaviors.withTimers { timer => GameLoopActor(timer).standardBehavior }}
+      Behaviors.setup{ _ => Behaviors.withTimers { timer => GameLoopActor(timer).standardBehavior() }}
 
     private case class GameLoopActor(timer: TimerScheduler[Command]) extends Controller with PausableController:
-      override def standardBehavior: Behavior[Command] = Behaviors.receive( (ctx, msg) => {
+      override def standardBehavior(): Behavior[Command] = Behaviors.receive( (ctx, msg) => {
         msg match
           case Update() =>
             // update model
@@ -60,17 +60,17 @@ object GameLoop:
           case EntityUpdate(entity) =>
             // pass the model to view
             Behaviors.same
-          case Pause() => pauseBehavior
+          case Pause() => pauseBehavior()
           case Stop() => Behaviors.stopped
           case _ => Behaviors.same
       })
 
-      override def pauseBehavior: Behavior[Command] = Behaviors.receive( (ctx, msg) => {
+      override def pauseBehavior(): Behavior[Command] = Behaviors.receive( (ctx, msg) => {
         msg match
           case Stop() => Behaviors.stopped
           case Resume() =>
             ctx.self ! Update()
-            standardBehavior
+            standardBehavior()
           case _ => Behaviors.same
       })
 
