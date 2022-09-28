@@ -1,15 +1,16 @@
-package controller
+package controller.behavior
 
 import akka.actor.testkit.typed.Effect
 import akka.actor.testkit.typed.scaladsl.{ActorTestKit, BehaviorTestKit, TestInbox}
 import akka.actor.typed.scaladsl.Behaviors
 import akka.actor.typed.{ActorRef, Behavior}
+import controller.Command
 import model.entities.{Enemy, Zombie}
 import org.scalatest.BeforeAndAfterAll
 import org.scalatest.funsuite.AnyFunSuite
 import org.scalatest.matchers.must.Matchers.must
-import org.scalatest.matchers.should.Matchers.shouldNot
 import org.scalatest.matchers.should.Matchers
+import org.scalatest.matchers.should.Matchers.shouldNot
 import org.scalatest.wordspec.AnyWordSpec
 
 import scala.concurrent.duration.FiniteDuration
@@ -19,7 +20,7 @@ class GameLoopTest extends AnyWordSpec with BeforeAndAfterAll with Matchers :
   import controller.GameLoop.*
   import controller.GameLoop.GameLoopCommands.*
 
-  // make a dsl to simplify and avoid repetion with akka testkit
+  // one day separate integration and behavior testing
 
   val testKit: ActorTestKit = ActorTestKit()
   val gameLoopActor: BehaviorTestKit[Command] = BehaviorTestKit(GameLoopActor())

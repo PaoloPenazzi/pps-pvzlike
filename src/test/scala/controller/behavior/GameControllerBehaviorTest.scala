@@ -1,9 +1,10 @@
-package controller
+package controller.behavior
 
 import akka.actor.testkit.typed.Effect
 import akka.actor.testkit.typed.scaladsl.{ActorTestKit, BehaviorTestKit, TestInbox}
 import akka.actor.typed.scaladsl.Behaviors
 import akka.actor.typed.{ActorRef, Behavior}
+import controller.Command
 import controller.GameController.GameControllerActor
 import controller.GameController.GameControllerCommands.StartGame
 import controller.GameLoop.GameLoopActor
@@ -16,8 +17,6 @@ import org.scalatest.wordspec.AnyWordSpec
 class GameControllerTest extends AnyWordSpec with BeforeAndAfterAll with Matchers :
   val testKit: ActorTestKit = ActorTestKit()
   val controller: BehaviorTestKit[Command] = BehaviorTestKit(GameControllerActor())
-
-  // with the future dsl we have to separate the integration test and behavior test (i.e. t
 
   override def afterAll(): Unit = testKit.shutdownTestKit()
 
