@@ -14,11 +14,10 @@ import org.scalatest.matchers.must.Matchers.must
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 
-class GameControllerTest extends AnyWordSpec with BeforeAndAfterAll with Matchers :
-  val testKit: ActorTestKit = ActorTestKit()
-  val controller: BehaviorTestKit[Command] = BehaviorTestKit(GameControllerActor())
+class GameControllerBehaviorTest extends AnyWordSpec with Matchers :
+  
+  val controller: BehaviorTestKit[Command] = BehaviorTestKit(GameControllerActor(TestInbox[Command]().ref, TestInbox[Command]().ref))
 
-  override def afterAll(): Unit = testKit.shutdownTestKit()
 
   "The GameController Actor" when {
     "created" should {

@@ -15,18 +15,14 @@ import org.scalatest.wordspec.AnyWordSpec
 
 import scala.concurrent.duration.FiniteDuration
 
-class GameLoopTest extends AnyWordSpec with BeforeAndAfterAll with Matchers :
+class GameLoopBehaviorTest extends AnyWordSpec with Matchers :
 
   import controller.GameLoop.*
   import controller.GameLoop.GameLoopCommands.*
 
-  // one day separate integration and behavior testing
-
-  val testKit: ActorTestKit = ActorTestKit()
   val gameLoopActor: BehaviorTestKit[Command] = BehaviorTestKit(GameLoopActor())
   val enemiesWave: Option[List[Enemy]] = Some(List.fill(3)(Zombie()))
 
-  override def afterAll(): Unit = testKit.shutdownTestKit()
 
   "The GameLoop Actor" when {
     "created" should {

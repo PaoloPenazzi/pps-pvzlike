@@ -1,24 +1,23 @@
 package controller.integration
 
-import org.scalatest.BeforeAndAfterAll
-import org.scalatest.matchers.should.Matchers
-import org.scalatest.wordspec.AnyWordSpec
 import akka.actor.testkit.typed.scaladsl.{ActorTestKit, BehaviorTestKit, ScalaTestWithActorTestKit, TestInbox, TestProbe}
 import akka.actor.typed.ActorRef
 import controller.Command
 import controller.GameController.GameControllerActor
 import controller.GameController.GameControllerCommands.{NewEnemiesWave, NewGame, StartGame}
-import org.scalatest.wordspec.AnyWordSpecLike
 import controller.GameLoop.GameLoopCommands.Start
 import controller.WaveController.WaveControllerCommands.GenerateWave
+import org.scalatest.BeforeAndAfterAll
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.wordspec.{AnyWordSpec, AnyWordSpecLike}
 
-class GameControllerIntegrationTest extends AnyWordSpec with Matchers:
+class GameControllerIntegrationTest extends AnyWordSpec with Matchers :
 
   val gameLoop: TestInbox[Command] = TestInbox[Command]()
   val waveController: TestInbox[Command] = TestInbox[Command]()
-  val gameController: BehaviorTestKit[Command] = BehaviorTestKit(GameControllerActor(Some(gameLoop.ref), Some(waveController.ref)))
+  val gameController: BehaviorTestKit[Command] = BehaviorTestKit(GameControllerActor(gameLoop.ref, waveController.ref))
 
-  "GameController" when  {
+  "GameController" when {
     "communicate correctly" should {
 
       "interact with WaveController" in {
