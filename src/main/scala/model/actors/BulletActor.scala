@@ -1,26 +1,26 @@
 package model.actors
 
-import akka.actor.typed.Behavior
+import akka.actor.typed.{ActorRef, Behavior}
 import akka.actor.typed.scaladsl.Behaviors
+import controller.GameLoop.GameLoopCommands.{EntityUpdate, GameLoopCommand}
 import model.entities.{Bullet, Enemy}
 
 trait BulletMessages extends CommonMessages
-case class Collision(enemy: Enemy) extends BulletMessages
+case class Collision(enemy: List[Enemy], replyTo: ActorRef[CommonMessages]) extends BulletMessages
 
 object BulletActor:
-  def apply(bullet: Bullet): Behavior[BulletMessages] =
+  def apply(bullet: Bullet): Behavior[BulletMessages | GameLoopCommand] =
     moving(bullet)
 
-  def moving(bullet: Bullet): Behavior[BulletMessages] =
+  def moving(bullet: Bullet): Behavior[BulletMessages | GameLoopCommand] =
     Behaviors.receiveMessage(msg => {
       msg match
-        case Update(timeElapsed, _, replyTo) =>
+        case Update(timeElapsed, entities, replyTo) =>
           bullet updatePositionAfter timeElapsed
-          replyTo ! EntityUpdate(bullet)
-          Behaviors.same
-
-        case Collision(enemy: Enemy) => 
-          bullet checkCollisionAgainst enemy
+          //replyTo ! EntityUpdate(bullet)
+          // notify controller/zombie
+          entities.collect { case e: Enemy => e }
+            .find(enemy => bullet checkCollisionAgainst enemy).foreach(e => ???)
           Behaviors.same
 
         case _ => Behaviors.same
