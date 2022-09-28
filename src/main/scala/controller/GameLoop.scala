@@ -4,7 +4,7 @@ import akka.actor.typed.*
 import akka.actor.typed.scaladsl.*
 import akka.actor.typed.scaladsl.adapter.*
 import controller.GameController.GameControllerCommands.GameControllerCommand
-import model.entities.Entity
+import model.entities.{Enemy, Entity}
 
 import scala.concurrent.duration.FiniteDuration
 
@@ -21,7 +21,7 @@ object GameLoop:
 
     case class Update() extends GameLoopCommand
 
-    case class Start() extends GameLoopCommand
+    case class Start[E<:Enemy](wave: List[E]) extends GameLoopCommand
 
     case class Pause() extends GameLoopCommand
 
@@ -34,8 +34,9 @@ object GameLoop:
     case class Stop() extends GameLoopCommand
   
   object GameLoopActor:
+    var enemiesWave: Option[List[Enemy]] = None
 
-    import GameLoopCommands.*
+    import GameLoopCommands.*    
 
     def apply(): Behavior[Command] =
       Behaviors.setup{ _ => Behaviors.withTimers { timer => GameLoopActor(timer).standardBehavior }}
@@ -47,11 +48,13 @@ object GameLoop:
             // update model
             // update view
             // find the correct time update
+            //wave.foreach(enemy ! update)
             timer.startSingleTimer(Update(), FiniteDuration(10, "second"))
             Behaviors.same
-          case Start() =>
-            // start the model
-            // start the view
+          case Start(wave) =>
+            // model ! start
+            // view ! start
+            enemiesWave = Some(wave)
             timer.startSingleTimer(Update(), FiniteDuration(10, "second"))
             Behaviors.same
           case EntityUpdate(entity) =>
@@ -69,6 +72,5 @@ object GameLoop:
             ctx.self ! Update()
             standardBehavior
           case _ => Behaviors.same
-  
       })
 
