@@ -9,10 +9,13 @@ import scala.concurrent.duration.DurationInt
 import model.entities.{Bullet, Turret}
 
 trait CommonMessages
+
 case class Update(timeElapsed: Double, entities: List[Entity], replyTo: ActorRef[CommonMessages]) extends CommonMessages
 
 trait TurretMessages extends CommonMessages
+
 case class Shoot() extends TurretMessages
+
 case class Hit(damage: Int) extends TurretMessages
 
 object TurretActor:
@@ -25,15 +28,17 @@ object TurretActor:
         msg match
           case Update(_, entities, _) =>
             entities.collect { case enemy: Enemy => enemy }
-              .sortWith((e1, e2) => e1.position._1 <= e2.position._1)
               .find(enemy => turret canAttack enemy) match
               case Some(_) =>
-                timer.startSingleTimer(actors.Shoot(), turret.fireRate.seconds)
+                if !timer.isTimerActive("TurretShooting")
+                then timer.startSingleTimer("TurretShooting", actors.Shoot(), turret.fireRate.seconds)
                 Behaviors.same
               case _ => Behaviors.same
 
           case Shoot() =>
-            ctx.spawnAnonymous(BulletActor(new Seed))
+            val bullet = new Seed
+            val bulletActor = ctx.spawnAnonymous(BulletActor(bullet))
+            // Send entity creation message
             Behaviors.same
 
           case Hit(damage) =>

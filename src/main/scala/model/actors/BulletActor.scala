@@ -18,7 +18,7 @@ object BulletActor:
         case Update(timeElapsed, entities, replyTo) =>
           bullet updatePositionAfter timeElapsed
           //replyTo ! EntityUpdate(bullet)
-          // notify controller/zombie
+          // notify controller
           entities.collect { case e: Enemy => e }
             .find(enemy => bullet checkCollisionAgainst enemy).foreach(e => ???)
           Behaviors.same
