@@ -13,7 +13,7 @@ trait Turret extends Entity with AttackingEntity with StationaryEntity :
     enemy.position._2 == position._2
 
   private def isInRange(enemy: Enemy): Boolean =
-    enemy.position._1 <= range
+    enemy.position._1.toInt <= range
 
 
 /**
@@ -21,4 +21,4 @@ trait Turret extends Entity with AttackingEntity with StationaryEntity :
  *
  * @param position The position in which the plant is placed by the player.
  */
-case class Plant(override val position: (Int, Int)) extends Turret
+case class Plant(override val position: (Double, Int)) extends Turret
