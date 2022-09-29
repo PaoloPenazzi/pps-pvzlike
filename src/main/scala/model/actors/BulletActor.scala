@@ -2,11 +2,12 @@ package model.actors
 
 import akka.actor.typed.{ActorRef, Behavior}
 import akka.actor.typed.scaladsl.Behaviors
+import controller.Command
 import controller.GameLoop.GameLoopCommands.{EntityUpdate, GameLoopCommand}
 import model.entities.{Bullet, Enemy}
 
-trait BulletMessages extends CommonMessages
-case class Collision(enemy: List[Enemy], replyTo: ActorRef[CommonMessages]) extends BulletMessages
+trait BulletMessages extends Command
+case class Collision(enemy: List[Enemy], replyTo: ActorRef[Command]) extends BulletMessages
 
 object BulletActor:
   def apply(bullet: Bullet): Behavior[BulletMessages | GameLoopCommand] =
