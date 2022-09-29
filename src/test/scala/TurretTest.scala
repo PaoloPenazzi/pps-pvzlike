@@ -32,7 +32,7 @@ class TurretTest extends AnyWordSpec with BeforeAndAfterAll with Matchers:
       }
 
       "shoot zombie" in {
-        testZombie1.position = (200, 1)
+        testZombie1.position = (100, 1)
         turretActor run Update(10, List(testZombie1), inbox.ref)
         turretActor expectEffect Effect.TimerScheduled("TurretShooting", Shoot(inbox.ref), plant.fireRate.seconds, Effect.TimerScheduled.SingleMode, false)(null)
       }

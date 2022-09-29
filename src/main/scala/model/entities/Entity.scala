@@ -7,10 +7,10 @@ trait Entity:
   def width: Int = DefaultValues.width(this)
 
 trait StationaryEntity extends Entity:
-  def position: (Int, Int)
+  def position: (Double, Int)
 
 abstract class MovingEntity() extends Entity:
-  var position: (Int, Int) = _
+  var position: (Double, Int) = _
   def velocity: Double
 
 trait AttackingEntity extends Entity :

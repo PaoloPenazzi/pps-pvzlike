@@ -6,7 +6,7 @@ trait Bullet extends MovingEntity with Entity:
   def damage: Int = damages(this)
 
   def updatePositionAfter(timeElapsed: Double): Unit =
-    position = (position._1 + (timeElapsed * velocity).toInt, position._2)
+    position = (position._1 + (timeElapsed * velocity), position._2)
 
   def checkCollisionAgainst(enemy: Enemy): Boolean =
     position._1 == enemy.position._1
