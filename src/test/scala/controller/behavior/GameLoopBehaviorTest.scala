@@ -37,15 +37,15 @@ class GameLoopBehaviorTest extends AnyWordSpec with Matchers :
       }
 
       "pause the loop" in {
-        gameLoopActor run Pause()
+        gameLoopActor run PauseLoop()
         gameLoopActor run Start(enemiesWave.get)
         gameLoopActor.returnedBehavior shouldBe Behaviors.same
       }
 
       "resume the loop" in {
-        gameLoopActor run Pause()
+        gameLoopActor run PauseLoop()
         val prevBehavior = gameLoopActor.currentBehavior
-        gameLoopActor run Resume()
+        gameLoopActor run ResumeLoop()
         val postBehavior = gameLoopActor.currentBehavior
         prevBehavior should not be postBehavior
       }

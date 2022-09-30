@@ -18,13 +18,15 @@ object GameLoopActor:
 
     case class StopLoop() extends GameLoopCommand
 
+    case class PauseLoop() extends GameLoopCommand
+
+    case class ResumeLoop() extends GameLoopCommand
+
     case class Update() extends GameLoopCommand
 
     case class Start[E <: Enemy](wave: List[E]) extends GameLoopCommand
 
-    case class Pause() extends GameLoopCommand
 
-    case class Resume() extends GameLoopCommand
 
 
     case class FinishGame() extends GameLoopCommand
@@ -55,6 +57,7 @@ object GameLoopActor:
           startTimer(timer)
           Behaviors.same
         case StopLoop() => Behaviors.stopped
+        case PauseLoop() => pauseBehavior()
         case Update() =>
           // todo check if the wave is end
           detectCollision
@@ -70,14 +73,14 @@ object GameLoopActor:
         case EntityUpdate(entity) =>
           // pass the model to view
           Behaviors.same
-        case Pause() => pauseBehavior()
+
         case _ => Behaviors.same
     })
 
     override def pauseBehavior(): Behavior[Command] = Behaviors.receive((ctx, msg) => {
       msg match
         case StopLoop() => Behaviors.stopped
-        case Resume() =>
+        case ResumeLoop() =>
           ctx.self ! Update()
           standardBehavior()
         case _ => Behaviors.same
