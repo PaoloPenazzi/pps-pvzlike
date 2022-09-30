@@ -62,8 +62,15 @@ object GameLoopActor:
           entities = entities.updated(entities.indexOf(ref), (ref, entity))
           // viewActor ! RenderEntities(entities)
           Behaviors.same
-        case EntityAdded(ref, entity) => ???
-        case EntityUpgraded(ref, entity) => ???
+        case EntityAdded(ref, entity) => entity match
+          case _: Bullet => ???
+          case _: Turret => ???
+          case _: Enemy => ???
+
+        case EntityUpgraded(ref, entity) => entity match
+          case _: Bullet => ???
+          case _: Turret => ???
+          case _: Enemy => ???
         case _ => Behaviors.same
     })
 
