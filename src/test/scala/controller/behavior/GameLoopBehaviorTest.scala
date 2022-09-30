@@ -31,28 +31,12 @@ class GameLoopBehaviorTest extends AnyWordSpec with Matchers :
         gameLoopActor.isAlive must be(true)
       }
 
-      "start a new timer" in {
-        gameLoopActor run Start(enemiesWave.get)
-        gameLoopActor expectEffect Effect.TimerScheduled(Update(), Update(), FiniteDuration(10, "second"), Effect.TimerScheduled.SingleMode, false)(null)
-      }
-
-      "pause the loop" in {
-        gameLoopActor run PauseLoop()
-        gameLoopActor run Start(enemiesWave.get)
-        gameLoopActor.returnedBehavior shouldBe Behaviors.same
-      }
-
       "resume the loop" in {
         gameLoopActor run PauseLoop()
         val prevBehavior = gameLoopActor.currentBehavior
         gameLoopActor run ResumeLoop()
         val postBehavior = gameLoopActor.currentBehavior
         prevBehavior should not be postBehavior
-      }
-
-      "stop its behavior" in {
-        gameLoopActor run Stop()
-        gameLoopActor.isAlive must be(false)
       }
     }
   }
