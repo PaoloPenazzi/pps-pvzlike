@@ -6,7 +6,7 @@ import akka.actor.testkit.typed.scaladsl.{ActorTestKit, BehaviorTestKit, ScalaTe
 import akka.actor.typed.scaladsl.Behaviors
 import akka.testkit.{ImplicitSender, TestActors, TestKit}
 import controller.Command
-import controller.GameLoop.GameLoopCommands.{EntityUpdate, GameLoopCommand}
+import controller.GameLoopActor.GameLoopCommands.{EntityUpdate, GameLoopCommand}
 import model.actors.{BulletActor, EntitySpawned, Hit, Shoot, TurretActor, TurretMessages, Update}
 import model.common.DefaultValues.*
 import model.entities.*

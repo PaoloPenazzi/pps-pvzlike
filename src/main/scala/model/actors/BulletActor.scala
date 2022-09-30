@@ -3,7 +3,7 @@ package model.actors
 import akka.actor.typed.{ActorRef, Behavior}
 import akka.actor.typed.scaladsl.Behaviors
 import controller.Command
-import controller.GameLoop.GameLoopCommands.{EntityUpdate, GameLoopCommand}
+import controller.GameLoopActor.GameLoopCommands.{EntityUpdate, GameLoopCommand}
 import model.entities.{Bullet, Enemy}
 
 trait BulletMessages extends Command
