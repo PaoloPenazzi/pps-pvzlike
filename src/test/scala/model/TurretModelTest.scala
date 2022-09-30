@@ -1,7 +1,9 @@
+package model
+
+import model.entities.*
 import org.scalatest.*
-import flatspec.*
-import matchers.*
-import model.entities.{Enemy, Entity, Plant, Turret, Zombie}
+import org.scalatest.flatspec.*
+import org.scalatest.matchers.*
 
 class TurretModelTest extends AnyFlatSpec with should.Matchers:
   "A turret" should "attack a zombie that is in range" in {

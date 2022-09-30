@@ -1,22 +1,22 @@
-import org.scalatest.funsuite.AnyFunSuite
-import org.scalatest.matchers.should.Matchers
-import org.scalatest.matchers.must.Matchers.must
+package model.actors
+
 import akka.actor.ActorSystem
 import akka.actor.testkit.typed.Effect
-import akka.testkit.{ImplicitSender, TestActors, TestKit}
 import akka.actor.testkit.typed.scaladsl.{ActorTestKit, BehaviorTestKit, ScalaTestWithActorTestKit, TestInbox}
 import akka.actor.typed.scaladsl.Behaviors
+import akka.testkit.{ImplicitSender, TestActors, TestKit}
+import controller.Command
+import controller.GameLoop.GameLoopCommands.{EntityUpdate, GameLoopCommand}
+import model.actors.{BulletActor, EntitySpawned, Hit, Shoot, TurretActor, TurretMessages, Update}
+import model.common.DefaultValues.*
+import model.entities.*
 import org.scalatest.BeforeAndAfterAll
+import org.scalatest.funsuite.AnyFunSuite
+import org.scalatest.matchers.must.Matchers.must
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.{AnyWordSpec, AnyWordSpecLike}
-import model.entities.{Bullet, Enemy, Plant, Seed, Turret, Zombie}
-import model.common.DefaultValues.*
-import model.actors.{BulletActor, TurretActor, TurretMessages, Update, Shoot, Hit, EntitySpawned}
-import controller.GameLoop.GameLoopCommands.{EntityUpdate, GameLoopCommand}
-import controller.Command
-import concurrent.duration.DurationInt
 
-import scala.concurrent.duration.FiniteDuration
+import scala.concurrent.duration.{DurationInt, FiniteDuration}
 
 class TurretActorTest extends AnyWordSpec with BeforeAndAfterAll with Matchers:
 
