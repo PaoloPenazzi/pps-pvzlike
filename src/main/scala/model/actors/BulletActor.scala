@@ -10,10 +10,10 @@ trait BulletMessages extends Command
 case class Collision(enemy: List[Enemy], replyTo: ActorRef[Command]) extends BulletMessages
 
 object BulletActor:
-  def apply(bullet: Bullet): Behavior[BulletMessages | GameLoopCommand] =
+  def apply(bullet: Bullet): Behavior[BulletMessages] =
     moving(bullet)
 
-  def moving(bullet: Bullet): Behavior[BulletMessages | GameLoopCommand] =
+  def moving(bullet: Bullet): Behavior[BulletMessages] =
     Behaviors.receiveMessage(msg => {
       msg match
         case Update(timeElapsed, entities, replyTo) =>
