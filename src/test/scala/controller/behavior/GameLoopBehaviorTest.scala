@@ -17,8 +17,9 @@ import scala.concurrent.duration.FiniteDuration
 
 class GameLoopBehaviorTest extends AnyWordSpec with Matchers :
 
-  import controller.GameLoop.*
-  import controller.GameLoop.GameLoopCommands.*
+  import controller.GameLoopActor
+  import controller.GameLoopActor.*
+  import controller.GameLoopActor.GameLoopCommands.*
 
   val gameLoopActor: BehaviorTestKit[Command] = BehaviorTestKit(GameLoopActor())
   val enemiesWave: Option[List[Enemy]] = Some(List.fill(3)(Zombie()))
