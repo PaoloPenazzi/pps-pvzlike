@@ -24,19 +24,9 @@ object GameLoopActor:
 
     case class Update() extends GameLoopCommand
 
-    case class Start[E <: Enemy](wave: List[E]) extends GameLoopCommand
-
-
-
-
-    case class FinishGame() extends GameLoopCommand
-
-    case class NewTurretAdded[T <: Turret](turret: T) extends GameLoopCommand
-
-
     // the presence or not of an entity is defined by this message: if i receive i will update that entity otherwise the
     // entity is dead and so i don't have to update that one
-    case class EntityUpdate[E <: Entity](entity: E) extends GameLoopCommand
+    case class EntityUpdate[E <: Entity](ref: ActorRef[Entity], entity: E) extends GameLoopCommand
 
 
   // TODO from here, make it better...
@@ -59,19 +49,14 @@ object GameLoopActor:
         case StopLoop() => Behaviors.stopped
         case PauseLoop() => pauseBehavior()
         case Update() =>
-          // todo check if the wave is end
           detectCollision
           updateAll(detectInterest)
           startTimer(timer)
           Behaviors.same
-        case Start(wave) =>
-          // model ! start
-          // view ! start
-          // enemiesWave = Some(wave)
-          startTimer(timer)
-          Behaviors.same
-        case EntityUpdate(entity) =>
-          // pass the model to view
+        case EntityUpdate(ref, entity) =>
+          // todo check if the wave is end
+          entities = entities.updated(entities.indexOf(ref), (ref, entity))
+          // viewActor ! RenderEntities(entities)
           Behaviors.same
 
         case _ => Behaviors.same
