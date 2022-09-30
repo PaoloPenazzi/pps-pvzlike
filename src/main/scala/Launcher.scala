@@ -1,20 +1,9 @@
-import akka.actor.typed.scaladsl.AskPattern.Askable
-import akka.actor.typed.scaladsl.Behaviors
-import akka.actor.typed.{ActorRef, ActorSystem, Behavior, Scheduler}
-import akka.util.Timeout
-import controller.Command
-import controller.Controller.ControllerActor
-import controller.Controller.ControllerCommands.{ControllerCommand, StartGame, FinishGame}
+import controller.RootActor
+import controller.RootActor.RootCommands.StartGame
+import akka.actor.typed.ActorSystem
 
-import scala.concurrent.duration.DurationInt
-import scala.concurrent.{ExecutionContext, Future}
-import scala.util.Success
-
-object Launcher {
-
+object Launcher :
   @main
-  def main() =
-    val controller: ActorSystem[ControllerCommand] = ActorSystem(ControllerActor(), name = "launcher")
-    controller ! StartGame()
-
-}
+  def main(): Unit =
+    val system = ActorSystem(RootActor(), "launcher")
+    system ! StartGame()
