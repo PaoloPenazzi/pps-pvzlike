@@ -15,9 +15,9 @@ trait Turret extends Entity with AttackingEntity with StationaryEntity :
   private def isInRange(enemy: Enemy): Boolean =
     enemy.position._1.toInt <= range
 
-  def filter(entities:  List[Entity]): List[Enemy] =
-    entities.collect{ case enemy: Enemy => enemy }
-      .filter(e => e.position._2 == position._2)
+  def filter: Entity => Boolean =
+      case enemy: Enemy => enemy.position._2 == position._2
+      case _ => false
 
 
 /**
