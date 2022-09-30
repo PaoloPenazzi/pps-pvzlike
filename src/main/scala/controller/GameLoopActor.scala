@@ -28,6 +28,10 @@ object GameLoopActor:
     // entity is dead and so i don't have to update that one
     case class EntityUpdate[E <: Entity](ref: ActorRef[Entity], entity: E) extends GameLoopCommand
 
+    case class EntityAdded[E <: Entity](ref: ActorRef[Entity], entity: E) extends GameLoopCommand
+
+    case class EntityUpgraded[E <: Entity](ref: ActorRef[Entity], entity: E) extends GameLoopCommand
+
 
   // TODO from here, make it better...
   var enemiesWave: Seq[(ActorRef[Enemy], Enemy)] = List[(ActorRef[Enemy], Enemy)]()
@@ -58,7 +62,8 @@ object GameLoopActor:
           entities = entities.updated(entities.indexOf(ref), (ref, entity))
           // viewActor ! RenderEntities(entities)
           Behaviors.same
-
+        case EntityAdded(ref, entity) => ???
+        case EntityUpgraded(ref, entity) => ???
         case _ => Behaviors.same
     })
 
