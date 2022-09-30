@@ -50,8 +50,8 @@ object GameLoopActor:
 
   import GameLoopCommands.*
   
-  private case class GameLoopActor(timer: TimerScheduler[Command]):
-    def standardBehavior(): Behavior[Command] = Behaviors.receive((ctx, msg) => {
+  private case class GameLoopActor(timer: TimerScheduler[Command]) extends Controller with PausableController:
+    override def standardBehavior(): Behavior[Command] = Behaviors.receive((ctx, msg) => {
       msg match
         case Update() =>
           // update model
@@ -74,7 +74,7 @@ object GameLoopActor:
         case _ => Behaviors.same
     })
 
-    def pauseBehavior(): Behavior[Command] = Behaviors.receive((ctx, msg) => {
+    override def pauseBehavior(): Behavior[Command] = Behaviors.receive((ctx, msg) => {
       msg match
         case Stop() => Behaviors.stopped
         case Resume() =>
