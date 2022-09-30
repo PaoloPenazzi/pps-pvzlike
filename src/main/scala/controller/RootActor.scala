@@ -8,15 +8,19 @@ object RootActor:
   object RootCommands:
     sealed trait RootCommand extends Command
 
-    case class StartView() extends RootCommand
+    case class StartGame() extends RootCommand
 
   def apply(): Behavior[Command] =
     Behaviors.setup { _ => RootActor().standardBehavior() }
 
   import RootCommands.*
-  
-  private case class RootActor():
-    def standardBehavior(): Behavior[Command] = Behaviors.receive((ctx, msg) => {
+
+  private case class RootActor() extends Controller:
+    override def standardBehavior(): Behavior[Command] = Behaviors.receive((ctx, msg) => {
       msg match
-        case StartView() => ???
+        case StartGame() =>
+          ctx.spawnAnonymous(GameLoopActor())
+          // ctx.spawnAnonymous(ViewActor(gameLoop.ref)
+          // viewActor ! StartView
+          Behaviors.same
     })
