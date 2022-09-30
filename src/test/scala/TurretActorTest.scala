@@ -11,14 +11,14 @@ import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.{AnyWordSpec, AnyWordSpecLike}
 import model.entities.{Bullet, Enemy, Plant, Seed, Turret, Zombie}
 import model.common.DefaultValues.*
-import model.actors.{BulletActor, TurretActor, TurretMessages, Update, Shoot, Hit}
+import model.actors.{BulletActor, TurretActor, TurretMessages, Update, Shoot, Hit, EntitySpawned}
 import controller.GameLoop.GameLoopCommands.{EntityUpdate, GameLoopCommand}
 import controller.Command
 import concurrent.duration.DurationInt
 
 import scala.concurrent.duration.FiniteDuration
 
-class TurretTest extends AnyWordSpec with BeforeAndAfterAll with Matchers:
+class TurretActorTest extends AnyWordSpec with BeforeAndAfterAll with Matchers:
 
   val plant: Turret = Plant(50, 1)
   val testZombie1: Enemy = Zombie()
@@ -35,6 +35,13 @@ class TurretTest extends AnyWordSpec with BeforeAndAfterAll with Matchers:
         testZombie1.position = (100, 1)
         turretActor run Update(10, List(testZombie1), inbox.ref)
         turretActor expectEffect Effect.TimerScheduled("TurretShooting", Shoot(inbox.ref), plant.fireRate.seconds, Effect.TimerScheduled.SingleMode, false)(null)
+      }
+
+      "spawn a bullet" in {
+        turretActor run Shoot(inbox.ref)
+        assert(inbox.hasMessages)
+        val message = inbox.receiveMessage()
+        assert(message.isInstanceOf[EntitySpawned])
       }
 
       "should die" in {

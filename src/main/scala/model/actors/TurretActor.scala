@@ -6,12 +6,11 @@ import controller.Command
 import controller.GameLoop.GameLoopCommands.{GameLoopCommand}
 import model.actors
 import model.entities.{Enemy, Entity, Seed}
-
 import scala.concurrent.duration.DurationInt
 import model.entities.{Bullet, Turret}
 
 trait TurretMessages extends Command
-
+case class EntitySpawned(bullet: Bullet, actorRef: ActorRef[BulletMessages]) extends Command
 case class Update(timeElapsed: Double, entities: List[Entity], replyTo: ActorRef[Command]) extends TurretMessages
 case class Shoot(replyTo: ActorRef[Command]) extends TurretMessages
 case class Hit(damage: Int) extends TurretMessages
@@ -36,7 +35,7 @@ object TurretActor:
           case Shoot(replyTo) =>
             val bullet = new Seed
             val bulletActor = ctx.spawnAnonymous(BulletActor(bullet))
-            // replyTo ! EntitySpawned(bullet, bulletActor)
+            replyTo ! EntitySpawned(bullet, bulletActor)
             Behaviors.same
 
           case Hit(damage) =>
