@@ -16,6 +16,8 @@ object GameLoopActor:
 
     case class StartLoop() extends GameLoopCommand
 
+    case class StopLoop() extends GameLoopCommand
+
     case class Update() extends GameLoopCommand
 
     case class Start[E <: Enemy](wave: List[E]) extends GameLoopCommand
@@ -24,19 +26,16 @@ object GameLoopActor:
 
     case class Resume() extends GameLoopCommand
 
-    case class StartGame() extends GameLoopCommand
 
     case class FinishGame() extends GameLoopCommand
 
     case class NewTurretAdded[T <: Turret](turret: T) extends GameLoopCommand
 
-    case class NewEnemiesWave[E <: Enemy](wave: List[E]) extends GameLoopCommand
 
     // the presence or not of an entity is defined by this message: if i receive i will update that entity otherwise the
     // entity is dead and so i don't have to update that one
     case class EntityUpdate[E <: Entity](entity: E) extends GameLoopCommand
 
-    case class Stop() extends GameLoopCommand
 
   // TODO from here, make it better...
   var enemiesWave: Seq[(ActorRef[Enemy], Enemy)] = List[(ActorRef[Enemy], Enemy)]()
@@ -55,6 +54,7 @@ object GameLoopActor:
           createWave(ctx)
           startTimer(timer)
           Behaviors.same
+        case StopLoop() => Behaviors.stopped
         case Update() =>
           // todo check if the wave is end
           detectCollision
@@ -71,13 +71,12 @@ object GameLoopActor:
           // pass the model to view
           Behaviors.same
         case Pause() => pauseBehavior()
-        case Stop() => Behaviors.stopped
         case _ => Behaviors.same
     })
 
     override def pauseBehavior(): Behavior[Command] = Behaviors.receive((ctx, msg) => {
       msg match
-        case Stop() => Behaviors.stopped
+        case StopLoop() => Behaviors.stopped
         case Resume() =>
           ctx.self ! Update()
           standardBehavior()
