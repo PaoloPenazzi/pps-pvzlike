@@ -53,7 +53,7 @@ object GameLoopActor:
       msg match
         case StartLoop() =>
           createWave(ctx)
-          timer.startSingleTimer(Update(), FiniteDuration(10, "second"))
+          startTimer(timer)
           Behaviors.same
         case Update() =>
           // update model
@@ -87,6 +87,8 @@ object GameLoopActor:
           standardBehavior()
         case _ => Behaviors.same
     })
+
+    def startTimer(timer: TimerScheduler[Command]) = timer.startSingleTimer(Update(), FiniteDuration(10, "second"))
 
     def createWave(ctx: ActorContext[Command]) = ???
       // WaveSupervisor.generateWave(2).map( e => (ctx.spawnAnonymous(EnemyActor(enemy)), e)).foreach(t => enemiesWave + t)
