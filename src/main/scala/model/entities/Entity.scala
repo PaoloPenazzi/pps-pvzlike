@@ -9,8 +9,8 @@ trait Entity:
 trait StationaryEntity extends Entity:
   def position: (Double, Int)
 
-abstract class MovingEntity() extends Entity:
-  var position: (Double, Int) = _
+trait MovingEntity() extends Entity:
+  var position: (Double, Int) = (0,0)
   def velocity: Double
 
 trait AttackingEntity extends Entity :
