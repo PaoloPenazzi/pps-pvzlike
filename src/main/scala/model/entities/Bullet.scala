@@ -11,5 +11,8 @@ trait Bullet extends MovingEntity with Entity:
   def checkCollisionAgainst(enemy: Enemy): Boolean =
     position._1 == enemy.position._1
 
+  def filter: Entity => Boolean =
+    _ => false
+
 class Seed() extends Bullet:
   override def velocity: Double = 5.0
