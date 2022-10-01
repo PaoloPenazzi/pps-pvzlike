@@ -10,17 +10,19 @@ object BulletActor:
     moving(bullet)
 
   def moving(bullet: Bullet): Behavior[ModelMessage] =
-    Behaviors.receiveMessage(msg => {
+    Behaviors.receive( (ctx,msg) => {
       msg match
-        case Update(timeElapsed, entities, replyTo) =>
+        case Update(timeElapsed, _, replyTo) =>
           bullet updatePositionAfter timeElapsed
-          // replyTo ! EntityUpdate(bullet)
-          // notify controller
-          entities.collect { case e: Enemy => e }
-            .find(enemy => bullet checkCollisionAgainst enemy).foreach(e => ???)
+          replyTo ! EntityUpdate(bullet)
           Behaviors.same
 
-        case Collision(entity) => ???  
+        case Collision(entity, replyTo) =>
+          if bullet shouldDisappearAfterHitting entity
+          then
+            replyTo ! EntityDead(bullet, ctx.self)
+            Behaviors.stopped
+          Behaviors.same
 
         case _ => Behaviors.same
     })
