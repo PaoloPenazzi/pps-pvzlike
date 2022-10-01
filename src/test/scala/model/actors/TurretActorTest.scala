@@ -7,7 +7,7 @@ import akka.actor.typed.scaladsl.Behaviors
 import akka.testkit.{ImplicitSender, TestActors, TestKit}
 import controller.Command
 import controller.GameLoopActor.GameLoopCommands.{EntityUpdate, GameLoopCommand}
-import model.actors.{BulletActor, EntitySpawned, Hit, Shoot, TurretActor, TurretMessages, Update}
+import model.actors.{BulletActor, EntitySpawned, Shoot, TurretActor, Update}
 import model.common.DefaultValues.*
 import model.entities.*
 import org.scalatest.BeforeAndAfterAll
@@ -22,7 +22,7 @@ class TurretActorTest extends AnyWordSpec with BeforeAndAfterAll with Matchers:
 
   val plant: Turret = Plant(50, 1)
   val testZombie1: Enemy = Zombie()
-  val turretActor: BehaviorTestKit[TurretMessages] = BehaviorTestKit(TurretActor(plant))
+  val turretActor: BehaviorTestKit[ModelMessage] = BehaviorTestKit(TurretActor(plant))
   val inbox = TestInbox[Command]()
 
   "The Turret Actor" when {
@@ -44,10 +44,9 @@ class TurretActorTest extends AnyWordSpec with BeforeAndAfterAll with Matchers:
         assert(message.isInstanceOf[EntitySpawned])
       }
 
-      "should die" in {
-        turretActor run Hit(150)
-        turretActor run Hit(150)
+      /*"should lose hp" in {
+        turretActor run Collision(testZombie1)
         turretActor.isAlive must be(false)
-      }
+      }*/
     }
   }

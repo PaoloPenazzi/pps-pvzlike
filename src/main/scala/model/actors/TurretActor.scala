@@ -10,16 +10,13 @@ import scala.concurrent.duration.DurationInt
 import model.entities.{Bullet, Turret}
 
 // todo va nel controller
-case class EntitySpawned(bullet: Bullet, actorRef: ActorRef[BulletMessages]) extends Command
-
-trait TurretMessages extends ModelMessage
-case class Shoot(replyTo: ActorRef[Command]) extends TurretMessages
+case class EntitySpawned(bullet: Bullet, actorRef: ActorRef[ModelMessage]) extends Command
 
 object TurretActor:
-  def apply(turret: Turret): Behavior[TurretMessages] =
+  def apply(turret: Turret): Behavior[ModelMessage] =
     detecting(turret)
 
-  def detecting(turret: Turret): Behavior[TurretMessages] =
+  def detecting(turret: Turret): Behavior[ModelMessage] =
     Behaviors.withTimers(timer => {
       Behaviors.receive((ctx, msg) => {
         msg match
