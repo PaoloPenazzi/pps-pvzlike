@@ -9,11 +9,11 @@ import model.entities.{Enemy, Entity, Seed}
 import scala.concurrent.duration.DurationInt
 import model.entities.{Bullet, Turret}
 
-trait TurretMessages extends Command
+// todo va nel controller
 case class EntitySpawned(bullet: Bullet, actorRef: ActorRef[BulletMessages]) extends Command
-case class Update(timeElapsed: Double, entities: List[Entity], replyTo: ActorRef[Command]) extends TurretMessages
+
+trait TurretMessages extends ModelMessage
 case class Shoot(replyTo: ActorRef[Command]) extends TurretMessages
-case class Hit(damage: Int) extends TurretMessages
 
 object TurretActor:
   def apply(turret: Turret): Behavior[TurretMessages] =
@@ -38,11 +38,7 @@ object TurretActor:
             replyTo ! EntitySpawned(bullet, bulletActor)
             Behaviors.same
 
-          case Hit(damage) =>
-            turret.healthPoints = turret.healthPoints - damage
-            turret.healthPoints match
-              case 0 => Behaviors.stopped
-              case _ => Behaviors.same
+          case Collision(entity) => ???
 
           case _ => Behaviors.same
       })
