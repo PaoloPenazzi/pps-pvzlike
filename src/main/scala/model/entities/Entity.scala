@@ -1,28 +1,17 @@
 package model.entities
 
+import model.common.DefaultValues
 import model.common.DefaultValues.*
 
-/**
- * The model.entities.Boundary class represent the entity's shape.
- * Each entity is a rectangle with a specified dimension.
- * The bottom left vertex of the rectangle correspond to the entity position.
- *
- * @param x The length of the entity shape.
- * @param y The height of the entity shape.
- */
-case class Boundary(x: Double, y: Double)
-
-
 trait Entity:
-  def boundary: Boundary = boundaries(this)
+  def width: Int = DefaultValues.width(this)
 
 trait StationaryEntity extends Entity:
-  def position: (Int, Int)
+  def position: (Double, Int)
 
-abstract class MovingEntity() extends Entity:
-  var position: (Int, Int) = _
+trait MovingEntity() extends Entity:
+  var position: (Double, Int) = (0,0)
   def velocity: Double
-  def direction: String
 
 trait AttackingEntity extends Entity :
   var healthPoints: Int = HP(this)

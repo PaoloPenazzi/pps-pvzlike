@@ -1,26 +1,28 @@
 package model.actors
 
-import akka.actor.typed.Behavior
+import akka.actor.typed.{ActorRef, Behavior}
 import akka.actor.typed.scaladsl.Behaviors
+import controller.GameLoopActor.GameLoopCommands.{EntityUpdate, GameLoopCommand}
 import model.entities.{Bullet, Enemy}
 
-trait BulletMessages extends CommonMessages
-case class Collision(enemy: Enemy) extends BulletMessages
-
-
 object BulletActor:
-  def apply(bullet: Bullet): Behavior[BulletMessages] =
+  def apply(bullet: Bullet): Behavior[ModelMessage] =
     moving(bullet)
 
-  def moving(bullet: Bullet): Behavior[BulletMessages] =
-    Behaviors.receiveMessage(msg => {
+  def moving(bullet: Bullet): Behavior[ModelMessage] =
+    Behaviors.receive( (ctx,msg) => {
       msg match
         case Update(timeElapsed, _, replyTo) =>
-          bullet.position = (bullet.position._1 + (timeElapsed * bullet.velocity).toInt, bullet.position._2)
-          // notify position change to controller
+          bullet updatePositionAfter timeElapsed
+          replyTo ! EntityUpdate(bullet)
           Behaviors.same
 
-        case Collision(enemy: Enemy) => ???
+        case Collision(entity, replyTo) =>
+          if bullet shouldDisappearAfterHitting entity
+          then
+            replyTo ! EntityDead(bullet, ctx.self)
+            Behaviors.stopped
+          Behaviors.same
 
         case _ => Behaviors.same
     })

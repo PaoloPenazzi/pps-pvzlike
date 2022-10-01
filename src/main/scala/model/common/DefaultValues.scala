@@ -1,12 +1,11 @@
 package model.common
 
-import model.entities.Turrets.{Plant, Turret}
-import model.entities.{AttackingEntity, Boundary, Bullet, Entity, Seed, Turrets, Zombie}
+import model.entities.{AttackingEntity, Bullet, Entity, Seed, Zombie, Plant, Turret}
 
 object DefaultValues:
-  val boundaries: Entity => Boundary =
-    case _: Bullet => Boundary(5, 5)
-    case _ => Boundary(20, 40)
+  val width: Entity => Int =
+    case _: Bullet => 5
+    case _ => 20
 
   val HP: AttackingEntity => Int =
     case _: Plant => 300
@@ -20,7 +19,7 @@ object DefaultValues:
 
   val costs: Turret => Int =
     case _: Plant => 100
-    case _        => 0
+    case _  => 0
 
   val damages: Bullet => Int =
     case _: Seed => 25

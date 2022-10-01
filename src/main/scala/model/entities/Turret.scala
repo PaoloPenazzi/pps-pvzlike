@@ -1,27 +1,28 @@
 package model.entities
 
 import model.common.DefaultValues.*
-import model.entities.Turrets.*
-import model.entities.{AttackingEntity, Boundary, Bullet, Enemy, Entity, Seed, StationaryEntity, Zombie}
+import model.entities.{AttackingEntity, Bullet, Enemy, Entity, Seed, StationaryEntity, Zombie, Turret}
 
-object Turrets:
-  trait Turret extends Entity with AttackingEntity with StationaryEntity:
-    def cost: Int = costs(this)
+trait Turret extends Entity with AttackingEntity with StationaryEntity :
+  def cost: Int = costs(this)
 
-    def canAttack(enemy: Enemy): Boolean =
-      isOnMyPath(enemy) && isInRange(enemy)
+  def canAttack(enemy: Enemy): Boolean =
+    isOnMyPath(enemy) && isInRange(enemy)
 
-    private def isOnMyPath(enemy: Enemy): Boolean =
-      enemy.position._2 == position._2
+  private def isOnMyPath(enemy: Enemy): Boolean =
+    enemy.position._2 == position._2
 
-    private def isInRange(enemy: Enemy): Boolean =
-      enemy.position._1 <= range
+  private def isInRange(enemy: Enemy): Boolean =
+    enemy.position._1.toInt <= range
+
+  def filter: Entity => Boolean =
+      case enemy: Enemy => enemy.position._2 == position._2
+      case _ => false
 
 
-  /**
-   * Basic turret.
-   *
-   * @param position The position in which the plant is placed by the player.
-   */
-  class Plant(override val position: (Int, Int)) extends Turret
-
+/**
+ * Basic turret.
+ *
+ * @param position The position in which the plant is placed by the player.
+ */
+case class Plant(override val position: (Double, Int)) extends Turret

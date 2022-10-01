@@ -3,8 +3,8 @@ package controller
 import akka.actor.typed.*
 import akka.actor.typed.scaladsl.*
 import akka.actor.typed.scaladsl.adapter.*
-import model.entities.Turrets.Turret
-import model.entities.{Bullet, Enemy, Entity}
+import model.entities.Turret
+import model.entities.{Enemy, Entity}
 
 import scala.collection.mutable
 import scala.concurrent.duration.FiniteDuration
