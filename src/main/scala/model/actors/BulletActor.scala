@@ -14,7 +14,7 @@ object BulletActor:
       msg match
         case Update(timeElapsed, _, replyTo) =>
           bullet updatePositionAfter timeElapsed
-          replyTo ! EntityUpdate(bullet)
+          replyTo ! EntityUpdate(ctx.self, bullet)
           Behaviors.same
 
         case Collision(entity, replyTo) =>

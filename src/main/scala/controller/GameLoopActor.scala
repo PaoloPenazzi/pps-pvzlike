@@ -3,8 +3,9 @@ package controller
 import akka.actor.typed.*
 import akka.actor.typed.scaladsl.*
 import akka.actor.typed.scaladsl.adapter.*
+import model.actors.ModelMessage
 import model.entities.Turret
-import model.entities.{Enemy, Entity}
+import model.entities.{Bullet, Enemy, Entity}
 
 import scala.collection.mutable
 import scala.concurrent.duration.FiniteDuration
@@ -26,17 +27,17 @@ object GameLoopActor:
 
     // the presence or not of an entity is defined by this message: if i receive i will update that entity otherwise the
     // entity is dead and so i don't have to update that one
-    case class EntityUpdate[E <: Entity](ref: ActorRef[Entity], entity: E) extends GameLoopCommand
+    case class EntityUpdate[E <: Entity](ref: ActorRef[ModelMessage], entity: E) extends GameLoopCommand
 
-    case class EntityAdded[E <: Entity](ref: ActorRef[Entity], entity: E) extends GameLoopCommand
+    case class EntitySpawned[E <: Entity](ref: ActorRef[ModelMessage], entity: E) extends GameLoopCommand
 
-    case class EntityUpgraded[E <: Entity](ref: ActorRef[Entity], entity: E) extends GameLoopCommand
+    case class EntityUpgraded[E <: Entity](ref: ActorRef[ModelMessage], entity: E) extends GameLoopCommand
 
 
   // TODO from here, make it better...
   var enemiesWave: Seq[(ActorRef[Enemy], Enemy)] = List[(ActorRef[Enemy], Enemy)]()
   var bullets: Seq[(ActorRef[Bullet], Bullet)] = List[(ActorRef[Bullet], Bullet)]()
-  var entities: Seq[(ActorRef[Entity], Entity)] = List[(ActorRef[Entity], Entity)]()
+  var entities: Seq[(ActorRef[ModelMessage], Entity)] = List[(ActorRef[ModelMessage], Entity)]()
 
   def apply(): Behavior[Command] =
     Behaviors.setup { _ => Behaviors.withTimers { timer => GameLoopActor(timer).standardBehavior() } }
@@ -62,7 +63,7 @@ object GameLoopActor:
           entities = entities.updated(entities.indexOf(ref), (ref, entity))
           // viewActor ! RenderEntities(entities)
           Behaviors.same
-        case EntityAdded(ref, entity) => entity match
+        case EntitySpawned(ref, entity) => entity match
           case _: Bullet => ???
           case _: Turret => ???
           case _: Enemy => ???
