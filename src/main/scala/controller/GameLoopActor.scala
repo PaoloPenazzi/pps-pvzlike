@@ -67,14 +67,14 @@ object GameLoopActor:
           Behaviors.same
         case EntitySpawned(ref, entity) => entity match
           // todo after the addiction, do we want to send the message instantly?
-          case _: Bullet => ???
-          case _: Turret => ???
-          case _: Enemy => ???
+          case _: Bullet => bullets = bullets :+ (ref, entity.asInstanceOf[Bullet]); Behaviors.same
+          case _: Turret => entities = entities :+ (ref, entity); Behaviors.same
+          case _: Enemy => enemiesWave = enemiesWave :+ (ref, entity.asInstanceOf[Enemy]); Behaviors.same
 
         case EntityUpgraded(ref, entity) => entity match
-          case _: Bullet => ???
-          case _: Turret => ???
-          case _: Enemy => ???
+          case _: Bullet => bullets = bullets.updated(bullets.indexOf(ref), (ref, entity.asInstanceOf[Bullet])); Behaviors.same
+          case _: Turret => entities = entities.updated(entities.indexOf(ref), (ref, entity)); Behaviors.same
+          case _: Enemy => enemiesWave = enemiesWave.updated(enemiesWave.indexOf(ref), (ref, entity.asInstanceOf[Enemy])); Behaviors.same
         case _ => Behaviors.same
     })
 
