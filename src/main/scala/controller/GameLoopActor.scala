@@ -44,7 +44,8 @@ object GameLoopActor:
 
   import GameLoopCommands.*
 
-  private case class GameLoopActor(timer: TimerScheduler[Command]) extends Controller with PausableController:
+  private case class GameLoopActor(timer: TimerScheduler[Command],
+                                   viewActor: ActorRef[ViewMessage] = null) extends Controller with PausableController:
     override def standardBehavior(): Behavior[Command] = Behaviors.receive((ctx, msg) => {
       msg match
         case StartLoop() =>
@@ -61,7 +62,7 @@ object GameLoopActor:
         case EntityUpdate(ref, entity) =>
           // todo check if the wave is end
           entities = entities.updated(entities.indexOf(ref), (ref, entity))
-          // viewActor ! RenderEntities(entities)
+          //viewActor ! Render(entities.map(e => e._2).toList, ctx.self)
           Behaviors.same
         case EntitySpawned(ref, entity) =>
           entities = entities :+ (ref, entity)
@@ -86,7 +87,7 @@ object GameLoopActor:
             case _: Bullet => bullets = bullets.filterNot(e => e == (ref, entity.asInstanceOf[Bullet])); Behaviors.same
             case _: Enemy => enemiesWave = enemiesWave.filterNot(e => e == (ref, entity.asInstanceOf[Enemy])); Behaviors.same
             case _ => Behaviors.same
-            
+
         case _ => Behaviors.same
     })
 
