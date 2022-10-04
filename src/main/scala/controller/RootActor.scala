@@ -2,6 +2,8 @@ package controller
 
 import akka.actor.typed.Behavior
 import akka.actor.typed.scaladsl.Behaviors
+import com.badlogic.gdx.backends.lwjgl3.*
+import view.Game
 
 object RootActor:
 
@@ -19,8 +21,13 @@ object RootActor:
     override def standardBehavior(): Behavior[Command] = Behaviors.receive((ctx, msg) => {
       msg match
         case StartGame() =>
+          val config = Lwjgl3ApplicationConfiguration()
+          config.setTitle("PVZ")
+          config.setResizable(true)
+          config.setWindowedMode(960, 540)
+          Lwjgl3Application(Game, config)
+
           ctx.spawnAnonymous(GameLoopActor())
-          // ctx.spawnAnonymous(ViewActor(gameLoop.ref)
-          // viewActor ! StartView
+          ctx.spawnAnonymous(ViewActor(Game.gameScreen))
           Behaviors.same
     })
