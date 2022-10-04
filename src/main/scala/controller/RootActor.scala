@@ -26,8 +26,8 @@ object RootActor:
           config.setResizable(true)
           config.setWindowedMode(960, 540)
           Lwjgl3Application(Game, config)
-
-          ctx.spawnAnonymous(GameLoopActor())
-          ctx.spawnAnonymous(ViewActor(Game.gameScreen))
+          
+          val view = ctx.spawnAnonymous(ViewActor(Game.gameScreen))
+          ctx.spawnAnonymous(GameLoopActor(view))
           Behaviors.same
     })

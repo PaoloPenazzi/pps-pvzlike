@@ -4,9 +4,10 @@ import akka.actor.testkit.typed.Effect
 import akka.actor.testkit.typed.scaladsl.{ActorTestKit, BehaviorTestKit, TestInbox}
 import akka.actor.typed.scaladsl.Behaviors
 import akka.actor.typed.{ActorRef, Behavior}
-import controller.Command
+import controller.{Command, ViewActor, ViewMessage}
 import model.entities.{Enemy, Zombie}
 import org.scalatest.BeforeAndAfterAll
+import view.Game
 import org.scalatest.funsuite.AnyFunSuite
 import org.scalatest.matchers.must.Matchers.must
 import org.scalatest.matchers.should.Matchers
@@ -21,7 +22,8 @@ class GameLoopBehaviorTest extends AnyWordSpec with Matchers :
   import controller.GameLoopActor.*
   import controller.GameLoopActor.GameLoopCommands.*
 
-  val gameLoopActor: BehaviorTestKit[Command] = BehaviorTestKit(GameLoopActor())
+  val viewActor = TestInbox[ViewMessage]()
+  val gameLoopActor: BehaviorTestKit[Command] = BehaviorTestKit(GameLoopActor(viewActor.ref))
   val enemiesWave: Option[List[Enemy]] = Some(List.fill(3)(Zombie()))
 
 
