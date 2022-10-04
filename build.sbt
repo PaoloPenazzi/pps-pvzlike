@@ -4,13 +4,9 @@ ThisBuild / scalaVersion := "3.2.0"
 
 lazy val root = (project in file("."))
   .settings(
-    name := "pps-pvzlike"
+    name := "pps-pvzlike",
+    libraryDependencies ++= Dependencies.Gdx()
   )
-
-lazy val javaFxLibrary = for {
-  module <- Seq("base", "controls", "fxml", "graphics", "media", "swing", "web")
-  os <- Seq("win", "mac", "linux")
-} yield "org.openjfx" % s"javafx-$module" % "15.0.1" classifier os
 
 val akkaVersion = "2.6.20"
 
