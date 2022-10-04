@@ -2,16 +2,17 @@ package model.entities
 
 import model.common.DefaultValues
 import model.common.DefaultValues.*
+import model.entities.WorldSpace.{Position, given}
 
 trait Entity:
   def width: Int = DefaultValues.width(this)
 
 trait StationaryEntity extends Entity:
-  def position: (Double, Int)
+  def position: Position
 
 trait MovingEntity() extends Entity:
-  var position: (Double, Int) = (0,0)
-  def velocity: Double
+  var position: Position = (0,0f)
+  def velocity: Float
 
 trait AttackingEntity extends Entity :
   var healthPoints: Int = HP(this)

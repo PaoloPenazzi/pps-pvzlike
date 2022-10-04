@@ -6,6 +6,7 @@ import com.badlogic.gdx.math.{Vector2, Vector3}
 import com.badlogic.gdx.physics.box2d.{Box2DDebugRenderer, World}
 import com.badlogic.gdx.utils.viewport.Viewport
 import com.badlogic.gdx.{Gdx, Input, ScreenAdapter}
+import model.entities.WorldSpace.given
 import model.entities.*
 import View.EntityRenderer
 
@@ -30,7 +31,7 @@ class Screen(private val viewport: Viewport) extends ScreenAdapter with EntityRe
 
     batch.begin()
 
-    batch.draw(texture(Plant((1,1))), 0, 4.5f, 1, 1)
+    batch.draw(texture(Plant((1,1f))), 0, 4.5f, 1, 1)
 
     batch.end()
 

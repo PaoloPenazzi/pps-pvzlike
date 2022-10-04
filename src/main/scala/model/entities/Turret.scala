@@ -1,22 +1,23 @@
 package model.entities
 
 import model.common.DefaultValues.*
-import model.entities.{AttackingEntity, Bullet, Enemy, Entity, Seed, StationaryEntity, Zombie, Turret}
+import model.entities.WorldSpace.{Position, given}
+import model.entities.{AttackingEntity, Bullet, Enemy, Entity, Seed, Turret, Zombie}
 
-trait Turret extends Entity with AttackingEntity with StationaryEntity :
+trait Turret extends Entity with AttackingEntity with StationaryEntity:
   def cost: Int = costs(this)
 
   def canAttack(enemy: Enemy): Boolean =
     isOnMyPath(enemy) && isInRange(enemy)
 
   private def isOnMyPath(enemy: Enemy): Boolean =
-    enemy.position._2 == position._2
+    enemy.position.y == position.y
 
   private def isInRange(enemy: Enemy): Boolean =
-    enemy.position._1.toInt <= range
+    enemy.position.x.toInt <= range
 
   def filter: Entity => Boolean =
-      case enemy: Enemy => enemy.position._2 == position._2
+      case enemy: Enemy => enemy.position.y == position.y
       case _ => false
 
 
@@ -25,4 +26,4 @@ trait Turret extends Entity with AttackingEntity with StationaryEntity :
  *
  * @param position The position in which the plant is placed by the player.
  */
-case class Plant(override val position: (Double, Int)) extends Turret
+case class Plant(override val position: Position) extends Turret
