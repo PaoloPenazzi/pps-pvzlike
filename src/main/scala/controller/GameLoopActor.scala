@@ -25,10 +25,8 @@ object GameLoopActor:
 
     case class Update() extends GameLoopCommand
 
-    case class EntityDead(entity: Entity, actorRef: ActorRef[ModelMessage]) extends GameLoopCommand
+    case class EntityDead[E <: Entity](ref: ActorRef[ModelMessage], entity: E) extends GameLoopCommand
 
-    // the presence or not of an entity is defined by this message: if i receive i will update that entity otherwise the
-    // entity is dead and so i don't have to update that one
     case class EntityUpdate[E <: Entity](ref: ActorRef[ModelMessage], entity: E) extends GameLoopCommand
 
     case class EntitySpawned[E <: Entity](ref: ActorRef[ModelMessage], entity: E) extends GameLoopCommand
@@ -56,8 +54,8 @@ object GameLoopActor:
         case StopLoop() => Behaviors.stopped
         case PauseLoop() => pauseBehavior()
         case Update() =>
-          detectCollision
-          updateAll(detectInterest)
+          // detectCollision
+          // updateAll(detectInterest)
           startTimer(timer)
           Behaviors.same
         case EntityUpdate(ref, entity) =>
@@ -65,16 +63,30 @@ object GameLoopActor:
           entities = entities.updated(entities.indexOf(ref), (ref, entity))
           // viewActor ! RenderEntities(entities)
           Behaviors.same
-        case EntitySpawned(ref, entity) => entity match
+        case EntitySpawned(ref, entity) =>
+          entities = entities :+ (ref, entity)
+          entity match
           // todo after the addiction, do we want to send the message instantly?
           case _: Bullet => bullets = bullets :+ (ref, entity.asInstanceOf[Bullet]); Behaviors.same
-          case _: Turret => entities = entities :+ (ref, entity); Behaviors.same
           case _: Enemy => enemiesWave = enemiesWave :+ (ref, entity.asInstanceOf[Enemy]); Behaviors.same
+          case _ => Behaviors.same
 
-        case EntityUpgraded(ref, entity) => entity match
+        case EntityUpgraded(ref, entity) =>
+          entities = entities.updated(entities.indexOf(ref), (ref, entity))
+          entity match
+          // todo after the addiction, do we want to send the message instantly?
           case _: Bullet => bullets = bullets.updated(bullets.indexOf(ref), (ref, entity.asInstanceOf[Bullet])); Behaviors.same
-          case _: Turret => entities = entities.updated(entities.indexOf(ref), (ref, entity)); Behaviors.same
           case _: Enemy => enemiesWave = enemiesWave.updated(enemiesWave.indexOf(ref), (ref, entity.asInstanceOf[Enemy])); Behaviors.same
+          case _ => Behaviors.same
+
+        case EntityDead(ref, entity) =>
+          entities = entities.filterNot(e => e == (ref, entity))
+          entity match
+            // todo after the addiction, do we want to send the message instantly?
+            case _: Bullet => bullets = bullets.filterNot(e => e == (ref, entity.asInstanceOf[Bullet])); Behaviors.same
+            case _: Enemy => enemiesWave = enemiesWave.filterNot(e => e == (ref, entity.asInstanceOf[Enemy])); Behaviors.same
+            case _ => Behaviors.same
+            
         case _ => Behaviors.same
     })
 

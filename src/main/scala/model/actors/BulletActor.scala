@@ -20,7 +20,7 @@ object BulletActor:
         case Collision(entity, replyTo) =>
           if bullet shouldDisappearAfterHitting entity
           then
-            replyTo ! EntityDead(bullet, ctx.self)
+            replyTo ! EntityDead(ctx.self, bullet)
             Behaviors.stopped
           Behaviors.same
 
