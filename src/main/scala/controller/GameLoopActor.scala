@@ -35,8 +35,8 @@ object GameLoopActor:
 
 
   // TODO from here, make it better...
-  var enemiesWave: Seq[(ActorRef[Enemy], Enemy)] = List[(ActorRef[Enemy], Enemy)]()
-  var bullets: Seq[(ActorRef[Bullet], Bullet)] = List[(ActorRef[Bullet], Bullet)]()
+  var enemiesWave: Seq[(ActorRef[ModelMessage], Enemy)] = List[(ActorRef[ModelMessage], Enemy)]()
+  var bullets: Seq[(ActorRef[ModelMessage], Bullet)] = List[(ActorRef[ModelMessage], Bullet)]()
   var entities: Seq[(ActorRef[ModelMessage], Entity)] = List[(ActorRef[ModelMessage], Entity)]()
 
   def apply(): Behavior[Command] =
@@ -100,7 +100,7 @@ object GameLoopActor:
          if entitiesColl.nonEmpty then entities.foreach(e => {e._1 ! CollisionWith(b._2); b._1 ! CollisionWith(e._2)}))*/
 
 
-    def detectInterest: Seq[(ActorRef[Entity], Seq[Entity])] =  ???
+    def detectInterest: Seq[(ActorRef[ModelMessage], Seq[Entity])] =  ???
     // crea una lista contenente (riferimento all entità, lista di entità a cui è interessato)
       /*for
         e1 <- entities
@@ -111,7 +111,7 @@ object GameLoopActor:
           if e1._2.filter(e2._2)
         yield e2._2)*/
 
-    def updateAll(interestForAll: Seq[(ActorRef[Entity], Seq[Entity])]) = ???
+    def updateAll(interestForAll: Seq[(ActorRef[ModelMessage], Seq[Entity])]) = ???
       // mando un messaggio di update ad ogni entità e gli allego le entità a cui è interessato
       // interestForAll.foreach(e => e._1 ! UpdateModel(e._2.map( x => x._2)))
 
