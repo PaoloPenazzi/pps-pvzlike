@@ -10,10 +10,10 @@ import controller.Command
 import model.entities.Entity
 
 trait ViewMessage
-case class Render(entities: List[Entity], replyTo: ActorRef[GameLoopCommand]) extends ModelMessage
+case class Render(entities: List[Entity], replyTo: ActorRef[GameLoopCommand]) extends ViewMessage
 
 object ViewActor:
-  def apply(renderer: EntityRenderer): Behavior[ModelMessage] =
+  def apply(renderer: EntityRenderer): Behavior[ViewMessage] =
     Behaviors.receive((ctx, msg) => {
       msg match
         case Render(list, _) =>

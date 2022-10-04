@@ -11,7 +11,8 @@ import scala.language.implicitConversions
 
 
 object Game extends com.badlogic.gdx.Game:
+  val gameScreen: Screen = Screen(FitViewport(16,9))
   override def create(): Unit =
-    setScreen(Screen(FitViewport(16,9)))
+    setScreen(gameScreen)
     
 
