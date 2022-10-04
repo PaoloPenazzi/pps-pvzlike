@@ -25,6 +25,8 @@ object GameLoopActor:
 
     case class Update() extends GameLoopCommand
 
+    case class EntityDead(entity: Entity, actorRef: ActorRef[ModelMessage]) extends GameLoopCommand
+
     // the presence or not of an entity is defined by this message: if i receive i will update that entity otherwise the
     // entity is dead and so i don't have to update that one
     case class EntityUpdate[E <: Entity](ref: ActorRef[ModelMessage], entity: E) extends GameLoopCommand
@@ -64,6 +66,7 @@ object GameLoopActor:
           // viewActor ! RenderEntities(entities)
           Behaviors.same
         case EntitySpawned(ref, entity) => entity match
+          // todo after the addiction, do we want to send the message instantly?
           case _: Bullet => ???
           case _: Turret => ???
           case _: Enemy => ???
