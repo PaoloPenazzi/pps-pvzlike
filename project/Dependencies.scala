@@ -26,6 +26,7 @@ object Dependencies {
       val dependencies = Seq(
         core,
         Some("backend-lwjgl3"),
+        Some("lwjgl3-glfw-awt-macos"),
         box2d,
         ttf,
       ).map(dependency)
