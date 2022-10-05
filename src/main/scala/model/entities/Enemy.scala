@@ -1,10 +1,18 @@
 package model.entities
 
-import model.entities.WorldSpace.Position
+trait Enemy extends Entity with MovingEntity with AttackingEntity:
+  override def velocity: Double = 1.0
 
-trait Enemy extends MovingEntity with AttackingEntity:
-  override type UpdatedEntity = Enemy
-  override def velocity: Float = 1.0
-class Zombie(override val position: Position) extends Enemy:
-  override def update(elapsedTime: Float, interests: List[Entity]): Enemy =
-    Zombie(updatePosition(elapsedTime))
+  def canAttack(turret: Turret): Boolean =
+    isOnMyPath(turret) && isInRange(turret)
+
+  private def isOnMyPath(turret: Turret): Boolean =
+    turret.position._2 == position._2
+
+  private def isInRange(turret: Turret): Boolean =
+    turret.position._1.toInt <= range
+
+/**
+ * Basic zombie.
+ */
+case class Zombie() extends Enemy
