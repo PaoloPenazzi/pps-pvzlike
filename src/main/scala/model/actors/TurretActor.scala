@@ -3,7 +3,7 @@ package model.actors
 import akka.actor.typed.*
 import akka.actor.typed.scaladsl.Behaviors
 import controller.Command
-import controller.GameLoopActor.GameLoopCommands.{EntitySpawned}
+import controller.GameLoopActor.GameLoopCommands.EntitySpawned
 import model.actors
 import model.entities.{Enemy, Entity, Seed}
 import scala.concurrent.duration.DurationInt
