@@ -6,7 +6,7 @@ import com.badlogic.gdx.math.{Vector2, Vector3}
 import com.badlogic.gdx.physics.box2d.{Box2DDebugRenderer, World}
 import com.badlogic.gdx.utils.viewport.Viewport
 import com.badlogic.gdx.{Gdx, Input, ScreenAdapter}
-import model.entities.WorldSpace.given
+import model.entities.WorldSpace.{LanesLength, given}
 import model.entities.*
 import View.EntityRenderer
 
@@ -31,7 +31,7 @@ class Screen(private val viewport: Viewport) extends ScreenAdapter with EntityRe
 
     batch.begin()
 
-    entities.foreach(e => batch.draw(texture(e), e.position.x, e.position.y, 1, 1))
+    entities.foreach(e => batch.draw(texture(e), xToScreen(e.position.x), e.position.y, width(e), height(e)))
 
     batch.end()
 
@@ -46,3 +46,16 @@ class Screen(private val viewport: Viewport) extends ScreenAdapter with EntityRe
     case _: Plant => "peashooter.png"
     case _: Seed => "seed.png"
     case _: Zombie => "zombie.png")))
+
+  def width(entity: Entity): Float = entity match
+    case _: Plant => 1
+    case _: Seed => 0.2
+    case _: Zombie => 1
+
+  def height(entity: Entity): Float = entity match
+    case _: Plant => 1
+    case _: Seed => 0.2
+    case _: Zombie => 1.5
+
+
+  def xToScreen(x:Float) = x/LanesLength*16

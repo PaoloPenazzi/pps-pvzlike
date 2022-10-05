@@ -6,7 +6,7 @@ import akka.actor.testkit.typed.scaladsl.{ActorTestKit, BehaviorTestKit, ScalaTe
 import akka.actor.typed.scaladsl.Behaviors
 import akka.testkit.{ImplicitSender, TestActors, TestKit}
 import controller.Command
-import controller.GameLoopActor.GameLoopCommands.{EntityUpdated, GameLoopCommand, EntitySpawned}
+import controller.GameLoopActor.GameLoopCommands.{EntitySpawned, EntityUpdated, GameLoopCommand}
 import model.actors.{BulletActor, Shoot, TurretActor, Update}
 import model.common.DefaultValues.*
 import model.entities.*
@@ -16,7 +16,7 @@ import org.scalatest.matchers.must.Matchers.must
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.{AnyWordSpec, AnyWordSpecLike}
 
-import scala.concurrent.duration.{DurationInt, FiniteDuration}
+import scala.concurrent.duration.{DurationInt, FiniteDuration, MILLISECONDS}
 import WorldSpace.LanesLength
 
 class TurretActorTest extends AnyWordSpec with BeforeAndAfterAll with Matchers:
@@ -32,7 +32,7 @@ class TurretActorTest extends AnyWordSpec with BeforeAndAfterAll with Matchers:
       }
 
       "shoot zombie" in {
-        turretActor run Update(10, List(Zombie(1, LanesLength)), inbox.ref)
+        turretActor run Update(FiniteDuration(32, MILLISECONDS), List(Zombie(1, LanesLength)), inbox.ref)
         turretActor expectEffect Effect.TimerScheduled("TurretShooting", Shoot(inbox.ref), plant.fireRate.seconds, Effect.TimerScheduled.SingleMode, false)(null)
       }
 
