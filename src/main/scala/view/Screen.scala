@@ -19,7 +19,7 @@ class Screen(private val viewport: Viewport) extends ScreenAdapter with EntityRe
   private val world: World = World(Vector2(0, 0), false)
   private val camera = viewport.getCamera
   private var entities: List[Entity] = List.empty
-  private val batch: SpriteBatch = SpriteBatch()
+  private lazy val batch: SpriteBatch = SpriteBatch()
 
   override def render(delta: Float): Unit =
     world.step(1 / Screen.Framerate, 6, 2)
