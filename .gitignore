@@ -2,10 +2,6 @@
 .bloop
 .bsp
 
-# metals
-project/metals.sbt
-.metals
-
 # vs code
 .vscode
 
