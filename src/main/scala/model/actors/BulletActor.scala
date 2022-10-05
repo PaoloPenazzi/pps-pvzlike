@@ -2,7 +2,7 @@ package model.actors
 
 import akka.actor.typed.{ActorRef, Behavior}
 import akka.actor.typed.scaladsl.Behaviors
-import controller.GameLoopActor.GameLoopCommands.{EntityUpdate, GameLoopCommand, EntityDead}
+import controller.GameLoopActor.GameLoopCommands.{EntityUpdated, GameLoopCommand, EntityDead}
 import model.entities.{Bullet, Enemy}
 
 object BulletActor:
@@ -14,7 +14,7 @@ object BulletActor:
       msg match
         case Update(timeElapsed, interests, replyTo) =>
           val updatedBullet = bullet.update(timeElapsed, interests)
-          replyTo ! EntityUpdate(ctx.self, updatedBullet)
+          replyTo ! EntityUpdated(ctx.self, updatedBullet)
           BulletActor(updatedBullet)
 
         case Collision(entity, replyTo) =>

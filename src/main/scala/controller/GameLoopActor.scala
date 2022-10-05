@@ -27,7 +27,7 @@ object GameLoopActor:
 
     case class EntityDead[E <: Entity](ref: ActorRef[ModelMessage], entity: E) extends GameLoopCommand
 
-    case class EntityUpdate[E <: Entity](ref: ActorRef[ModelMessage], entity: E) extends GameLoopCommand
+    case class EntityUpdated[E <: Entity](ref: ActorRef[ModelMessage], entity: E) extends GameLoopCommand
 
     case class EntitySpawned[E <: Entity](ref: ActorRef[ModelMessage], entity: E) extends GameLoopCommand
 
@@ -59,7 +59,7 @@ object GameLoopActor:
           // updateAll(detectInterest)
           startTimer(timer)
           Behaviors.same
-        case EntityUpdate(ref, entity) =>
+        case EntityUpdated(ref, entity) =>
           // todo check if the wave is end
           entities = entities.updated(entities.indexOf(ref), (ref, entity))
           viewActor ! Render(entities.map(e => e._2).toList, ctx.self)
