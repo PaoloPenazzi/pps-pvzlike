@@ -3,7 +3,7 @@ import sbt._
 object Dependencies {
   object Gdx {
     private def dependency(module: String): ModuleID =
-      "com.badlogicgames.gdx" % module % "1.10.0"
+      "com.badlogicgames.gdx" % module % "1.11.0"
 
     private def moduleName(module: Option[String]): String =
       "gdx" + module.map("-" + _).getOrElse("")
@@ -26,6 +26,7 @@ object Dependencies {
       val dependencies = Seq(
         core,
         Some("backend-lwjgl3"),
+        Some("lwjgl3-glfw-awt-macos"),
         box2d,
         ttf,
       ).map(dependency)

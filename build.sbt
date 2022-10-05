@@ -1,12 +1,35 @@
-ThisBuild / version := "0.1.0-SNAPSHOT"
+import sbtassembly.AssemblyPlugin.assemblySettings
+
+assemblySettings
+
+name := "pps-pvzlike"
+
+version := "0.1"
+
+assembly / assemblyMergeStrategy := {
+  case "reference.conf" => MergeStrategy.concat
+  case PathList("META-INF", _@_*) => MergeStrategy.discard
+  case _ => MergeStrategy.first
+}
+
+scalacOptions ++= Seq(
+  "-unchecked",
+  "-deprecation",
+  "-encoding",
+  "utf8",
+  "-feature",
+  "-Ymacro-annotations"
+)
 
 ThisBuild / scalaVersion := "3.2.0"
 
 lazy val root = (project in file("."))
   .settings(
     name := "pps-pvzlike",
+    assembly / assemblyJarName := "pps-pvzlike.jar",
     libraryDependencies ++= Dependencies.Gdx()
   )
+
 
 val akkaVersion = "2.6.20"
 

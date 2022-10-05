@@ -1,22 +1,29 @@
+
 package model.actors
 
-object EnemyActor:
-  enum EnemyActorCommand:
-    case ComputeVelocityRequest(entities: mutable.Seq[Enemy], replyTo: ActorRef[GameLoopCommand])
-    case ComputePositionRequest(boundary: Boundary, replyTo: ActorRef[GameLoopCommand])
-  export EnemyActorCommand.*
-  def apply(enemy: Enemy): Behavior[EnemyActorCommand] = Behaviors.setup(new EnemyActor(_, enemy))
+import akka.actor.typed.scaladsl.Behaviors
+import controller.GameLoopActor.GameLoopCommands.EntityUpdated
+import model.entities.Enemy
+import akka.actor.typed.{ActorRef, Behavior}
+import akka.actor.typed.scaladsl.Behaviors
 
-class BodyActor(context: ActorContext[BodyActor.BodyActorCommand], val enemy: Enemy)
-  extends AbstractBehavior[EnemyActor.EnemyActorCommand](context):
-  override def onMessage(msg: EnemyActor.EnemyActorCommand): Behavior[EnemyActor.EnemyActorCommand] = msg match {
-    case ComputeVelocityRequest(entities, ref) =>
-      enemy.computeBodyVelocity(entities)
-      ref ! ComputeVelocityResponse(enemy)
-      Behaviors.same
-    case ComputePositionRequest(boundary, ref) =>
-      enemy.computeBodyPosition(boundary)
-      ref ! ComputePositionResponse(enemy)
-      Behaviors.same
-    case _ => Behaviors.same
-  }
+object EnemyActor :
+  def apply(enemy: Enemy): Behavior[ModelMessage] =
+    moving(enemy)
+
+  def moving(enemy: Enemy): Behavior[ModelMessage] =
+    Behaviors.withTimers(timer => {
+      Behaviors.receive((ctx, msg) => {
+        msg match
+          case Update(timeElapsed, entities, replyTo) =>
+            val updatedEnemy = enemy.update(timeElapsed, entities)
+            replyTo ! EntityUpdated(ctx.self, updatedEnemy)
+            moving(updatedEnemy)
+
+          case Shoot(replyTo) => ???
+
+          case Collision(entity, replyTo) => ???
+
+          case _ => Behaviors.same
+      })
+    })

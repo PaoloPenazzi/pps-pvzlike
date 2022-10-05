@@ -4,6 +4,8 @@ import model.common.DefaultValues.*
 import model.entities.WorldSpace.{Position, given}
 import model.entities.{AttackingEntity, Bullet, Enemy, Entity, Seed, Turret, Zombie}
 
+import scala.concurrent.duration.FiniteDuration
+
 trait Turret extends Entity with AttackingEntity:
   override type UpdatedEntity = Turret
   def cost: Int = costs(this)
@@ -17,10 +19,9 @@ trait Turret extends Entity with AttackingEntity:
   private def isInRange(enemy: Enemy): Boolean =
     enemy.position.x.toInt <= range
 
-  def filter: Entity => Boolean =
+  override def filter: Entity => Boolean =
       case enemy: Enemy => enemy.position.y == position.y
       case _ => false
-
 
 /**
  * Basic turret.
@@ -28,5 +29,5 @@ trait Turret extends Entity with AttackingEntity:
  * @param position The position in which the plant is placed by the player.
  */
 case class Plant(override val position: Position) extends Turret:
-  override def update(elapsedTime: Float, interests: List[Entity]): Plant =
+  override def update(elapsedTime: FiniteDuration, interests: List[Entity]): Plant =
     Plant(position)
