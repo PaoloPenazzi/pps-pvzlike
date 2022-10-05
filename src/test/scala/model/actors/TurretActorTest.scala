@@ -17,10 +17,11 @@ import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.{AnyWordSpec, AnyWordSpecLike}
 
 import scala.concurrent.duration.{DurationInt, FiniteDuration}
+import WorldSpace.LanesLength
 
 class TurretActorTest extends AnyWordSpec with BeforeAndAfterAll with Matchers:
 
-  val plant: Turret = Plant(1, 50)
+  val plant: Turret = Plant(1, LanesLength / 2)
   val turretActor: BehaviorTestKit[ModelMessage] = BehaviorTestKit(TurretActor(plant))
   val inbox = TestInbox[Command]()
 
@@ -31,7 +32,7 @@ class TurretActorTest extends AnyWordSpec with BeforeAndAfterAll with Matchers:
       }
 
       "shoot zombie" in {
-        turretActor run Update(10, List(Zombie(1, 100)), inbox.ref)
+        turretActor run Update(10, List(Zombie(1, LanesLength)), inbox.ref)
         turretActor expectEffect Effect.TimerScheduled("TurretShooting", Shoot(inbox.ref), plant.fireRate.seconds, Effect.TimerScheduled.SingleMode, false)(null)
       }
 
