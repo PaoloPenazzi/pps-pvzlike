@@ -31,7 +31,7 @@ class Screen(private val viewport: Viewport) extends ScreenAdapter with EntityRe
 
     batch.begin()
 
-    batch.draw(texture(Plant((1,1f))), 0, 4.5f, 1, 1)
+    entities.foreach(e => batch.draw(texture(e), e.position.x, e.position.y, 1, 1))
 
     batch.end()
 
