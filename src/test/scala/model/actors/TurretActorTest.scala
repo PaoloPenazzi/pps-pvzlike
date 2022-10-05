@@ -42,10 +42,5 @@ class TurretActorTest extends AnyWordSpec with BeforeAndAfterAll with Matchers:
         val message = inbox.receiveMessage()
         assert(message.isInstanceOf[EntitySpawned[Bullet]])
       }
-
-      /*"should lose hp" in {
-        turretActor run Collision(testZombie1)
-        turretActor.isAlive must be(false)
-      }*/
     }
   }
