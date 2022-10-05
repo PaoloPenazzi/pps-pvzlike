@@ -40,8 +40,6 @@ jobs:
           root_file: report.tex
           args: '-output-format=pdf -file-line-error -synctex=1 -halt-on-error -interaction=nonstopmode -shell-escape'
           working_directory: doc/tex/report
-      - name: Rename jar file
-        run: mv pps-pvzlike/*.jar pps-pvzlike/pps-pvzlike.jar
       - name: Rename report file
         run: mv doc/tex/report/*.pdf doc/tex/report/pps-pvzlike-report.pdf
       - uses: marvinpinto/action-automatic-releases@latest
