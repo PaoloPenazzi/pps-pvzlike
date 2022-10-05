@@ -25,3 +25,31 @@ jobs:
         with:
           name: pps-pvzlike
           path: target/scala-3.2.0/*.jar
+
+  release:
+    name: Release
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - uses: actions/download-artifact@v2
+      - name: Build LaTeX report
+        uses: xu-cheng/latex-action@v2
+        with:
+          root_file: report.tex
+          args: '-output-format=pdf -file-line-error -synctex=1 -halt-on-error -interaction=nonstopmode -shell-escape'
+          working_directory: doc/tex/report
+      - name: Rename jar file
+        run: mv pps-pvzlike/*.jar pps-pvzlike/pps-pvzlike.jar
+      - name: Rename report file
+        run: mv doc/tex/report/*.pdf doc/tex/report/pps-pvzlike-report.pdf
+      - uses: marvinpinto/action-automatic-releases@latest
+        with:
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          automatic_release_tag: "0.1.0"
+          prerelease: false
+          title: "Scrum Sprint 1 - Release"
+          files: |
+            pps-pvzlike/*.jar
+            doc/tex/report/pps-pvzlike-report.pdf
