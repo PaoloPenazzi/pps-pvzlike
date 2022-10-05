@@ -1,14 +1,47 @@
-.idea/
+# bloop and metals
+.bloop
+.bsp
 
-!.idea/codeStyles
-!.idea/runConfigurations
+# metals
+project/metals.sbt
+.metals
 
-.DS_STORE
-*.DS_STORE
+# vs code
+.vscode
 
-*~$*
+# scala3
+.tasty
 
+# sbt
+project/project/
+project/target/
 target/
-project/
+out/
+auxil/
+
+# eclipse
 build/
-.bsp/*
+.classpath
+.project
+.settings
+.worksheet
+bin/
+.cache
+
+# intellij idea
+*.log
+*.iml
+*.ipr
+*.iws
+.idea
+
+# mac
+.DS_Store
+
+# other?
+.history
+.scala_dependencies
+.cache-main
+
+#general
+*.class
