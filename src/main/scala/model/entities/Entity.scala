@@ -5,16 +5,17 @@ import model.common.DefaultValues.*
 import model.entities.WorldSpace.{Position, given}
 
 trait Entity:
+  type UpdatedEntity <: Entity
   def width: Int = DefaultValues.width(this)
-
-trait StationaryEntity extends Entity:
   def position: Position
+  def update(elapsedTime: Float, interest: List[Entity]): UpdatedEntity
 
 trait MovingEntity() extends Entity:
-  var position: Position = (0,0f)
   def velocity: Float
+  def updatePosition(elapsedTime: Float): Position =
+    (position.y, position.x + (elapsedTime * velocity))
 
 trait AttackingEntity extends Entity :
-  var healthPoints: Int = HP(this)
+  def hp: Int = 1
   def fireRate: Int = fireRates(this)
   def range: Int = ranges(this)

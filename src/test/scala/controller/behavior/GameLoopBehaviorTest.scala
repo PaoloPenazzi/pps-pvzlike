@@ -15,6 +15,7 @@ import org.scalatest.matchers.should.Matchers.shouldNot
 import org.scalatest.wordspec.AnyWordSpec
 
 import scala.concurrent.duration.FiniteDuration
+import model.entities.WorldSpace.given
 
 class GameLoopBehaviorTest extends AnyWordSpec with Matchers :
 
@@ -24,7 +25,7 @@ class GameLoopBehaviorTest extends AnyWordSpec with Matchers :
 
   val viewActor = TestInbox[ViewMessage]()
   val gameLoopActor: BehaviorTestKit[Command] = BehaviorTestKit(GameLoopActor(viewActor.ref))
-  val enemiesWave: Option[List[Enemy]] = Some(List.fill(3)(Zombie()))
+  val enemiesWave: Option[List[Enemy]] = Some(List.fill(3)(Zombie((0,0))))
 
 
   "The GameLoop Actor" when {

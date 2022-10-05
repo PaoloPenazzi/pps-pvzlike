@@ -20,8 +20,7 @@ import scala.concurrent.duration.{DurationInt, FiniteDuration}
 
 class TurretActorTest extends AnyWordSpec with BeforeAndAfterAll with Matchers:
 
-  val plant: Turret = Plant(50, 1)
-  val testZombie1: Enemy = Zombie()
+  val plant: Turret = Plant(1, 50)
   val turretActor: BehaviorTestKit[ModelMessage] = BehaviorTestKit(TurretActor(plant))
   val inbox = TestInbox[Command]()
 
@@ -32,8 +31,7 @@ class TurretActorTest extends AnyWordSpec with BeforeAndAfterAll with Matchers:
       }
 
       "shoot zombie" in {
-        testZombie1.position = (100, 1)
-        turretActor run Update(10, List(testZombie1), inbox.ref)
+        turretActor run Update(10, List(Zombie(1, 100)), inbox.ref)
         turretActor expectEffect Effect.TimerScheduled("TurretShooting", Shoot(inbox.ref), plant.fireRate.seconds, Effect.TimerScheduled.SingleMode, false)(null)
       }
 

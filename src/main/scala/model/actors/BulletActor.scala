@@ -12,10 +12,10 @@ object BulletActor:
   def moving(bullet: Bullet): Behavior[ModelMessage] =
     Behaviors.receive( (ctx,msg) => {
       msg match
-        case Update(timeElapsed, _, replyTo) =>
-          bullet updatePositionAfter timeElapsed
-          replyTo ! EntityUpdate(ctx.self, bullet)
-          Behaviors.same
+        case Update(timeElapsed, interests, replyTo) =>
+          val updatedBullet = bullet.update(timeElapsed, interests)
+          replyTo ! EntityUpdate(ctx.self, updatedBullet)
+          BulletActor(updatedBullet)
 
         case Collision(entity, replyTo) =>
           if bullet shouldDisappearAfterHitting entity

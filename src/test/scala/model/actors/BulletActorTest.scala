@@ -8,5 +8,5 @@ import model.entities.{Bullet, Seed}
 
 class BulletActorTest extends AnyWordSpec with BeforeAndAfterAll with Matchers:
 
-  val bullet: Bullet = new Seed()
+  val bullet: Bullet = new Seed(1,0)
   val bulletActor: BehaviorTestKit[ModelMessage] = BehaviorTestKit(BulletActor(bullet))

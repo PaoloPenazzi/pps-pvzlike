@@ -28,7 +28,7 @@ object TurretActor:
               case _ => Behaviors.same
 
           case Shoot(replyTo) =>
-            val bullet = new Seed
+            val bullet = new Seed(turret.position)
             val bulletActor = ctx.spawnAnonymous(BulletActor(bullet))
             replyTo ! EntitySpawned(bulletActor, bullet)
             Behaviors.same
