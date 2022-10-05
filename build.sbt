@@ -7,9 +7,9 @@ name := "pps-pvzlike"
 version := "0.1"
 
 assembly / assemblyMergeStrategy := {
-  case "reference.conf"            => MergeStrategy.concat
-  case PathList("META-INF", _ @_*) => MergeStrategy.discard
-  case _                           => MergeStrategy.first
+  case "reference.conf" => MergeStrategy.concat
+  case PathList("META-INF", _@_*) => MergeStrategy.discard
+  case _ => MergeStrategy.first
 }
 
 scalacOptions ++= Seq(
@@ -29,6 +29,7 @@ lazy val root = (project in file("."))
     assembly / assemblyJarName := "pps-pvzlike.jar",
     libraryDependencies ++= Dependencies.Gdx()
   )
+
 
 val akkaVersion = "2.6.20"
 
