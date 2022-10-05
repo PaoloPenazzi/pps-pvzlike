@@ -2,7 +2,7 @@ import sbtassembly.AssemblyPlugin.assemblySettings
 
 assemblySettings
 
-name := "pps-test-cicd"
+name := "pps-pvzlike"
 
 version := "0.1"
 
