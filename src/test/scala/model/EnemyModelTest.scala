@@ -1,6 +1,7 @@
 package model
 
-import model.entities.{Enemy, Zombie, Plant, Turret}
+import model.entities.WorldSpace.LanesLength
+import model.entities.{Enemy, Entity, Plant, Turret, WorldSpace, Zombie}
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should
 
@@ -15,3 +16,5 @@ class EnemyModelTest extends AnyFlatSpec with should.Matchers:
     val zombie: Enemy = Zombie(100, 2)
     zombie canAttack turret shouldBe false
   }
+
+
