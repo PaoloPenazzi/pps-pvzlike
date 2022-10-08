@@ -6,7 +6,9 @@ import org.scalatest.flatspec.*
 import org.scalatest.matchers.*
 import WorldSpace.{LanesLength, given}
 
+
 class EnemyModelTest extends AnyFlatSpec with should.Matchers:
+
   "A zombie" should "attack a turrets that is in range" in {
     val turret: Turret = Plant(1, LanesLength / 2)
     val zombie: Enemy =  Zombie(1, (LanesLength / 2 + 5) )
@@ -26,6 +28,15 @@ class EnemyModelTest extends AnyFlatSpec with should.Matchers:
     val entities: List[Entity] = List(firstTurretInFirstLane, secondTurretInSecondLane,
       firstZombieFirstLane, thirdZombieInSecondLane)
     assert(entities.filter(basicZombie.filter) == List(firstTurretInFirstLane))
+  }
+
+
+  import org.scalatest.funsuite.AnyFunSuite
+  import org.scalatest.matchers.should.Matchers.*
+
+  class EnemyTest extends AnyFunSuite:
+      test("Enemy correctly defines constructors") {
+        "Enemy(1, LanesLength / 2)" should compile
   }
 
 
