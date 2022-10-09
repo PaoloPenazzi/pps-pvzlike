@@ -60,6 +60,7 @@ object GameLoopActor:
           // detectCollision
           val interests = detectInterest
           entities.foreach(e => e._1 ! Update(FiniteDuration(16, "milliseconds"), interests.filter(_._1 == e._1).head._2.toList, ctx.self))
+          if enemiesWave.isEmpty then createWave(ctx)
           startTimer(timer)
           Behaviors.same
         case EntityUpdated(ref, entity) =>
