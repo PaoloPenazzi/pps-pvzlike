@@ -1,6 +1,6 @@
-package controller
+package model
 
-import controller.Generator.WaveImpl
+import model.Generator.WaveImpl
 import model.entities.WorldSpace.given
 import model.entities.{Enemy, Zombie}
 

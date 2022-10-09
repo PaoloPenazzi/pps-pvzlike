@@ -1,4 +1,4 @@
-import controller.{WaveGenerator, Wave, Generator}
+import model.{Generator, Wave, WaveGenerator}
 import org.scalatest.flatspec.*
 import org.scalatest.matchers.*
 
