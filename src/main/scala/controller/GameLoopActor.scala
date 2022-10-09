@@ -105,11 +105,11 @@ object GameLoopActor:
 
     def startTimer(timer: TimerScheduler[Command]) = timer.startSingleTimer(UpdateLoop(), FiniteDuration(16, "milliseconds"))
 
-    def createWave(ctx: ActorContext[Command]): Unit =
+    def createWave(ctx: ActorContext[Command]): Unit = ???
       // genera una wave di zombie poi la lista di zombie creata verrà mappata in un'altra lista fatta di tuple (zombieRef, zombie)
       // e alla fine gli zombie verranno aggiunti alla lista enemiesWave lista che contiene tutti gli zombie
-      val newWave = WaveSupervisor.generateWave(2).map(e => (ctx.spawnAnonymous(EnemyActor(e)), e))
-      entities = entities :++ newWave
+      //val newWave = WaveSupervisor.generateWave(2).map(e => (ctx.spawnAnonymous(EnemyActor(e)), e))
+      //entities = entities :++ newWave
 
     def detectCollision = ???
       // todo provarlo a fare con for-yield o pimp-my-library
