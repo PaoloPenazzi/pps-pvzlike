@@ -3,6 +3,7 @@ package controller
 import akka.actor.typed.*
 import akka.actor.typed.scaladsl.*
 import akka.actor.typed.scaladsl.adapter.*
+import model.{Generator, WaveGenerator}
 import model.actors.{EnemyActor, ModelMessage, TurretActor, Update}
 import model.entities.{Bullet, Enemy, Entity, Plant, Turret}
 
@@ -37,6 +38,7 @@ object GameLoopActor:
   var enemiesWave: Seq[(ActorRef[ModelMessage], Enemy)] = List[(ActorRef[ModelMessage], Enemy)]()
   var bullets: Seq[(ActorRef[ModelMessage], Bullet)] = List[(ActorRef[ModelMessage], Bullet)]()
   var entities: Seq[(ActorRef[ModelMessage], Entity)] = List[(ActorRef[ModelMessage], Entity)]()
+  val waveGenerator: WaveGenerator = Generator()
 
   def apply(viewActor: ActorRef[ViewMessage]): Behavior[Command] =
     Behaviors.setup { _ => Behaviors.withTimers { timer => GameLoopActor(timer, viewActor).standardBehavior() } }
@@ -105,11 +107,12 @@ object GameLoopActor:
 
     def startTimer(timer: TimerScheduler[Command]) = timer.startSingleTimer(UpdateLoop(), FiniteDuration(16, "milliseconds"))
 
-    def createWave(ctx: ActorContext[Command]): Unit = ???
-      // genera una wave di zombie poi la lista di zombie creata verrà mappata in un'altra lista fatta di tuple (zombieRef, zombie)
-      // e alla fine gli zombie verranno aggiunti alla lista enemiesWave lista che contiene tutti gli zombie
-      //val newWave = WaveSupervisor.generateWave(2).map(e => (ctx.spawnAnonymous(EnemyActor(e)), e))
-      //entities = entities :++ newWave
+    def createWave(ctx: ActorContext[Command]): Unit =
+      val newWave = waveGenerator.generateNextWave
+      val newWaveWithActors = newWave.enemies.map(e => (ctx.spawnAnonymous(EnemyActor(e)), e))
+      // TODO: which one is correct? @Angelo
+      entities = entities :++ newWaveWithActors
+      enemiesWave = enemiesWave :++ newWaveWithActors
 
     def detectCollision = ???
       // todo provarlo a fare con for-yield o pimp-my-library
