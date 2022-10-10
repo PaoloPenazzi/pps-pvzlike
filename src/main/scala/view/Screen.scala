@@ -9,6 +9,7 @@ import com.badlogic.gdx.{Gdx, Input, ScreenAdapter}
 import model.entities.WorldSpace.{LanesLength, given}
 import model.entities.*
 import View.EntityRenderer
+import Sprites.spriteName
 
 object Screen:
   val Framerate: Float = 60
@@ -42,10 +43,18 @@ class Screen(private val viewport: Viewport) extends ScreenAdapter with EntityRe
 
   def renderEntities(entities: List[Entity]): Unit = this.entities = entities
 
-  def texture(entity: Entity): Texture = new Texture(Gdx.files.classpath("assets/" + (entity match
-    case _: Plant => "peashooter.png"
-    case _: Seed => "seed.png"
-    case _: Zombie => "zombie.png")))
+  val texture: Entity => Texture = memoizedTexture
+  def memoizedTexture: Entity => Texture =
+    def texture(entity: Entity): Texture = new Texture(Gdx.files.classpath("assets/" + spriteName(entity)))
+
+    val cache = collection.mutable.Map.empty[String, Texture]
+
+    entity =>
+      cache.getOrElse(entity.getClass.getSimpleName, {
+        System.out.println("ciao")
+        cache.update(entity.getClass.getSimpleName, texture(entity))
+        cache(entity.getClass.getSimpleName)
+      })
 
   def width(entity: Entity): Float = entity match
     case _: Plant => 1
