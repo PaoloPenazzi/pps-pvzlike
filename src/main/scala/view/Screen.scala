@@ -9,7 +9,8 @@ import com.badlogic.gdx.{Gdx, Input, ScreenAdapter}
 import model.entities.WorldSpace.{LanesLength, given}
 import model.entities.*
 import View.EntityRenderer
-import Sprites.spriteName
+import Sprites.*
+import ViewportSpace.*
 
 object Screen:
   val Framerate: Float = 60
@@ -32,7 +33,7 @@ class Screen(private val viewport: Viewport) extends ScreenAdapter with EntityRe
 
     batch.begin()
 
-    entities.foreach(e => batch.draw(texture(e), xToScreen(e.position.x), e.position.y, width(e), height(e)))
+    entities.foreach(e => batch.draw(texture(e), projectX(e.position.x), projectY(e.position.y), width(e), height(e)))
 
     batch.end()
 
@@ -51,20 +52,8 @@ class Screen(private val viewport: Viewport) extends ScreenAdapter with EntityRe
 
     entity =>
       cache.getOrElse(entity.getClass.getSimpleName, {
-        System.out.println("ciao")
         cache.update(entity.getClass.getSimpleName, texture(entity))
         cache(entity.getClass.getSimpleName)
       })
 
-  def width(entity: Entity): Float = entity match
-    case _: Plant => 1
-    case _: Seed => 0.2
-    case _: Zombie => 1
 
-  def height(entity: Entity): Float = entity match
-    case _: Plant => 1
-    case _: Seed => 0.2
-    case _: Zombie => 1.5
-
-
-  def xToScreen(x:Float) = x/LanesLength*16
