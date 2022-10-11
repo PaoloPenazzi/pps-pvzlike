@@ -22,15 +22,52 @@ import WorldSpace.LanesLength
 
 class TroopActorTest extends AnyWordSpec with BeforeAndAfterAll with Matchers:
 
-  val plant: Turret = Plant((1, LanesLength / 2))
-  val zombie: Zombie = Zombie((1, LanesLength))
-  val firstTroopActor: BehaviorTestKit[ModelMessage] = BehaviorTestKit(TroopActor(plant))
-  val secondTroopActor: BehaviorTestKit[ModelMessage] = BehaviorTestKit(TroopActor(zombie))
+  val plant: Turret = Plant((1, LanesLength))
+  val zombie: Zombie = Zombie((1, LanesLength + 2))
+  val turretTroopActor: BehaviorTestKit[ModelMessage] = BehaviorTestKit(TroopActor(plant))
+  val zombieTroopActor: BehaviorTestKit[ModelMessage] = BehaviorTestKit(TroopActor(zombie))
+  val inbox = TestInbox[Command]()
 
   "The troop actor" when {
     "created" should {
       "be alive" in {
-        firstTroopActor.isAlive must be(true)
+        turretTroopActor.isAlive must be(true)
+      }
+    }
+  }
+
+  "The troop actor (turret)" when {
+    "is updated" should {
+      "attack the zombie" in {
+        turretTroopActor run Update(FiniteDuration(32, MILLISECONDS), List(zombie), inbox.ref)
+        turretTroopActor expectEffect Effect.TimerScheduled("Shooting",
+          Shoot(inbox.ref),
+          plant.fireRate.seconds,
+          Effect.TimerScheduled.SingleMode, false)(null)
+      }
+      "update his position" in {
+        turretTroopActor run Update(FiniteDuration(32, MILLISECONDS), List(zombie), inbox.ref)
+        assert(inbox.hasMessages)
+        val message = inbox.receiveMessage()
+        assert(message.isInstanceOf[EntityUpdated[Troop]])
+      }
+    }
+  }
+
+  "The troop actor (zombie)" when {
+    "is updated" should {
+      "attack the plant" in {
+        zombieTroopActor run Update(FiniteDuration(32, MILLISECONDS), List(plant), inbox.ref)
+        zombieTroopActor expectEffect Effect.TimerScheduled("Shooting",
+          Shoot(inbox.ref),
+          zombie.fireRate.seconds,
+          Effect.TimerScheduled.SingleMode, false)(null)
+      }
+      "update his position" in {
+        zombieTroopActor run Update(FiniteDuration(32, MILLISECONDS), List(plant), inbox.ref)
+        assert(inbox.hasMessages)
+        val message = inbox.receiveMessage()
+        assert(message.isInstanceOf[EntityUpdated[Troop]])
       }
     }
   }
