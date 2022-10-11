@@ -4,6 +4,7 @@ import akka.actor.typed.Behavior
 import akka.actor.typed.scaladsl.Behaviors
 import controller.GameLoopActor.GameLoopCommands.{EntitySpawned, EntityUpdated}
 import model.entities.*
+import model.actors.BulletActor
 import concurrent.duration.DurationInt
 
 object TroopActor:
@@ -28,7 +29,11 @@ object TroopActor:
               case _ =>
             standardBehaviour(entityUpdated.asInstanceOf[Troop])
 
-          case Shoot(replyTo) => ???
+          case Shoot(replyTo) =>
+            val bullet: Bullet = troop.asInstanceOf[AttackingEntity].getBullet
+            val bulletActor = ctx.spawnAnonymous(BulletActor(bullet))
+            replyTo ! EntitySpawned(bulletActor, bullet)
+            Behaviors.same
 
           case Collision(entity, replyTo) => ???
 
