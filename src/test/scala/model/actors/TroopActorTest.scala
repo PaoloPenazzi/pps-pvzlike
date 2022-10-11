@@ -26,11 +26,10 @@ class TroopActorTest extends AnyWordSpec with BeforeAndAfterAll with Matchers:
   val zombie: Zombie = Zombie((1, LanesLength))
   val firstTroopActor: BehaviorTestKit[ModelMessage] = BehaviorTestKit(TroopActor(plant))
   val secondTroopActor: BehaviorTestKit[ModelMessage] = BehaviorTestKit(TroopActor(zombie))
-  val inbox = TestInbox[Command]()
 
   "The troop actor" when {
     "created" should {
-      "be alive in" {
+      "be alive" in {
         firstTroopActor.isAlive must be(true)
       }
     }
