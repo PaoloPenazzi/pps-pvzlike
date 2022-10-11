@@ -2,7 +2,7 @@ package model.actors
 
 import akka.actor.typed.Behavior
 import akka.actor.typed.scaladsl.Behaviors
-import controller.GameLoopActor.GameLoopCommands.EntitySpawned
+import controller.GameLoopActor.GameLoopCommands.{EntitySpawned, EntityUpdated}
 import model.entities.*
 
 object TroopActor:
@@ -13,7 +13,10 @@ object TroopActor:
     Behaviors.withTimers(timer => {
       Behaviors.receive((ctx, msg) => {
         msg match
-          case Update(_, entities, replyTo) => ???
+          case Update(elapsedTime, entities, replyTo) =>
+            val entityUpdated: Entity = troop.update(elapsedTime, entities)
+            replyTo ! EntityUpdated(ctx.self, entityUpdated)
+            standardBehaviour(entityUpdated.asInstanceOf[Troop])
 
           case Shoot(replyTo) => ???
 
