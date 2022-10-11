@@ -27,6 +27,7 @@ trait AttackingEntity extends Troop :
    * @return true if it is of his own interest
    */
   def interest: Entity => Boolean
+  def getBullet: Bullet
   def canAttack(entity: Entity): Boolean
   def fireRate: Int = fireRates(this)
   def range: Int = ranges(this)
