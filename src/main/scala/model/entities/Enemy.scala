@@ -1,5 +1,6 @@
 package model.entities
 
+import model.common.DefaultValues
 import model.entities.WorldSpace.Position
 
 import scala.concurrent.duration.FiniteDuration
@@ -7,30 +8,21 @@ import scala.concurrent.duration.FiniteDuration
 /**
  * Interface of an enemy model
  */
-trait Enemy extends MovingEntity with AttackingEntity:
+trait Enemy extends MovingEntity with AttackingEntity with Troop:
   override type UpdatedEntity = Enemy
 
-  def canAttack(turret: Turret): Boolean
-
-  /**
-   * filters to keep only all game entities present on the same lane
-   * @return true if it is of his own interest
-   */
-  def filter: Entity => Boolean
+  override def interest: Entity => Boolean =
+    case turret: Turret => turret.position.y == position.y
+    case _ => false
 
 /**
  * Basic Enemy.
  */
-class Zombie(override val position: Position) extends Enemy:
-  assert(position != null)
+class Zombie(override val position: Position, override val life: Int = 100) extends Enemy:
   override def velocity: Float = -0.001
 
-  override def canAttack(turret: Turret): Boolean =
-    filter(turret) && position.x - turret.position.x.toInt <= range
-
-  override def filter: Entity => Boolean =
-    case turret: Turret => turret.position.y == position.y
-    case _ => false
+  override def canAttack(turret: Entity): Boolean =
+    interest(turret) && position.x - turret.position.x.toInt <= range
 
   override def update(elapsedTime: FiniteDuration, interests: List[Entity]): Enemy =
     Zombie(updatePosition(elapsedTime))
