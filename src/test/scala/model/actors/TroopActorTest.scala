@@ -62,6 +62,15 @@ class TroopActorTest extends AnyWordSpec with BeforeAndAfterAll with Matchers :
         assert(message.isInstanceOf[EntitySpawned[Bullet]])
       }
     }
+    "colliding with a bullet" should {
+      "update himself" in {
+        val inbox = TestInbox[Command]()
+        turretTroopActor run Collision(Seed(1,1), inbox.ref)
+        assert(inbox.hasMessages)
+        val message = inbox.receiveMessage()
+        assert(message.isInstanceOf[EntityUpdated[Entity]])
+      }
+    }
   }
 
 
