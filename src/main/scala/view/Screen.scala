@@ -9,6 +9,8 @@ import com.badlogic.gdx.{Gdx, Input, ScreenAdapter}
 import model.entities.WorldSpace.{LanesLength, given}
 import model.entities.*
 import View.EntityRenderer
+import Sprites.*
+import ViewportSpace.*
 
 object Screen:
   val Framerate: Float = 60
@@ -31,7 +33,7 @@ class Screen(private val viewport: Viewport) extends ScreenAdapter with EntityRe
 
     batch.begin()
 
-    entities.foreach(e => batch.draw(texture(e), xToScreen(e.position.x), e.position.y, width(e), height(e)))
+    entities.foreach(e => batch.draw(texture(e), projectX(e.position.x), projectY(e.position.y), width(e), height(e)))
 
     batch.end()
 
@@ -42,20 +44,16 @@ class Screen(private val viewport: Viewport) extends ScreenAdapter with EntityRe
 
   def renderEntities(entities: List[Entity]): Unit = this.entities = entities
 
-  def texture(entity: Entity): Texture = new Texture(Gdx.files.classpath("assets/" + (entity match
-    case _: Plant => "peashooter.png"
-    case _: Seed => "seed.png"
-    case _: Zombie => "zombie.png")))
+  val texture: Entity => Texture = memoizedTexture
+  def memoizedTexture: Entity => Texture =
+    def texture(entity: Entity): Texture = new Texture(Gdx.files.classpath("assets/" + spriteName(entity)))
 
-  def width(entity: Entity): Float = entity match
-    case _: Plant => 1
-    case _: Seed => 0.2
-    case _: Zombie => 1
+    val cache = collection.mutable.Map.empty[String, Texture]
 
-  def height(entity: Entity): Float = entity match
-    case _: Plant => 1
-    case _: Seed => 0.2
-    case _: Zombie => 1.5
+    entity =>
+      cache.getOrElse(entity.getClass.getSimpleName, {
+        cache.update(entity.getClass.getSimpleName, texture(entity))
+        cache(entity.getClass.getSimpleName)
+      })
 
 
-  def xToScreen(x:Float) = x/LanesLength*16
