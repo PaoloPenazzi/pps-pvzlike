@@ -31,4 +31,4 @@ object Generator:
     private def createEnemyList(n: Int)(l: List[Enemy]): List[Enemy] =
       n match
         case 0 => l
-        case _ => createEnemyList(n - 1)(l = l :+ new Zombie(Random.between(0, NumOfLanes), LanesLength + 100))
+        case _ => createEnemyList(n - 1)(l = l :+ new Zombie((Random.between(0, NumOfLanes), LanesLength + 100)))

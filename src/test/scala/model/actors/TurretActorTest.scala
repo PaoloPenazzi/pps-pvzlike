@@ -21,7 +21,7 @@ import WorldSpace.LanesLength
 
 class TurretActorTest extends AnyWordSpec with BeforeAndAfterAll with Matchers:
 
-  val plant: Turret = Plant(1, LanesLength / 2)
+  val plant: Turret = Plant((1, LanesLength / 2))
   val turretActor: BehaviorTestKit[ModelMessage] = BehaviorTestKit(TurretActor(plant))
   val inbox = TestInbox[Command]()
 
@@ -32,7 +32,7 @@ class TurretActorTest extends AnyWordSpec with BeforeAndAfterAll with Matchers:
       }
 
       "shoot zombie" in {
-        turretActor run Update(FiniteDuration(32, MILLISECONDS), List(Zombie(1, LanesLength)), inbox.ref)
+        turretActor run Update(FiniteDuration(32, MILLISECONDS), List(Zombie((1, LanesLength))), inbox.ref)
         turretActor expectEffect Effect.TimerScheduled("TurretShooting", Shoot(inbox.ref), plant.fireRate.seconds, Effect.TimerScheduled.SingleMode, false)(null)
       }
 
