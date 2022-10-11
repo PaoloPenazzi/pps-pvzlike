@@ -11,7 +11,7 @@ class EnemyModelTest extends AnyFlatSpec with should.Matchers:
 
   "A zombie" should "attack a turrets that is in range" in {
     val turret: Turret = Plant((1, LanesLength / 2))
-    val zombie: Enemy =  Zombie((1, (LanesLength / 2 + 5)) )
+    val zombie: Enemy =  Zombie((1, LanesLength / 2 + 5 ))
     zombie canAttack turret shouldBe true
   }
   "A zombie" should "not attack a turret in another lane" in {

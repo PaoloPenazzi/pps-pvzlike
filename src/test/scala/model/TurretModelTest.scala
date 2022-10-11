@@ -4,6 +4,7 @@ import model.entities.*
 import org.scalatest.*
 import org.scalatest.flatspec.*
 import org.scalatest.matchers.*
+import scala.language.implicitConversions
 import WorldSpace.{LanesLength, given}
 
 class TurretModelTest extends AnyFlatSpec with should.Matchers:

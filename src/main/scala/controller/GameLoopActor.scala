@@ -8,6 +8,7 @@ import model.actors.{EnemyActor, ModelMessage, TurretActor, Update}
 import model.entities.WorldSpace.LanesLength
 import model.entities.{Bullet, Enemy, Entity, Plant, Turret, WorldSpace}
 
+
 import scala.collection.mutable
 import scala.concurrent.duration.FiniteDuration
 
