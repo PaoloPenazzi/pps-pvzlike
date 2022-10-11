@@ -1,12 +1,30 @@
 package model.entities
 
+import model.common.DefaultValues
 import model.entities.WorldSpace.Position
 
 import scala.concurrent.duration.FiniteDuration
 
-trait Enemy extends MovingEntity with AttackingEntity:
+/**
+ * Interface of an enemy model
+ */
+trait Enemy extends MovingEntity with AttackingEntity with Troop:
   override type UpdatedEntity = Enemy
+
+  override def interest: Entity => Boolean =
+    case turret: Turret => turret.position.y == position.y
+    case _ => false
+
+/**
+ * Basic Enemy.
+ */
+class Zombie(override val position: Position, override val life: Int = 100) extends Enemy:
   override def velocity: Float = -0.001
-class Zombie(override val position: Position) extends Enemy:
+
+  override def canAttack(turret: Entity): Boolean =
+    interest(turret) && position.x - turret.position.x.toInt <= range
+
   override def update(elapsedTime: FiniteDuration, interests: List[Entity]): Enemy =
     Zombie(updatePosition(elapsedTime))
+
+

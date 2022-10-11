@@ -11,14 +11,23 @@ trait Entity:
   def width: Int = DefaultValues.width(this)
   def position: Position
   def update(elapsedTime: FiniteDuration, interest: List[Entity]): UpdatedEntity
-  def filter: Entity => Boolean = _ => false
+  def interest: Entity => Boolean = _ => false
 
 trait MovingEntity() extends Entity:
   def velocity: Float
   def updatePosition(elapsedTime: FiniteDuration): Position =
     (position.y, position.x + (elapsedTime.length * velocity))
-
+  
+trait Troop() extends Entity:
+  def life: Int
+  
 trait AttackingEntity extends Entity :
-  def hp: Int = 1
+  /**
+   * filters to keep only all game entities present on the same lane
+   * @return true if it is of his own interest
+   */
+  def interest: Entity => Boolean
+  def canAttack(entity: Entity): Boolean
+
   def fireRate: Int = fireRates(this)
   def range: Int = ranges(this)
