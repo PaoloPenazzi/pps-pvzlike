@@ -19,8 +19,11 @@ trait Enemy extends MovingEntity with AttackingEntity with Troop:
  * Basic Enemy.
  */
 class Zombie(override val position: Position, override val life: Int = 100) extends Enemy:
-  override def velocity: Float = -0.001
 
+  override def updateAfterCollision(entity: Entity): Enemy = ???
+   
+  override def velocity: Float = -0.001
+  
   override def getBullet: Bullet = new Seed(position)
 
   override def canAttack(turret: Entity): Boolean =

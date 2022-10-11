@@ -19,6 +19,7 @@ trait MovingEntity() extends Entity:
     (position.y, position.x + (elapsedTime.length * velocity))
   
 trait Troop extends Entity:
+  def updateAfterCollision(entity: Entity): UpdatedEntity
   def life: Int
   
 trait AttackingEntity extends Troop :
