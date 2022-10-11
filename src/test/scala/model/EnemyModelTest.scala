@@ -27,7 +27,7 @@ class EnemyModelTest extends AnyFlatSpec with should.Matchers:
     val thirdZombieInSecondLane: Enemy = Zombie(2, LanesLength)
     val entities: List[Entity] = List(firstTurretInFirstLane, secondTurretInSecondLane,
       firstZombieFirstLane, thirdZombieInSecondLane)
-    assert(entities.filter(basicZombie.filter) == List(firstTurretInFirstLane))
+    assert(entities.filter(basicZombie.interest) == List(firstTurretInFirstLane))
   }
 
 
