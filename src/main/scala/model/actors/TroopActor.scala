@@ -30,7 +30,7 @@ object TroopActor:
             standardBehaviour(entityUpdated.asInstanceOf[Troop])
 
           case Shoot(replyTo) =>
-            val bullet: Bullet = troop.asInstanceOf[AttackingEntity].getBullet
+            val bullet: Bullet = troop.asInstanceOf[AttackingEntity].bullet
             val bulletActor = ctx.spawnAnonymous(BulletActor(bullet))
             replyTo ! EntitySpawned(bulletActor, bullet)
             Behaviors.same

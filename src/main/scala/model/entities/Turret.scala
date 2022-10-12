@@ -24,7 +24,7 @@ case class Plant(override val position: Position)(override val life: Int = 300) 
   override def updateAfterCollision(entity: Entity): Turret =
     Plant(position)(life - entity.asInstanceOf[Bullet].damage)
 
-  override def getBullet: Bullet = new Seed(position)
+  override def bullet: Bullet = new Seed(position)
 
   override def canAttack(enemy: Entity): Boolean =
     enemy.position.x.toInt <= range

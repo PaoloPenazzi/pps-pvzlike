@@ -24,7 +24,7 @@ class Zombie(override val position: Position, override val life: Int = 100) exte
    
   override def velocity: Float = -0.001
   
-  override def getBullet: Bullet = new Seed(position)
+  override def bullet: Bullet = new Seed(position)
 
   override def canAttack(turret: Entity): Boolean =
     isInterestedIn(turret) && position.x - turret.position.x.toInt <= range
