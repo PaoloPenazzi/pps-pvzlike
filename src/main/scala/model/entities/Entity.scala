@@ -11,7 +11,7 @@ trait Entity:
   def width: Int = DefaultValues.width(this)
   def position: Position
   def update(elapsedTime: FiniteDuration, interest: List[Entity]): UpdatedEntity
-  def interest: Entity => Boolean = _ => false
+  def isInterestedIn: Entity => Boolean = _ => false
 
 trait MovingEntity() extends Entity:
   def velocity: Float

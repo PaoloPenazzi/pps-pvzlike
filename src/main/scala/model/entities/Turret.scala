@@ -11,7 +11,7 @@ trait Turret extends Entity with AttackingEntity with Troop:
   def cost: Int = costs(this)
 
 
-  override def interest: Entity => Boolean =
+  override def isInterestedIn: Entity => Boolean =
       case enemy: Enemy => enemy.position.y == position.y
       case _ => false
 

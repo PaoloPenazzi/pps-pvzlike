@@ -20,5 +20,5 @@ class TurretModelTest extends AnyFlatSpec with should.Matchers:
     val zombieInList1: Enemy = Zombie((1, LanesLength))
     val zombieInList2: Enemy = Zombie((2, LanesLength))
     val entities: List[Entity] = List(turretInList1, turretInList2, zombieInList1, zombieInList2)
-    assert(entities.filter(turret.interest) == List(zombieInList1))
+    assert(entities.filter(turret.isInterestedIn) == List(zombieInList1))
   }
