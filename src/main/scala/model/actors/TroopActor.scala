@@ -35,7 +35,8 @@ object TroopActor:
             replyTo ! EntitySpawned(bulletActor, bullet)
             Behaviors.same
 
-          case Collision(entity, replyTo) => ???
+          case Collision(entity, replyTo) =>
+
 
           case _ => Behaviors.same
       })
