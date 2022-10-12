@@ -21,7 +21,7 @@ import WorldSpace.LanesLength
 
 class TurretActorTest extends AnyWordSpec with BeforeAndAfterAll with Matchers:
 
-  val plant: Turret = Plant((1, LanesLength / 2))
+  val plant: Turret = Plant(1, LanesLength / 2)()
   val turretActor: BehaviorTestKit[ModelMessage] = BehaviorTestKit(TurretActor(plant))
   val inbox = TestInbox[Command]()
 

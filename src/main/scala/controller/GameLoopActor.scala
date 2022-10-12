@@ -51,7 +51,7 @@ object GameLoopActor:
     override def standardBehavior(): Behavior[Command] = Behaviors.receive((ctx, msg) => {
       msg match
         case StartLoop() =>
-          entities = entities :+ (ctx.spawnAnonymous(TurretActor(Plant((1,0)))), Plant((1,0)))
+          entities = entities :+ (ctx.spawnAnonymous(TurretActor(Plant(1,0)())), Plant(1,0)())
           createWave(ctx)
           startTimer(timer)
           Behaviors.same
