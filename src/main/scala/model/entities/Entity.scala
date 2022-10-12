@@ -27,7 +27,6 @@ trait AttackingEntity extends Troop :
    * filters to keep only all game entities present on the same lane
    * @return true if it is of his own interest
    */
-  def interest: Entity => Boolean
   def getBullet: Bullet
   def canAttack(entity: Entity): Boolean
   def fireRate: Int = fireRates(this)
