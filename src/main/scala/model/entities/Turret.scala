@@ -7,7 +7,6 @@ import model.entities.{AttackingEntity, Bullet, Enemy, Entity, Seed, Turret, Zom
 import scala.concurrent.duration.FiniteDuration
 
 trait Turret extends Entity with AttackingEntity with Troop:
-  override type UpdatedEntity = Turret
   def cost: Int = costs(this)
 
 

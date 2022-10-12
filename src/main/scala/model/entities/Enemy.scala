@@ -9,7 +9,6 @@ import scala.concurrent.duration.FiniteDuration
  * Interface of an enemy model
  */
 trait Enemy extends MovingEntity with AttackingEntity with Troop:
-  override type UpdatedEntity = Enemy
 
   override def isInterestedIn: Entity => Boolean =
     case turret: Turret => turret.position.y == position.y
