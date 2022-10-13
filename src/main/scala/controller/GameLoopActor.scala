@@ -52,7 +52,7 @@ object GameLoopActor:
     override def standardBehavior(): Behavior[Command] = Behaviors.receive((ctx, msg) => {
       msg match
         case StartLoop() =>
-          entities = entities :+ (ctx.spawnAnonymous(TurretActor(Plant((1,0)))), Plant((1,0)))
+          entities = entities :+ (ctx.spawnAnonymous(TurretActor(Plant(1,0)())), Plant(1,0)())
           createWave(ctx)
           startTimer(timer)
           Behaviors.same
@@ -133,7 +133,7 @@ object GameLoopActor:
         (e1._1, for
           e2 <- entities
           if e1._1 != e2._1
-          if e1._2.interest(e2._2)
+          if e1._2.isInterestedIn(e2._2)
         yield e2._2)
 
     def updateAll(interestForAll: Seq[(ActorRef[ModelMessage], Seq[Entity])]) = ???

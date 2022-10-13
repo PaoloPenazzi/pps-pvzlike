@@ -3,6 +3,7 @@ package model.entities
 import model.common.DefaultValues
 import model.common.DefaultValues.*
 import model.entities.WorldSpace.{Position, given}
+import scala.language.implicitConversions
 
 import scala.concurrent.duration.FiniteDuration
 
@@ -11,24 +12,28 @@ trait Entity:
   def width: Int = DefaultValues.width(this)
   def position: Position
   def update(elapsedTime: FiniteDuration, interest: List[Entity]): UpdatedEntity
-  def interest: Entity => Boolean = _ => false
+  def isInterestedIn: Entity => Boolean = _ => false
 
-trait MovingEntity() extends Entity:
+trait MovingAbility extends Entity:
   def velocity: Float
   def updatePosition(elapsedTime: FiniteDuration): Position =
     (position.y, position.x + (elapsedTime.length * velocity))
-  
-trait Troop extends Entity:
-  def updateAfterCollision(entity: Entity): UpdatedEntity
-  def life: Int
-  
-trait AttackingEntity extends Troop :
+
+trait AttackingAbility extends Entity :
   /**
    * filters to keep only all game entities present on the same lane
    * @return true if it is of his own interest
    */
-  def interest: Entity => Boolean
-  def getBullet: Bullet
+  def bullet: Bullet
   def canAttack(entity: Entity): Boolean
   def fireRate: Int = fireRates(this)
   def range: Int = ranges(this)
+  
+trait Troop extends Entity with AttackingAbility:
+  override type UpdatedEntity = Troop
+  def collideWith(bullet: Bullet): Option[UpdatedEntity]
+  def life: Int
+    
+
+
+
