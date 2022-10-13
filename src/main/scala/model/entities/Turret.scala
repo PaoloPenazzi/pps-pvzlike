@@ -2,14 +2,13 @@ package model.entities
 
 import model.common.DefaultValues.*
 import model.entities.WorldSpace.{Position, given}
-import model.entities.{AttackingEntity, Bullet, Enemy, Entity, Seed, Turret, Zombie}
+import model.entities.{AttackingAbility, Bullet, Enemy, Entity, Seed, Turret, Zombie}
 
 import scala.concurrent.duration.FiniteDuration
 
-trait Turret extends Entity with AttackingEntity with Troop:
+trait Turret extends Entity with AttackingAbility with Troop:
   def cost: Int = costs(this)
-
-
+  
   override def isInterestedIn: Entity => Boolean =
       case enemy: Enemy => enemy.position.y == position.y
       case _ => false

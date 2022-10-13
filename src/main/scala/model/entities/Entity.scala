@@ -14,7 +14,7 @@ trait Entity:
   def update(elapsedTime: FiniteDuration, interest: List[Entity]): UpdatedEntity
   def isInterestedIn: Entity => Boolean = _ => false
 
-trait MovingEntity() extends Entity:
+trait MovingAbility extends Entity:
   def velocity: Float
   def updatePosition(elapsedTime: FiniteDuration): Position =
     (position.y, position.x + (elapsedTime.length * velocity))
@@ -24,7 +24,7 @@ trait Troop extends Entity:
   def updateAfterCollision(entity: Entity): UpdatedEntity
   def life: Int
 
-trait AttackingEntity extends Troop :
+trait AttackingAbility extends Troop :
   /**
    * filters to keep only all game entities present on the same lane
    * @return true if it is of his own interest

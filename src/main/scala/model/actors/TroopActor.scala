@@ -19,18 +19,18 @@ object TroopActor:
             val entityUpdated: Entity = troop.update(elapsedTime, entities)
             replyTo ! EntityUpdated(ctx.self, entityUpdated)
             troop match
-              case _: AttackingEntity =>
-                entities.find(enemy => troop.asInstanceOf[AttackingEntity] canAttack enemy) match
+              case _: AttackingAbility =>
+                entities.find(enemy => troop.asInstanceOf[AttackingAbility] canAttack enemy) match
                   case Some(_) =>
                     if !timer.isTimerActive("Shooting")
                     then
-                      timer.startSingleTimer("Shooting", Shoot(replyTo), troop.asInstanceOf[AttackingEntity].fireRate.seconds)
+                      timer.startSingleTimer("Shooting", Shoot(replyTo), troop.asInstanceOf[AttackingAbility].fireRate.seconds)
                   case _ =>
               case _ =>
             standardBehaviour(entityUpdated.asInstanceOf[Troop])
 
           case Shoot(replyTo) =>
-            val bullet: Bullet = troop.asInstanceOf[AttackingEntity].bullet
+            val bullet: Bullet = troop.asInstanceOf[AttackingAbility].bullet
             val bulletActor = ctx.spawnAnonymous(BulletActor(bullet))
             replyTo ! EntitySpawned(bulletActor, bullet)
             Behaviors.same

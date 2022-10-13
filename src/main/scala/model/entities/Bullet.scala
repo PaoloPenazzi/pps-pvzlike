@@ -4,7 +4,7 @@ import model.common.DefaultValues.*
 import model.entities.WorldSpace.{Position, given}
 import scala.concurrent.duration.FiniteDuration
 
-trait Bullet extends MovingEntity with Entity:
+trait Bullet extends MovingAbility with Entity:
   override type UpdatedEntity = Bullet
   def damage: Int = damages(this)
   def shouldDisappearAfterHitting(entity: Entity): Boolean = true
