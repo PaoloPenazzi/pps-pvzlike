@@ -21,9 +21,9 @@ object GameLoopActor:
   val updateTime: FiniteDuration = FiniteDuration(16, "milliseconds")
 
   case class GameLoopActor(viewActor: ActorRef[ViewMessage],
-                           entities: Seq[(ActorRef[ModelMessage], Entity)] = List.empty):
+                           entities: Seq[(ActorRef[ModelMessage], Entity)] = List.empty) extends Controller with PauseAbility:
 
-    def standardBehavior: Behavior[Command] =
+    override def standardBehavior: Behavior[Command] =
       Behaviors.withTimers(timer =>
         Behaviors.receive((ctx, msg) => {
           msg match
@@ -56,7 +56,7 @@ object GameLoopActor:
             case _ => Behaviors.same
         }))
 
-    def pauseBehavior: Behavior[Command] =
+    override def pauseBehavior: Behavior[Command] =
       Behaviors.receive((ctx, msg) => {
         msg match
           case StopLoop() => Behaviors.stopped
