@@ -54,7 +54,7 @@ object GameLoopActor:
 
             case StopLoop() => Behaviors.stopped
 
-            case PauseLoop() => ???
+            case PauseLoop() => pauseBehavior(viewActor, entities)
 
             case UpdateLoop() =>
               detectCollision(entities).foreach{e => e._1._1 ! Collision(e._2._2, ctx.self); e._2._1 ! Collision(e._1._2, ctx.self)}
@@ -76,6 +76,20 @@ object GameLoopActor:
 
             case _ => Behaviors.same
     }))
+
+  def pauseBehavior(viewActor: ActorRef[ViewMessage],
+                    entities: Seq[(ActorRef[ModelMessage], Entity)]): Behavior[Command] =
+    Behaviors.receive((ctx, msg) => {
+      msg match
+        case StopLoop() => Behaviors.stopped
+
+        case ResumeLoop() =>
+          ctx.self ! UpdateLoop()
+          GameLoopActor(viewActor, entities)
+
+        case _ => Behaviors.same
+    })
+
 
   private def startTimer(timer: TimerScheduler[Command]): Unit = timer.startSingleTimer(UpdateLoop(), updateTime)
 
