@@ -1,3 +1,4 @@
+
 package model.actors
 
 import akka.actor.typed.scaladsl.Behaviors
@@ -14,10 +15,7 @@ object EnemyActor :
     Behaviors.withTimers(timer => {
       Behaviors.receive((ctx, msg) => {
         msg match
-          case Update(timeElapsed, entities, replyTo) =>
-            val updatedEnemy = enemy.update(timeElapsed, entities)
-            replyTo ! EntityUpdated(ctx.self, updatedEnemy)
-            moving(updatedEnemy)
+          case Update(timeElapsed, entities, replyTo) => ???
 
           case Shoot(replyTo) => ???
 
