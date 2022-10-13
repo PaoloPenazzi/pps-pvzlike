@@ -35,10 +35,10 @@ object TroopActor:
             replyTo ! EntitySpawned(bulletActor, bullet)
             Behaviors.same
 
-          case Collision(entity, replyTo) =>
-            val entityUpdated = troop.updateAfterCollision(entity)
+          case Collision(bullet, replyTo) =>
+            val entityUpdated = troop.updateAfterCollision(bullet)
             replyTo ! EntityUpdated(ctx.self, entityUpdated)
-            standardBehaviour(entityUpdated.asInstanceOf[Troop])
+            standardBehaviour(entityUpdated)
 
           case _ => Behaviors.same
       })
