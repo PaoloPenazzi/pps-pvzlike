@@ -11,23 +11,30 @@ import scala.concurrent.duration.FiniteDuration
 trait Enemy extends MovingEntity with AttackingEntity with Troop:
   override type UpdatedEntity = Enemy
 
-  override def interest: Entity => Boolean =
-    case turret: Turret => turret.position.y == position.y
-    case _ => false
 
 /**
  * Basic Enemy.
  */
-class Zombie(override val position: Position, override val life: Int = 100) extends Enemy:
+class Zombie(override val position: Position,
+             override val life: Int = 100,
+             override val velocity: Float = -0.001) extends Enemy:
 
-  override def updateAfterCollision(entity: Entity): Enemy = ???
-   
-  override def velocity: Float = -0.001
-  
+  import model.entities.Turret
+  import model.entities.Seed
+
+  override def updateAfterCollision(entity: Entity): Enemy =
+    entity match
+      case seed: Seed => Zombie(position, life - seed.damage, velocity)
+      case _ => Zombie(position, life, velocity)
+
+  override def interest: Entity => Boolean =
+    case turret: Turret => (turret.position.y == position.y) && position.x - turret.position.x.toInt <= range)
+    case _ => false
+
   override def getBullet: Bullet = new Seed(position)
 
   override def canAttack(turret: Entity): Boolean =
-    interest(turret) && position.x - turret.position.x.toInt <= range
+    interest(turret)
 
   override def update(elapsedTime: FiniteDuration, interests: List[Entity]): Enemy =
     Zombie(updatePosition(elapsedTime))
