@@ -19,7 +19,7 @@ trait Enemy extends MovingAbility with AttackingAbility with Troop:
  */
 class Zombie(override val position: Position, override val life: Int = 100) extends Enemy:
 
-  override def collideWith(bullet: Bullet): Enemy = ???
+  override def collideWith(bullet: Bullet): Option[Enemy] = ???
    
   override def velocity: Float = -0.001
   

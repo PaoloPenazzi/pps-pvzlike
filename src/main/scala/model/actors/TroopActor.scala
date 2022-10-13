@@ -2,9 +2,10 @@ package model.actors
 
 import akka.actor.typed.Behavior
 import akka.actor.typed.scaladsl.Behaviors
-import controller.GameLoopActor.GameLoopCommands.{EntitySpawned, EntityUpdated}
+import controller.GameLoopActor.GameLoopCommands.{EntityDead, EntitySpawned, EntityUpdated}
 import model.entities.*
 import model.actors.BulletActor
+
 import concurrent.duration.DurationInt
 
 object TroopActor:
@@ -32,9 +33,14 @@ object TroopActor:
             Behaviors.same
 
           case Collision(bullet, replyTo) =>
-            val entityUpdated = troop collideWith bullet
-            replyTo ! EntityUpdated(ctx.self, entityUpdated)
-            standardBehaviour(entityUpdated)
+            val entityUpdated: Option[Troop] = troop collideWith bullet
+            entityUpdated match
+              case None =>
+                replyTo ! EntityDead(ctx.self, troop)
+                Behaviors.stopped
+              case _ =>
+                replyTo ! EntityUpdated(ctx.self, entityUpdated.get)
+                standardBehaviour(entityUpdated.get)
 
           case _ => Behaviors.same
       })

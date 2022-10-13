@@ -6,21 +6,24 @@ import model.entities.{AttackingAbility, Bullet, Enemy, Entity, Seed, Turret, Zo
 
 import scala.concurrent.duration.FiniteDuration
 
-trait Turret extends Entity with AttackingAbility with Troop:
+trait Turret extends Entity with AttackingAbility with Troop :
   def cost: Int = costs(this)
 
   override def isInterestedIn: Entity => Boolean =
-      case enemy: Enemy => enemy.position.y == position.y
-      case _ => false
+    case enemy: Enemy => enemy.position.y == position.y
+    case _ => false
 
 /**
  * Basic turret.
  *
  * @param position The position in which the plant is placed by the player.
  */
-case class Plant(override val position: Position)(override val life: Int = 300) extends Turret:
-  override def collideWith(bullet: Bullet): Turret =
-    Plant(position)(life - bullet.damage)
+case class Plant(override val position: Position)(override val life: Int = 300) extends Turret :
+  override def collideWith(bullet: Bullet): Option[Turret] =
+    val newLife = life - bullet.damage
+    newLife match
+      case 0 => None
+      case _ => Some(Plant(position)(newLife))
 
   override def bullet: Bullet = new Seed(position)
 
