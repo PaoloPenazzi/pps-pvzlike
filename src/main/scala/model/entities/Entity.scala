@@ -21,7 +21,7 @@ trait MovingAbility extends Entity:
 
 trait Troop extends Entity:
   override type UpdatedEntity = Troop
-  def updateAfterCollision(entity: Entity): UpdatedEntity
+  def collideWith(bullet: Bullet): UpdatedEntity
   def life: Int
 
 trait AttackingAbility extends Troop :

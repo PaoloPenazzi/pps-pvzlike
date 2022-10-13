@@ -36,7 +36,7 @@ object TroopActor:
             Behaviors.same
 
           case Collision(bullet, replyTo) =>
-            val entityUpdated = troop.updateAfterCollision(bullet)
+            val entityUpdated = troop collideWith bullet
             replyTo ! EntityUpdated(ctx.self, entityUpdated)
             standardBehaviour(entityUpdated)
 
