@@ -19,12 +19,7 @@ trait MovingAbility extends Entity:
   def updatePosition(elapsedTime: FiniteDuration): Position =
     (position.y, position.x + (elapsedTime.length * velocity))
 
-trait Troop extends Entity:
-  override type UpdatedEntity = Troop
-  def collideWith(bullet: Bullet): UpdatedEntity
-  def life: Int
-
-trait AttackingAbility extends Troop :
+trait AttackingAbility extends Entity :
   /**
    * filters to keep only all game entities present on the same lane
    * @return true if it is of his own interest
@@ -33,4 +28,10 @@ trait AttackingAbility extends Troop :
   def canAttack(entity: Entity): Boolean
   def fireRate: Int = fireRates(this)
   def range: Int = ranges(this)
+  
+trait Troop extends Entity with AttackingAbility:
+  override type UpdatedEntity = Troop
+  def collideWith(bullet: Bullet): UpdatedEntity
+  def life: Int
+
 

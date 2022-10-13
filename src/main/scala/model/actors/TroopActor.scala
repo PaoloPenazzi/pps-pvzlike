@@ -18,15 +18,11 @@ object TroopActor:
           case Update(elapsedTime, entities, replyTo) =>
             val entityUpdated: Entity = troop.update(elapsedTime, entities)
             replyTo ! EntityUpdated(ctx.self, entityUpdated)
-            troop match
-              case _: AttackingAbility =>
-                entities.find(enemy => troop.asInstanceOf[AttackingAbility] canAttack enemy) match
+                entities.find(enemy => troop canAttack enemy) match
                   case Some(_) =>
                     if !timer.isTimerActive("Shooting")
-                    then
-                      timer.startSingleTimer("Shooting", Shoot(replyTo), troop.asInstanceOf[AttackingAbility].fireRate.seconds)
+                    then timer.startSingleTimer("Shooting", Shoot(replyTo), troop.fireRate.seconds)
                   case _ =>
-              case _ =>
             standardBehaviour(entityUpdated.asInstanceOf[Troop])
 
           case Shoot(replyTo) =>
