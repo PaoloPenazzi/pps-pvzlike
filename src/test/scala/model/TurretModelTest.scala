@@ -9,6 +9,7 @@ import WorldSpace.{LanesLength, given}
 
 class TurretModelTest extends AnyFlatSpec with should.Matchers:
   val testTurret: Turret = Plant(1, LanesLength / 2)()
+  val lowHealthTurret: Turret = Plant(1, LanesLength)(25)
   val dummyTurret1: Turret = Plant(2, LanesLength)()
   val dummyZombie1: Enemy = Zombie((1, LanesLength))
   val dummyZombie2: Enemy = Zombie((2, LanesLength))
@@ -25,4 +26,8 @@ class TurretModelTest extends AnyFlatSpec with should.Matchers:
   "A turret" should "lose HPs after getting hitted" in {
     val updatedTurret = testTurret collideWith dummyBullet
     assert(updatedTurret.get.life < testTurret.life)
+  }
+  "A turret" should "die if reaches 0 HP" in {
+    val updatedTurret = lowHealthTurret collideWith dummyBullet
+    assert(updatedTurret.isEmpty)
   }
