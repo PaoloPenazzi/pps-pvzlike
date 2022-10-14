@@ -77,9 +77,9 @@ object GameLoopActor:
       for
         e1 <- entities
         e2 <- entities
+        if e1 != e2
         if e1._2.isInstanceOf[Bullet]
-        if e1._1 != e2._1
-      // if e1._2.collideWith(e2._2)
+        if e1._2.asInstanceOf[Bullet] checkCollisionWith e2._2
       yield (e1, e2)
 
     def detectInterest =
@@ -88,7 +88,7 @@ object GameLoopActor:
       yield
         (e1._1, for
           e2 <- entities
-          if e1._1 != e2._1
+          if e1 != e2
           if e1._2 isInterestedIn e2._2
         yield e2._2)
 
