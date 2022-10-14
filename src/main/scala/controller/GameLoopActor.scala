@@ -68,12 +68,12 @@ object GameLoopActor:
           case _ => Behaviors.same
       })
 
-    def startTimer(timer: TimerScheduler[Command]): Unit = timer.startSingleTimer(UpdateLoop(), updateTime)
+    private def startTimer(timer: TimerScheduler[Command]): Unit = timer.startSingleTimer(UpdateLoop(), updateTime)
 
-    def createWave(ctx: ActorContext[Command]) =
+    private def createWave(ctx: ActorContext[Command]) =
       waveGenerator.generateNextWave.enemies.map(e => (ctx.spawnAnonymous(EnemyActor(e)), e))
 
-    def detectCollision =
+    private def detectCollision =
       for
         e1 <- entities
         e2 <- entities
@@ -82,7 +82,7 @@ object GameLoopActor:
         if e1._2.asInstanceOf[Bullet] checkCollisionWith e2._2
       yield (e1, e2)
 
-    def detectInterest =
+    private def detectInterest =
       for
         e1 <- entities
       yield
@@ -92,12 +92,12 @@ object GameLoopActor:
           if e1._2 isInterestedIn e2._2
         yield e2._2)
 
-    def isWaveOver: Boolean = entities map (_._2) collect { case enemy: Enemy => enemy } isEmpty
+    private def isWaveOver: Boolean = entities map (_._2) collect { case enemy: Enemy => enemy } isEmpty
 
-    def updateAll(ctx: ActorContext[Command], interests: Seq[(ActorRef[ModelMessage], Seq[Entity])]): Unit =
+    private def updateAll(ctx: ActorContext[Command], interests: Seq[(ActorRef[ModelMessage], Seq[Entity])]): Unit =
       interests.foreach(e => e._1 ! Update(updateTime, e._2.toList, ctx.self))
 
-    def render(ctx: ActorContext[Command], renderedEntities: List[Entity]): Unit = viewActor ! Render(renderedEntities, ctx.self)
+    private def render(ctx: ActorContext[Command], renderedEntities: List[Entity]): Unit = viewActor ! Render(renderedEntities, ctx.self)
 
   object GameLoopCommands:
     sealed trait GameLoopCommand extends Command
