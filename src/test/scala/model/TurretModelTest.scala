@@ -8,9 +8,9 @@ import scala.language.implicitConversions
 import WorldSpace.{LanesLength, given}
 
 class TurretModelTest extends AnyFlatSpec with should.Matchers:
-  val testTurret: Turret = Plant(1, LanesLength / 2)()
-  val lowHealthTurret: Turret = Plant(1, LanesLength)(25)
-  val dummyTurret1: Turret = Plant(2, LanesLength)()
+  val testTurret: Turret = PeaShooter(1, LanesLength / 2)()
+  val lowHealthTurret: Turret = PeaShooter(1, LanesLength)(25)
+  val dummyTurret1: Turret = PeaShooter(2, LanesLength)()
   val dummyZombie1: Enemy = Zombie((1, LanesLength))
   val dummyZombie2: Enemy = Zombie((2, LanesLength))
   val dummyBullet: Bullet = PeaBullet(0,0)
