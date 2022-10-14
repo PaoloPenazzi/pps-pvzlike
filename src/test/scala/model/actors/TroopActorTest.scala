@@ -67,7 +67,7 @@ class TroopActorTest extends AnyWordSpec with BeforeAndAfterAll with Matchers :
     "colliding with a bullet" should {
       "update himself" in {
         val inbox = TestInbox[Command]()
-        turretActor run Collision(Seed(1,1), inbox.ref)
+        turretActor run Collision(PeaBullet(1,1), inbox.ref)
         assert(inbox.hasMessages)
         val message = inbox.receiveMessage()
         assert(message.isInstanceOf[EntityUpdated[Entity]])
@@ -76,7 +76,7 @@ class TroopActorTest extends AnyWordSpec with BeforeAndAfterAll with Matchers :
     "colliding with a bullet" should {
       "die if has 0 HPs" in {
         val inbox = TestInbox[Command]()
-        lowHealthTurretActor run Collision(Seed(1, 1), inbox.ref)
+        lowHealthTurretActor run Collision(PeaBullet(1, 1), inbox.ref)
         assert(inbox.hasMessages)
         val message = inbox.receiveMessage()
         assert(message.isInstanceOf[EntityDead[Entity]])

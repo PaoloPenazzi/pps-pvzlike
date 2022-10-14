@@ -5,7 +5,7 @@ import akka.actor.typed.scaladsl.Behaviors
 import controller.Command
 import controller.GameLoopActor.GameLoopCommands.EntitySpawned
 import model.actors
-import model.entities.{Enemy, Entity, Seed}
+import model.entities.{Enemy, Entity, PeaBullet}
 import scala.concurrent.duration.DurationInt
 import model.entities.{Bullet, Turret}
 
@@ -28,7 +28,7 @@ object TurretActor:
               case _ => Behaviors.same
 
           case Shoot(replyTo) =>
-            val bullet = new Seed(turret.position)
+            val bullet = new PeaBullet(turret.position)
             val bulletActor = ctx.spawnAnonymous(BulletActor(bullet))
             replyTo ! EntitySpawned(bulletActor, bullet)
             Behaviors.same

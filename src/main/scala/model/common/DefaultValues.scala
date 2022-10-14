@@ -1,6 +1,6 @@
 package model.common
 
-import model.entities.{AttackingAbility, Bullet, Entity, Seed, Zombie, Plant, Turret}
+import model.entities.{AttackingAbility, Bullet, Entity, PeaBullet, Zombie, Plant, Turret}
 
 object DefaultValues:
   val width: Entity => Int =
@@ -17,7 +17,7 @@ object DefaultValues:
     case _  => 0
 
   val damages: Bullet => Int =
-    case _: Seed => 25
+    case _: PeaBullet => 25
     case _       => 0
 
   val ranges: AttackingAbility => Int =

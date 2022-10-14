@@ -13,7 +13,7 @@ class TurretModelTest extends AnyFlatSpec with should.Matchers:
   val dummyTurret1: Turret = Plant(2, LanesLength)()
   val dummyZombie1: Enemy = Zombie((1, LanesLength))
   val dummyZombie2: Enemy = Zombie((2, LanesLength))
-  val dummyBullet: Bullet = Seed(0,0)
+  val dummyBullet: Bullet = PeaBullet(0,0)
 
   "A turret" should "attack a zombie that is in range" in {
       testTurret canAttack dummyZombie1 shouldBe true

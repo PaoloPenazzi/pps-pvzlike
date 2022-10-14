@@ -2,7 +2,7 @@ package model.entities
 
 import model.common.DefaultValues.*
 import model.entities.WorldSpace.{Position, given}
-import model.entities.{AttackingAbility, Bullet, Enemy, Entity, Seed, Turret, Zombie}
+import model.entities.{AttackingAbility, Bullet, Enemy, Entity, PeaBullet, Turret, Zombie}
 
 import scala.concurrent.duration.FiniteDuration
 
@@ -25,7 +25,7 @@ case class Plant(override val position: Position)(override val life: Int = 300) 
       case x if x > 0 => Some(Plant(position)(newHPs))
       case _ => None
 
-  override def bullet: Bullet = new Seed(position)
+  override def bullet: Bullet = new PeaBullet(position)
 
   override def canAttack(enemy: Entity): Boolean =
     enemy.position.x.toInt <= range
