@@ -7,7 +7,7 @@ import akka.actor.typed.scaladsl.Behaviors
 import akka.testkit.{ImplicitSender, TestActors, TestKit}
 import controller.Command
 import controller.GameLoopActor.GameLoopCommands.{EntityDead, EntitySpawned, EntityUpdated, GameLoopCommand}
-import model.actors.{BulletActor, Shoot, TurretActor, Update}
+import model.actors.{BulletActor, Shoot, Update}
 import model.common.DefaultValues.*
 import model.entities.*
 import org.scalatest.BeforeAndAfterAll
