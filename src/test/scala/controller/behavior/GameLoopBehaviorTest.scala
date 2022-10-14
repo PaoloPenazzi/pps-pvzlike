@@ -8,25 +8,32 @@ import controller.GameLoopActor.*
 import controller.GameLoopActor.GameLoopCommands.*
 import controller.{Command, GameLoopActor, ViewActor, ViewMessage}
 import model.actors.{EnemyActor, ModelMessage}
-import model.entities.WorldSpace.{LanesLength, given}
 import model.entities.*
-import org.scalatest.BeforeAndAfterAll
+import model.entities.WorldSpace.{LanesLength, given}
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.funsuite.AnyFunSuite
 import org.scalatest.matchers.must.Matchers.must
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.matchers.should.Matchers.shouldNot
 import org.scalatest.wordspec.AnyWordSpec
+import org.scalatest.{BeforeAndAfter, BeforeAndAfterAll}
 import view.Game
 
 import scala.concurrent.duration.FiniteDuration
 import scala.language.postfixOps
 
-class GameLoopBehaviorTest extends AnyWordSpec with Matchers :
+class GameLoopBehaviorTest extends AnyWordSpec with BeforeAndAfter with Matchers :
 
-  val viewActor: TestInbox[ViewMessage] = TestInbox[ViewMessage]()
-  val gameLoopActor: BehaviorTestKit[Command] = BehaviorTestKit(controller.GameLoopActor.GameLoopActor(viewActor.ref).standardBehavior)
-  val updateTime: FiniteDuration = FiniteDuration(16, "milliseconds")
+  var viewActor: TestInbox[ViewMessage] = _
+  var gameLoopActor: BehaviorTestKit[Command] = _
+  var updateTime: FiniteDuration = _
+
+  before {
+    viewActor = TestInbox[ViewMessage]()
+    gameLoopActor = BehaviorTestKit(controller.GameLoopActor.GameLoopActor(viewActor.ref).standardBehavior)
+    updateTime = FiniteDuration(16, "milliseconds")
+  }
+
 
   "The GameLoop Actor" when {
     "created" should {
