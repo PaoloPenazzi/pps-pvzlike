@@ -43,7 +43,7 @@ object GameLoopActor:
               GameLoopActor(viewActor, newWave ++ entities).standardBehavior
 
             case EntityUpdated(ref, entity) =>
-              val newEntities = entities collect { case x if x._1 == ref => (ref, entity) }
+              val newEntities = entities collect { case x if x._1 == ref => (ref, entity) case x => x}
               render(ctx, newEntities.map(_._2).toList)
               GameLoopActor(viewActor, newEntities).standardBehavior
 
