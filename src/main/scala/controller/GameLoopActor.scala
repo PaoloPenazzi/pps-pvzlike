@@ -89,7 +89,7 @@ object GameLoopActor:
         (e1._1, for
           e2 <- entities
           if e1._1 != e2._1
-          if e1._2 filter e2._2
+          if e1._2 isInterestedIn e2._2
         yield e2._2)
 
     def isWaveOver: Boolean = entities map (_._2) collect { case enemy: Enemy => enemy } isEmpty
