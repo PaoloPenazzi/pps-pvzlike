@@ -20,10 +20,10 @@ trait Turret extends Entity with AttackingAbility with Troop :
  */
 case class Plant(override val position: Position)(override val life: Int = 300) extends Turret :
   override def collideWith(bullet: Bullet): Option[Turret] =
-    val newLife = life - bullet.damage
-    newLife match
-      case 0 => None
-      case _ => Some(Plant(position)(newLife))
+    val newHPs: Int = life - bullet.damage
+    newHPs match
+      case x if x > 0 => Some(Plant(position)(newHPs))
+      case _ => None
 
   override def bullet: Bullet = new Seed(position)
 
