@@ -17,7 +17,7 @@ object Screen:
 
   def apply(viewport: Viewport) = new Screen(viewport)
 
-class Screen(private val viewport: Viewport) extends ScreenAdapter with EntityRenderer:
+class Screen(private val viewport: Viewport) extends ScreenAdapter with EntityRenderer :
   private val world: World = World(Vector2(0, 0), false)
   private val camera = viewport.getCamera
   private var entities: List[Entity] = List.empty
@@ -31,8 +31,10 @@ class Screen(private val viewport: Viewport) extends ScreenAdapter with EntityRe
     Gdx.gl.glClearColor(0, 0, 0, 1)
     Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
 
-    batch.begin()
+    val background: Texture = new Texture(Gdx.files.classpath("assets/background/day.png"))
 
+    batch.begin()
+    batch.draw(background, -3, projectY(0), 25, 7.5f)
     entities.foreach(e => batch.draw(texture(e), projectX(e.position.x), projectY(e.position.y), width(e), height(e)))
 
     batch.end()
@@ -45,6 +47,7 @@ class Screen(private val viewport: Viewport) extends ScreenAdapter with EntityRe
   def renderEntities(entities: List[Entity]): Unit = this.entities = entities
 
   val texture: Entity => Texture = memoizedTexture
+
   def memoizedTexture: Entity => Texture =
     def texture(entity: Entity): Texture = new Texture(Gdx.files.classpath("assets/" + spriteName(entity)))
 
