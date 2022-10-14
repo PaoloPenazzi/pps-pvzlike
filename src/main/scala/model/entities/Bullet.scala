@@ -11,7 +11,7 @@ trait Bullet extends MovingAbility with Entity:
   def checkCollisionWith(entity: Entity): Boolean =
     entity.position.x - entity.width <= position.x + width
 
-class Seed(override val position: Position) extends Bullet:
+class PeaBullet(override val position: Position) extends Bullet:
   override def velocity: Float = 0.1
 
   override def checkCollisionWith(entity: Entity): Boolean =
@@ -20,4 +20,4 @@ class Seed(override val position: Position) extends Bullet:
       case _: Enemy => super.checkCollisionWith(entity)
 
   override def update(elapsedTime: FiniteDuration, interests: List[Entity]): Bullet =
-    Seed(updatePosition(elapsedTime))
+    PeaBullet(updatePosition(elapsedTime))
