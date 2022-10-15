@@ -4,10 +4,9 @@ import akka.actor.typed.*
 import akka.actor.typed.scaladsl.*
 import akka.actor.typed.scaladsl.adapter.*
 import model.{Generator, WaveGenerator}
-import model.actors.{EnemyActor, ModelMessage, TurretActor, Update}
-import model.entities.WorldSpace.LanesLength
-import model.entities.{Bullet, Enemy, Entity, Plant, Turret, WorldSpace}
-
+import model.actors.{EnemyActor, ModelMessage, TroopActor, Update}
+import model.entities.{Bullet, Enemy, Entity, PeaShooter, Turret}
+import model.entities.WorldSpace.{Position, given}
 
 import scala.collection.mutable
 import scala.concurrent.duration.FiniteDuration
@@ -52,7 +51,7 @@ object GameLoopActor:
     override def standardBehavior(): Behavior[Command] = Behaviors.receive((ctx, msg) => {
       msg match
         case StartLoop() =>
-          entities = entities :+ (ctx.spawnAnonymous(TurretActor(Plant(1,0)())), Plant(1,0)())
+          entities = entities :+ (ctx.spawnAnonymous(TroopActor(PeaShooter(1,0)())), PeaShooter(1,0)())
           createWave(ctx)
           startTimer(timer)
           Behaviors.same

@@ -21,9 +21,8 @@ trait Enemy extends MovingAbility with AttackingAbility with Troop:
 class Zombie(override val position: Position,
              override val life: Int = 100,
              override val velocity: Float = -0.001) extends Enemy:
-
-  import model.entities.Turret
-  import model.entities.Seed
+  
+  override def bullet: Bullet = new PeaBullet(position)
 
   override def canAttack(turret: Entity): Boolean =
     isInterestedIn(turret)
@@ -31,8 +30,6 @@ class Zombie(override val position: Position,
   override def collideWith(bullet: Bullet): Option[Enemy] =
     val newLife = life - bullet.damage
     if newLife <= 0 then None else Some(Zombie(position, newLife, velocity))
-  
-  override def bullet: Bullet = new Seed(position)
   
   override def update(elapsedTime: FiniteDuration, interests: List[Entity]): Enemy =
     Zombie(updatePosition(elapsedTime))

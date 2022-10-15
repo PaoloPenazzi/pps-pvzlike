@@ -1,3 +1,4 @@
+
 package model
 
 import model.entities.*
@@ -8,22 +9,26 @@ import scala.language.implicitConversions
 import WorldSpace.{LanesLength, given}
 
 class TurretModelTest extends AnyFlatSpec with should.Matchers:
+  val testTurret: Turret = PeaShooter(1, LanesLength / 2)()
+  val lowHealthTurret: Turret = PeaShooter(1, LanesLength)(25)
+  val dummyTurret1: Turret = PeaShooter(2, LanesLength)()
+  val dummyZombie1: Enemy = Zombie((1, LanesLength))
+  val dummyZombie2: Enemy = Zombie((2, LanesLength))
+  val dummyBullet: Bullet = PeaBullet(0,0)
+
   "A turret" should "attack a zombie that is in range" in {
-      val turret: Turret = Plant(1, LanesLength / 2)()
-      val zombie: Enemy = Zombie((1, LanesLength))
-      turret canAttack zombie shouldBe true
-  }
-  "A turret" should "not attack a zombie in another lane" in {
-      val turret: Turret = Plant((1, LanesLength / 2))
-      val zombie: Enemy = Zombie((2, LanesLength))
-      turret canAttack zombie shouldBe false
+    testTurret canAttack dummyZombie1 shouldBe true
   }
   "A turret" should "filter the interesting entities" in {
-    val turret: Turret = Plant(1, LanesLength / 2)()
-    val turretInList1: Turret = Plant(2, LanesLength)()
-    val turretInList2: Turret = Plant(2, LanesLength * 0.75)()
-    val zombieInList1: Enemy = Zombie((1, LanesLength))
-    val zombieInList2: Enemy = Zombie((2, LanesLength))
-    val entities: List[Entity] = List(turretInList1, turretInList2, zombieInList1, zombieInList2)
-    assert(entities.filter(turret.isInterestedIn) == List(zombieInList1))
+    val entities: List[Entity] = List(dummyTurret1, dummyZombie1, dummyZombie2)
+    val entitiesFiltered = entities.filter(testTurret.isInterestedIn)
+    assertResult(entitiesFiltered)(List(dummyZombie1))
+  }
+  "A turret" should "lose HPs after getting hitted" in {
+    val updatedTurret = testTurret collideWith dummyBullet
+    assert(updatedTurret.get.life < testTurret.life)
+  }
+  "A turret" should "die if reaches 0 HP" in {
+    val updatedTurret = lowHealthTurret collideWith dummyBullet
+    assert(updatedTurret.isEmpty)
   }
