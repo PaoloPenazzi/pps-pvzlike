@@ -33,8 +33,17 @@ class Screen(private val viewport: Viewport) extends ScreenAdapter with EntityRe
 
     val background: Texture = new Texture(Gdx.files.classpath("assets/background/day.png"))
 
+    val gamingWindowPlants: Texture = new Texture(Gdx.files.classpath("assets/gameWindow/pea-shooter-button.png"))
+    val gamingWindowSunFlowers: Texture = new Texture(Gdx.files.classpath("assets/gameWindow/sunflower-button.png"))
+    val gamingWindowSunPotato: Texture = new Texture(Gdx.files.classpath("assets/gameWindow/wallnut-button.png"))
+    val gamingWindowNumberOfSun: Texture = Texture(Gdx.files.classpath("assets/gameWindow/numberOfSun.png"))
+
     batch.begin()
     batch.draw(background, -3, projectY(0), 25, 7.5f)
+    batch.draw(gamingWindowPlants, 0, 7.5f, 1.5f, 1.5f)
+    batch.draw(gamingWindowSunFlowers, 1.5f, 7.5f, 1.5f, 1.5f)
+    batch.draw(gamingWindowSunPotato, 3, 7.5f, 1.5f, 1.5f)
+    batch.draw(gamingWindowNumberOfSun, 12, 7.5f, 4, 1.5f)
     entities.foreach(e => batch.draw(texture(e), projectX(e.position.x), projectY(e.position.y), width(e), height(e)))
 
     batch.end()
