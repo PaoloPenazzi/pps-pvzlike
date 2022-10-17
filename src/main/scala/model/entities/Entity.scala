@@ -20,7 +20,8 @@ trait MovingAbility extends Entity:
     (position.y, position.x + (elapsedTime.length * velocity))
 
 trait AttackingAbility extends Entity:
-  def bullet: Bullet
+  type BulletType <: Bullet
+  def bullet: BulletType
   def canAttack(entity: Entity): Boolean
   def fireRate: Int = fireRates(this)
   def range: Int = ranges(this)
