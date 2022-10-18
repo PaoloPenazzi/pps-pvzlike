@@ -30,7 +30,23 @@ object Troops:
     troopBuilder.build(bullet)
 
   case class BasePlant[B <: AdvancedBullet]() extends AdvancedTroop[AdvancedPeaBullet]
-    
+
   case class BaseZombie[B <: AdvancedBullet]() extends AdvancedTroop[AdvancedZombieBullet]
+
+  object TowerValues:
+    val sightRanges: Bullet => Int = {
+      case _: AdvancedPeaBullet => 100
+      case _: AdvancedZombieBullet => 10
+      case _ => 50
+    }
+
+    val fireRates: Bullet => Int = {
+      case _: AdvancedPeaBullet => 2
+      case _: AdvancedZombieBullet => 3
+      case _ => 1
+    }
+
+    val towerDefaultShotRatio: Int = 1
+    val towerDefaultSightRange: Int = 75
 
   // Troops ofType Peashooter inPosition (20,2)
