@@ -42,7 +42,15 @@ object Troops:
     override def withFireRate(rate: Int): AdvancedTroop[AdvancedPeaBullet] = copy(fireRate = rate)
     override def withSightRange(range: Int): AdvancedTroop[AdvancedPeaBullet] = copy(sightRange = range)
 
-  case class BaseZombie[B <: AdvancedBullet]() extends AdvancedTroop[AdvancedZombieBullet]
+
+  case class BaseZombie[B <: AdvancedBullet](
+                                              override val bullet: B,
+                                              override val fireRate: Int = towerDefaultFireRatio,
+                                              override val sightRange: Int = towerDefaultSightRange
+                                            ) extends AdvancedTroop[AdvancedZombieBullet]:
+    def this(baseZombie: BaseZombie[B]) = this(baseZombie.bullet, baseZombie.fireRate, baseZombie.sightRange)
+    override def withFireRate(rate: Int): AdvancedTroop[AdvancedZombieBullet] = copy(fireRate = rate)
+    override def withSightRange(range: Int): AdvancedTroop[AdvancedZombieBullet] = copy(sightRange = range)
 
   object TowerValues:
     val fireRates: Bullet => Int = {
