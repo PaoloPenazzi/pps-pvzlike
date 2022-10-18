@@ -15,6 +15,9 @@ object Troops:
     def withFireRate(rate: Int): AdvancedAttackingAbility
     def withSightRange(range: Int): AdvancedAttackingAbility
 
-  trait Troop extends AdvancedEntity with AdvancedAttackingAbility:
-    override def withFireRate(rate: Int): Troop
-    override def withSightRange(range: Int): Troop
+  trait Troop[B <: Bullet] extends AdvancedEntity with AdvancedAttackingAbility:
+    def bullet: B
+    override def withFireRate(rate: Int): Troop[B]
+    override def withSightRange(range: Int): Troop[B]
+
+  
