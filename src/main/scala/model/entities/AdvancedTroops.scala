@@ -20,4 +20,5 @@ object Troops:
     override def withFireRate(rate: Int): Troop[B]
     override def withSightRange(range: Int): Troop[B]
 
-  
+  trait TroopBuilder[B <: Bullet]:
+    def build(bullet: B): Troop[B]
