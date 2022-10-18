@@ -25,9 +25,9 @@ object Troops:
   trait TroopBuilder[B <: AdvancedBullet]:
     def build(bullet: B): AdvancedTroop[B]
   given TroopBuilder[AdvancedPeaBullet] with
-    override def build(bullet: AdvancedPeaBullet): AdvancedTroop[AdvancedPeaBullet] = BasePlant[AdvancedPeaBullet]()
+    override def build(bullet: AdvancedPeaBullet): AdvancedTroop[AdvancedPeaBullet] = BasePlant[AdvancedPeaBullet](_)
   given TroopBuilder[AdvancedZombieBullet] with
-    override def build(bullet: AdvancedZombieBullet): AdvancedTroop[AdvancedZombieBullet] = BaseZombie[AdvancedZombieBullet]()
+    override def build(bullet: AdvancedZombieBullet): AdvancedTroop[AdvancedZombieBullet] = BaseZombie[AdvancedZombieBullet](_)
 
   def ofType[B <: AdvancedBullet](using troopBuilder: TroopBuilder[B])(bullet: B): AdvancedTroop[B] =
     troopBuilder.build(bullet)
@@ -63,3 +63,4 @@ object Troops:
     val towerDefaultSightRange: Int = 75
 
   // Troops ofType Peashooter inPosition (20,2)
+
