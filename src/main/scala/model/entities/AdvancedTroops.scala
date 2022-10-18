@@ -1,6 +1,5 @@
 package model.entities
 
-
 object Troops:
 
   trait AdvancedBullet
@@ -20,5 +19,18 @@ object Troops:
     override def withFireRate(rate: Int): Troop[B]
     override def withSightRange(range: Int): Troop[B]
 
-  trait TroopBuilder[B <: Bullet]:
-    def build(bullet: B): Troop[B]
+  object TroopBuilders:
+    trait TroopBuilder[B <: Bullet]:
+      def build(b: B): Troop[B]
+    given TroopBuilder[AdvancedPeaBullet] with
+      override def build(bullet: AdvancedPeaBullet): Troop[AdvancedPeaBullet] = Troop[AdvancedPeaBullet]()
+    given TroopBuilder[AdvancedZombieBullet] with
+      override def build(bullet: AdvancedZombieBullet): Troop[AdvancedZombieBullet] = BaseZombie[AdvancedZombieBullet]()
+
+  import TroopBuilders.*
+
+  def ofType[B <: Bullet](using troopBuilder: TroopBuilder[Bullet])(bullet: B): Troop[B] =
+    troopBuilder.build(bullet)
+
+  case class BasePlant[B <: Bullet]() extends Troop[Bullet]
+  case class BaseZombie[B <: Bullet]() extends Troop[Bullet]
