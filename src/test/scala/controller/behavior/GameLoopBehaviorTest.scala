@@ -62,7 +62,7 @@ class GameLoopBehaviorTest extends AnyWordSpec with BeforeAndAfter with Matchers
       }
 
       "update the resources" in {
-        //TODO
+
       }
 
       "resume the loop" in {
