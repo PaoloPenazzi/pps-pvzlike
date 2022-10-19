@@ -9,5 +9,9 @@ class ResourceModelTest extends AnyFlatSpec with Matchers:
   val mockSun: Sun = Sun()
   val anotherMockSun: Sun = Sun()
 
+  "A sun" should "sum with other sun" in {
+    mockSun + anotherMockSun shouldBe Sun(50)
+  }
+
 
 
