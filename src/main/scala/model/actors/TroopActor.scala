@@ -17,14 +17,14 @@ object TroopActor:
       Behaviors.receive((ctx, msg) => {
         msg match
           case Update(elapsedTime, entities, replyTo) =>
-            val entityUpdated: Entity = troop.update(elapsedTime, entities)
+            val entityUpdated: Troop = troop.update(elapsedTime, entities)
             replyTo ! EntityUpdated(ctx.self, entityUpdated)
                 entities.find(enemy => troop canAttack enemy) match
                   case Some(_) =>
                     if !timer.isTimerActive("Shooting")
                     then timer.startSingleTimer("Shooting", Shoot(replyTo), troop.fireRate.seconds)
                   case _ =>
-            standardBehaviour(entityUpdated.asInstanceOf[Troop])
+            standardBehaviour(entityUpdated)
 
           case Shoot(replyTo) =>
             val bullet: Bullet = troop.asInstanceOf[AttackingAbility].bullet

@@ -20,4 +20,5 @@ object Game extends com.badlogic.gdx.Game:
     val system = ActorSystem(RootActor(), "launcher")
     system ! StartGame()
     
+   
 
