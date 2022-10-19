@@ -29,32 +29,39 @@ object GameLoopActor:
         Behaviors.receive((ctx, msg) => {
           msg match
             case StartLoop() =>
-              startTimer(timer)
-              GameLoopActor(viewActor, createWave(ctx)).standardBehavior
+              startLoopTimer(timer)
+              ctx.self ! StartResourcesLoop()
+              GameLoopActor(viewActor, createWave(ctx), metaData).standardBehavior
+
+            case StartResourcesLoop() =>
+              startResourcesTimer(timer)
+              GameLoopActor(viewActor, entities, metaData).standardBehavior
 
             case StopLoop() => Behaviors.stopped
 
-            case PauseLoop() => GameLoopActor(viewActor, entities).pauseBehavior
+            case PauseLoop() => GameLoopActor(viewActor, entities, metaData).pauseBehavior
 
-            case UpdateResources() => GameLoopActor(viewActor, entities, updateResources).standardBehavior
+            case UpdateResources() =>
+              startResourcesTimer(timer)
+              GameLoopActor(viewActor, entities, updateResources).standardBehavior
 
             case UpdateLoop() =>
               detectCollision foreach { e => e._1._1 ! Collision(e._2._2, ctx.self); e._2._1 ! Collision(e._1._2, ctx.self) }
               updateAll(ctx, detectInterest)
               val newWave: List[(ActorRef[ModelMessage], Entity)] = if isWaveOver then createWave(ctx) else List.empty
-              startTimer(timer)
-              GameLoopActor(viewActor, newWave ++ entities).standardBehavior
+              startLoopTimer(timer)
+              GameLoopActor(viewActor, newWave ++ entities, metaData).standardBehavior
 
             case EntityUpdated(ref, entity) =>
               val newEntities = entities collect { case x if x._1 == ref => (ref, entity) case x => x}
               render(ctx, newEntities.map(_._2).toList)
-              GameLoopActor(viewActor, newEntities).standardBehavior
+              GameLoopActor(viewActor, newEntities, metaData).standardBehavior
 
             case EntitySpawned(ref, entity) =>
-              GameLoopActor(viewActor, entities :+ (ref, entity)).standardBehavior
+              GameLoopActor(viewActor, entities :+ (ref, entity), metaData).standardBehavior
 
             case EntityDead(ref) =>
-              GameLoopActor(viewActor, entities filter { e => e._1 != ref }).standardBehavior
+              GameLoopActor(viewActor, entities filter { e => e._1 != ref }, metaData).standardBehavior
 
             case _ => Behaviors.same
         }))
@@ -66,12 +73,14 @@ object GameLoopActor:
 
           case ResumeLoop() =>
             ctx.self ! UpdateLoop()
-            GameLoopActor(viewActor, entities).standardBehavior
+            GameLoopActor(viewActor, entities, metaData).standardBehavior
 
           case _ => Behaviors.same
       })
 
-    private def startTimer(timer: TimerScheduler[Command]): Unit = timer.startSingleTimer(UpdateLoop(), updateTime)
+    private def startLoopTimer(timer: TimerScheduler[Command]): Unit = timer.startSingleTimer(UpdateLoop(), updateTime)
+
+    private def startResourcesTimer(timer: TimerScheduler[Command]): Unit = timer.startSingleTimer(UpdateResources(), metaData.velocity.speed)
 
     private def updateResources: MetaData = MetaData(metaData.sun + Sun(), metaData.availableEntities, metaData.velocity)
 
@@ -108,6 +117,8 @@ object GameLoopActor:
     sealed trait GameLoopCommand extends Command
 
     case class StartLoop() extends GameLoopCommand
+
+    case class StartResourcesLoop() extends GameLoopCommand
 
     case class StopLoop() extends GameLoopCommand
 
