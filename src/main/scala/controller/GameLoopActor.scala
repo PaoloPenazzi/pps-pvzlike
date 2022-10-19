@@ -13,6 +13,8 @@ import scala.collection.mutable
 import scala.concurrent.duration.FiniteDuration
 import scala.language.postfixOps
 
+import scala.language.implicitConversions
+import WorldSpace.given
 object GameLoopActor:
 
   val waveGenerator: WaveGenerator = Generator()
@@ -29,7 +31,7 @@ object GameLoopActor:
           msg match
             case StartLoop() =>
               startTimer(timer)
-              GameLoopActor(viewActor, createWave(ctx)).standardBehavior
+              GameLoopActor(viewActor, createWave(ctx) :+ (ctx.spawnAnonymous(TroopActor(PeaShooter((1,0)))), PeaShooter((1,0)))).standardBehavior
 
             case StopLoop() => Behaviors.stopped
 
@@ -71,7 +73,7 @@ object GameLoopActor:
     private def startTimer(timer: TimerScheduler[Command]): Unit = timer.startSingleTimer(UpdateLoop(), updateTime)
 
     private def createWave(ctx: ActorContext[Command]) =
-      waveGenerator.generateNextWave.enemies.map(e => (ctx.spawnAnonymous(EnemyActor(e)), e))
+      waveGenerator.generateNextWave.enemies.map(e => (ctx.spawnAnonymous(TroopActor(e)), e))
 
     private def detectCollision =
       for

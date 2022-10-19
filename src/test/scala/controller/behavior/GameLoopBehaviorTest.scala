@@ -7,7 +7,7 @@ import akka.actor.typed.{ActorRef, Behavior}
 import controller.GameLoopActor.*
 import controller.GameLoopActor.GameLoopCommands.*
 import controller.{Command, GameLoopActor, ViewActor, ViewMessage}
-import model.actors.{EnemyActor, ModelMessage}
+import model.actors.{ModelMessage}
 import model.entities.*
 import model.entities.WorldSpace.{LanesLength, given}
 import org.scalatest.flatspec.AnyFlatSpec

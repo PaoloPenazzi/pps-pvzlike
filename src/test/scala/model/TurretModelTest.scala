@@ -5,19 +5,21 @@ import model.entities.*
 import org.scalatest.*
 import org.scalatest.flatspec.*
 import org.scalatest.matchers.*
+
 import scala.language.implicitConversions
 import WorldSpace.{LanesLength, given}
+import model.entities.TroopState.{Attacking, Dead}
 
 class TurretModelTest extends AnyFlatSpec with should.Matchers:
-  val testTurret: Turret = PeaShooter(1, LanesLength / 2)()
-  val lowHealthTurret: Turret = PeaShooter(1, LanesLength)(25)
-  val dummyTurret1: Turret = PeaShooter(2, LanesLength)()
+  val testTurret: Turret = PeaShooter((1, LanesLength / 2))
+  val lowHealthTurret: Turret = PeaShooter((1, LanesLength))
+  val dummyTurret1: Turret = PeaShooter((2, LanesLength))
   val dummyZombie1: Enemy = Zombie((1, LanesLength))
   val dummyZombie2: Enemy = Zombie((2, LanesLength))
   val dummyBullet: Bullet = PeaBullet(0,0)
 
   "A turret" should "attack a zombie that is in range" in {
-    testTurret canAttack dummyZombie1 shouldBe true
+    testTurret.state shouldBe Attacking
   }
   "A turret" should "filter the interesting entities" in {
     val entities: List[Entity] = List(dummyTurret1, dummyZombie1, dummyZombie2)
@@ -26,9 +28,9 @@ class TurretModelTest extends AnyFlatSpec with should.Matchers:
   }
   "A turret" should "lose HPs after getting hitted" in {
     val updatedTurret = testTurret collideWith dummyBullet
-    assert(updatedTurret.get.life < testTurret.life)
+    updatedTurret.life should be < testTurret.life
   }
   "A turret" should "die if reaches 0 HP" in {
     val updatedTurret = lowHealthTurret collideWith dummyBullet
-    assert(updatedTurret.isEmpty)
+    updatedTurret.state shouldBe Dead
   }
