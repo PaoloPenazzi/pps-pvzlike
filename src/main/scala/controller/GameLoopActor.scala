@@ -21,7 +21,8 @@ object GameLoopActor:
   val updateTime: FiniteDuration = FiniteDuration(16, "milliseconds")
 
   case class GameLoopActor(viewActor: ActorRef[ViewMessage],
-                           entities: Seq[(ActorRef[ModelMessage], Entity)] = List.empty) extends Controller with PauseAbility:
+                           entities: Seq[(ActorRef[ModelMessage], Entity)] = List.empty,
+                           metaData: MetaData = MetaData()) extends Controller with PauseAbility:
 
     override def standardBehavior: Behavior[Command] =
       Behaviors.withTimers(timer =>
@@ -34,6 +35,8 @@ object GameLoopActor:
             case StopLoop() => Behaviors.stopped
 
             case PauseLoop() => GameLoopActor(viewActor, entities).pauseBehavior
+
+            case UpdateResources() => GameLoopActor(viewActor, entities, updateResources).standardBehavior
 
             case UpdateLoop() =>
               detectCollision foreach { e => e._1._1 ! Collision(e._2._2, ctx.self); e._2._1 ! Collision(e._1._2, ctx.self) }
@@ -69,6 +72,8 @@ object GameLoopActor:
       })
 
     private def startTimer(timer: TimerScheduler[Command]): Unit = timer.startSingleTimer(UpdateLoop(), updateTime)
+
+    private def updateResources: MetaData = MetaData(metaData.sun + Sun(), metaData.availableEntities, metaData.velocity)
 
     private def createWave(ctx: ActorContext[Command]) =
       waveGenerator.generateNextWave.enemies.map(e => (ctx.spawnAnonymous(EnemyActor(e)), e))
@@ -111,6 +116,8 @@ object GameLoopActor:
     case class ResumeLoop() extends GameLoopCommand
 
     case class UpdateLoop() extends GameLoopCommand
+
+    case class UpdateResources() extends GameLoopCommand
 
     case class EntityDead[E <: Entity](ref: ActorRef[ModelMessage]) extends GameLoopCommand
 
