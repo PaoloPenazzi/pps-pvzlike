@@ -62,10 +62,6 @@ class GameLoopBehaviorTest extends AnyWordSpec with BeforeAndAfter with Matchers
         gameLoopActor expectEffect Effect.TimerScheduled(UpdateResources(), UpdateResources(), resourcesTime, Effect.TimerScheduled.SingleMode, false)(null)
       }
 
-      "update the resources" in {
-
-      }
-
       "resume the loop" in {
         gameLoopActor run PauseLoop()
         val prevBehavior = gameLoopActor.currentBehavior

@@ -4,7 +4,7 @@ import akka.actor.typed.*
 import akka.actor.typed.scaladsl.*
 import controller.GameLoopActor.GameLoopCommands.{StartLoop, UpdateLoop}
 import model.actors.*
-import model.common.Utilities.{MetaData, Sun}
+import model.common.Utilities.{MetaData, Sun, Velocity}
 import model.entities.*
 import model.{Generator, WaveGenerator}
 
@@ -40,6 +40,8 @@ object GameLoopActor:
             case UpdateResources() =>
               startTimer(timer, UpdateResources())
               GameLoopActor(viewActor, entities, metaData + Sun.Normal.value).standardBehavior
+
+            case ChangeVelocity(velocity) => GameLoopActor(viewActor, entities, metaData >>> velocity).standardBehavior
 
             case UpdateLoop() =>
               detectCollision foreach { e => e._1._1 ! Collision(e._2._2, ctx.self); e._2._1 ! Collision(e._1._2, ctx.self) }
@@ -121,6 +123,8 @@ object GameLoopActor:
     case class UpdateLoop() extends GameLoopCommand
 
     case class UpdateResources() extends GameLoopCommand
+
+    case class ChangeVelocity(velocity: Velocity) extends GameLoopCommand
 
     case class EntityDead[E <: Entity](ref: ActorRef[ModelMessage]) extends GameLoopCommand
 
