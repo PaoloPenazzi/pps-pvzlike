@@ -3,11 +3,11 @@ package controller.integration
 import akka.actor.testkit.typed.scaladsl.{BehaviorTestKit, TestInbox}
 import akka.actor.typed.ActorRef
 import model.entities.*
+import model.common.Utilities.*
 import controller.{Command, Render, ViewMessage}
 import controller.GameLoopActor.{GameLoopActor, updateTime}
 import controller.GameLoopActor.GameLoopCommands.{EntityUpdated, StartLoop, StartResourcesLoop, UpdateLoop}
 import model.actors.{Collision, ModelMessage, Update}
-import model.entities.*
 import model.entities.WorldSpace.LanesLength
 import org.scalatest.BeforeAndAfter
 import org.scalatest.matchers.should.Matchers

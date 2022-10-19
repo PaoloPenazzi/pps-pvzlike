@@ -2,8 +2,8 @@ package controller
 
 import akka.actor.typed.Behavior
 import akka.actor.typed.scaladsl.Behaviors
-import controller.GameLoopActor.GameLoopCommands.StartLoop
 import controller.GameLoopActor.GameLoopActor
+import controller.GameLoopActor.GameLoopCommands.StartLoop
 import view.Game
 
 object RootActor:

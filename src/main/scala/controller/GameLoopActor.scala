@@ -2,9 +2,9 @@ package controller
 
 import akka.actor.typed.*
 import akka.actor.typed.scaladsl.*
-import akka.actor.typed.scaladsl.adapter.*
 import controller.GameLoopActor.GameLoopCommands.{StartLoop, UpdateLoop}
 import model.actors.*
+import model.common.Utilities.{MetaData, Sun}
 import model.entities.*
 import model.{Generator, WaveGenerator}
 
@@ -43,7 +43,8 @@ object GameLoopActor:
 
             case UpdateResources() =>
               startResourcesTimer(timer)
-              GameLoopActor(viewActor, entities, updateResources).standardBehavior
+              GameLoopActor(viewActor, entities,
+                MetaData(metaData.sun + Sun.Normal.value, metaData.turrets, metaData.velocity)).standardBehavior
 
             case UpdateLoop() =>
               detectCollision foreach { e => e._1._1 ! Collision(e._2._2, ctx.self); e._2._1 ! Collision(e._1._2, ctx.self) }
@@ -57,8 +58,10 @@ object GameLoopActor:
               render(ctx, newEntities.map(_._2).toList)
               GameLoopActor(viewActor, newEntities, metaData).standardBehavior
 
-            case EntitySpawned(ref, entity) =>
-              GameLoopActor(viewActor, entities :+ (ref, entity), metaData).standardBehavior
+            case EntitySpawned(ref, entity) => entity match
+              case turret: Turret if metaData.sun < turret.cost => GameLoopActor(viewActor, entities, metaData).standardBehavior
+              case turret: Turret => GameLoopActor(viewActor, entities :+ (ref, entity), MetaData(metaData.sun - turret.cost, metaData.turrets, metaData.velocity)).standardBehavior
+              case _ => GameLoopActor(viewActor, entities :+ (ref, entity), metaData).standardBehavior
 
             case EntityDead(ref) =>
               GameLoopActor(viewActor, entities filter { e => e._1 != ref }, metaData).standardBehavior
@@ -81,8 +84,6 @@ object GameLoopActor:
     private def startLoopTimer(timer: TimerScheduler[Command]): Unit = timer.startSingleTimer(UpdateLoop(), updateTime)
 
     private def startResourcesTimer(timer: TimerScheduler[Command]): Unit = timer.startSingleTimer(UpdateResources(), metaData.velocity.speed)
-
-    private def updateResources: MetaData = MetaData(metaData.sun + Sun(), metaData.availableEntities, metaData.velocity)
 
     private def createWave(ctx: ActorContext[Command]) =
       waveGenerator.generateNextWave.enemies.map(e => (ctx.spawnAnonymous(EnemyActor(e)), e))

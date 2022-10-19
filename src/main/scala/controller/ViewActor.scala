@@ -1,13 +1,13 @@
 package controller
 
-import akka.actor.typed.Behavior
+import akka.actor.typed.{ActorRef, Behavior}
 import akka.actor.typed.scaladsl.Behaviors
+import controller.Command
 import controller.GameLoopActor.GameLoopCommands.GameLoopCommand
 import model.actors.ModelMessage
+import model.common.Utilities.MetaData
+import model.entities.Entity
 import view.View.EntityRenderer
-import akka.actor.typed.ActorRef
-import controller.Command
-import model.entities.{Entity, MetaData}
 
 trait ViewMessage
 case class Render(entities: List[Entity], replyTo: ActorRef[GameLoopCommand], metaData: MetaData) extends ViewMessage
