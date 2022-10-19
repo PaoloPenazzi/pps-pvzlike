@@ -27,4 +27,3 @@ object Utilities:
     @targetName("change velocity")
     def >>>(newVelocity: Velocity): MetaData = MetaData(sun, newVelocity)
 
-    
