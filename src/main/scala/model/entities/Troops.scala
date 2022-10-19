@@ -1,6 +1,6 @@
 package model.entities
 
-import model.entities.Troops.{BaseCake, BaseSlice}
+import model.entities.Troops.{AdvancedPeaBullet, AdvancedPeashooter}
 import model.entities.Troops.TowerValues.*
 
 import scala.language.{implicitConversions, postfixOps}
@@ -8,53 +8,57 @@ import scala.language.{implicitConversions, postfixOps}
 object Troops:
 
   trait AdvancedBullet
-  trait AdvancedPeaBullet extends AdvancedBullet
-  trait AdvancedZombieBullet extends AdvancedBullet
+  case class AdvancedPeaBullet() extends AdvancedBullet
+  case class AdvancedZombieBullet() extends AdvancedBullet
 
   trait AdvancedEntity
 
   trait AdvancedAttackingAbility:
     def fireRate: Int
     def sightRange: Int
+    def life: Int
     def withFireRate(rate: Int): AdvancedAttackingAbility
     def withSightRange(range: Int): AdvancedAttackingAbility
+    def withLife(hp: Int): AdvancedAttackingAbility
 
   trait AdvancedTroop[B <: AdvancedBullet] extends AdvancedEntity with AdvancedAttackingAbility:
     def bullet: B
     override def withFireRate(rate: Int): AdvancedTroop[B]
     override def withSightRange(range: Int): AdvancedTroop[B]
+    override def withLife(hp: Int): AdvancedTroop[B]
 
-  trait TroopBuilder[B <: AdvancedTroop]:
+  trait TroopBuilder[B <: AdvancedBullet]:
     def build(bullet: B): AdvancedTroop[B]
 
   given TroopBuilder[AdvancedPeaBullet] with
-    override def build(bullet: AdvancedPeaBullet): AdvancedTroop[AdvancedPeaBullet] = BasePlant[AdvancedPeaBullet](_)
+    override def build(bullet: AdvancedPeaBullet): AdvancedPeashooter[AdvancedPeaBullet] = AdvancedPeashooter[AdvancedPeaBullet]()
   given TroopBuilder[AdvancedZombieBullet] with
-    override def build(bullet: AdvancedZombieBullet): AdvancedTroop[AdvancedZombieBullet] = BaseZombie[AdvancedZombieBullet](_)
+    override def build(bullet: AdvancedZombieBullet): BaseZombie[AdvancedZombieBullet] = BaseZombie[AdvancedZombieBullet]()
 
-  def ofType[B <: AdvancedBullet](using troopBuilder: TroopBuilder[B])(bullet: B): AdvancedTroop[B] =
+  def shooting[B <: AdvancedBullet](bullet: B)(using troopBuilder: TroopBuilder[B]): AdvancedTroop[B] =
     troopBuilder.build(bullet)
 
-  case class BasePlant[B <: AdvancedBullet](
-                                             override val bullet: B,
+  case class AdvancedPeashooter[B <: AdvancedBullet](
                                              override val fireRate: Int = towerDefaultFireRatio,
-                                             override val sightRange: Int = towerDefaultSightRange
+                                             override val sightRange: Int = towerDefaultSightRange,
+                                             override val life: Int = towerDefaultLife
                                            ) extends AdvancedTroop[AdvancedPeaBullet]:
 
-    def this(basePlant: BasePlant[B]) = this(basePlant.bullet, basePlant.fireRate, basePlant.sightRange)
+    override def bullet: AdvancedPeaBullet = ???
     override def withFireRate(rate: Int): AdvancedTroop[AdvancedPeaBullet] = copy(fireRate = rate)
     override def withSightRange(range: Int): AdvancedTroop[AdvancedPeaBullet] = copy(sightRange = range)
-
+    override def withLife(hp: Int): AdvancedTroop[AdvancedPeaBullet] = copy(life = hp)
 
   case class BaseZombie[B <: AdvancedBullet](
-                                              override val bullet: B,
                                               override val fireRate: Int = towerDefaultFireRatio,
-                                              override val sightRange: Int = towerDefaultSightRange
+                                              override val sightRange: Int = towerDefaultSightRange,
+                                              override val life: Int = towerDefaultLife
                                             ) extends AdvancedTroop[AdvancedZombieBullet]:
 
-    // def this(baseZombie: BaseZombie[B]) = this(baseZombie.bullet, baseZombie.fireRate, baseZombie.sightRange)
+    override def bullet: AdvancedZombieBullet = ???
     override def withFireRate(rate: Int): AdvancedTroop[AdvancedZombieBullet] = copy(fireRate = rate)
     override def withSightRange(range: Int): AdvancedTroop[AdvancedZombieBullet] = copy(sightRange = range)
+    override def withLife(hp: Int): AdvancedTroop[AdvancedZombieBullet] = copy(life = hp)
 
   object TowerValues:
     val fireRates: AdvancedBullet => Int = {
@@ -62,7 +66,7 @@ object Troops:
       case _: AdvancedZombieBullet => 3
       case _ => 1
     }
-
+    val towerDefaultLife: Int = 100
     val towerDefaultFireRatio: Int = 1
     val towerDefaultSightRange: Int = 75
 
@@ -81,10 +85,9 @@ object Troops:
     override def build(): Cake = BaseCake()
 
   def of[B <: Apple](impl: B)(using builder: AppleBuilder[B]): B =
-    builder.build[B]
+    builder.build[B]*/
 
 @main
 def test(): Unit =
-  val newSlice: BaseSlice = Troops of BaseSlice()
-  val newCake: BaseCake = Troops of BaseCake()*/
+  val plant = Troops shooting AdvancedPeaBullet() withLife 200
 
