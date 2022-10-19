@@ -31,11 +31,11 @@ object GameLoopActor:
             case StartLoop() =>
               startLoopTimer(timer)
               ctx.self ! StartResourcesLoop()
-              GameLoopActor(viewActor, createWave(ctx), metaData).standardBehavior
+              GameLoopActor(viewActor, createWave(ctx)).standardBehavior
 
             case StartResourcesLoop() =>
               startResourcesTimer(timer)
-              GameLoopActor(viewActor, entities, metaData).standardBehavior
+              GameLoopActor(viewActor, entities).standardBehavior
 
             case StopLoop() => Behaviors.stopped
 
@@ -111,7 +111,7 @@ object GameLoopActor:
     private def updateAll(ctx: ActorContext[Command], interests: Seq[(ActorRef[ModelMessage], Seq[Entity])]): Unit =
       interests.foreach(e => e._1 ! Update(updateTime, e._2.toList, ctx.self))
 
-    private def render(ctx: ActorContext[Command], renderedEntities: List[Entity]): Unit = viewActor ! Render(renderedEntities, ctx.self)
+    private def render(ctx: ActorContext[Command], renderedEntities: List[Entity]): Unit = viewActor ! Render(renderedEntities, ctx.self, metaData)
 
   object GameLoopCommands:
     sealed trait GameLoopCommand extends Command

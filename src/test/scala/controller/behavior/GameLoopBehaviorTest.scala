@@ -8,6 +8,7 @@ import controller.GameLoopActor.*
 import controller.GameLoopActor.GameLoopCommands.*
 import controller.{Command, GameLoopActor, ViewActor, ViewMessage}
 import model.actors.{EnemyActor, ModelMessage}
+import model.common.Utilities.Velocity
 import model.entities.*
 import model.entities.WorldSpace.{LanesLength, given}
 import org.scalatest.flatspec.AnyFlatSpec
@@ -26,12 +27,12 @@ class GameLoopBehaviorTest extends AnyWordSpec with BeforeAndAfter with Matchers
 
   var viewActor: TestInbox[ViewMessage] = _
   var gameLoopActor: BehaviorTestKit[Command] = _
-  var updateTime: FiniteDuration = _
+  var updateTime: FiniteDuration = FiniteDuration(16, "milliseconds")
+  val resourcesTime: FiniteDuration = Velocity.Normal.speed
 
   before {
     viewActor = TestInbox[ViewMessage]()
     gameLoopActor = BehaviorTestKit(controller.GameLoopActor.GameLoopActor(viewActor.ref).standardBehavior)
-    updateTime = FiniteDuration(16, "milliseconds")
   }
 
 
@@ -50,9 +51,18 @@ class GameLoopBehaviorTest extends AnyWordSpec with BeforeAndAfter with Matchers
         startTimerEffect should not be startWaveEffect
       }
 
-      "start the timer" in {
+      "start the loop timer" in {
         gameLoopActor run StartLoop()
         gameLoopActor expectEffect Effect.TimerScheduled(UpdateLoop(), UpdateLoop(), updateTime, Effect.TimerScheduled.SingleMode, false)(null)
+      }
+
+      "start the resources timer" in {
+        gameLoopActor run StartResourcesLoop()
+        gameLoopActor expectEffect Effect.TimerScheduled(UpdateResources(), UpdateResources(), resourcesTime, Effect.TimerScheduled.SingleMode, false)(null)
+      }
+
+      "update the resources" in {
+        //TODO
       }
 
       "resume the loop" in {

@@ -5,7 +5,7 @@ import akka.actor.typed.ActorRef
 import model.entities.*
 import controller.{Command, Render, ViewMessage}
 import controller.GameLoopActor.{GameLoopActor, updateTime}
-import controller.GameLoopActor.GameLoopCommands.{EntityUpdated, UpdateLoop}
+import controller.GameLoopActor.GameLoopCommands.{EntityUpdated, StartLoop, StartResourcesLoop, UpdateLoop}
 import model.actors.{Collision, ModelMessage, Update}
 import model.entities.*
 import model.entities.WorldSpace.LanesLength
@@ -52,6 +52,13 @@ class GameLoopIntegrationTest extends AnyWordSpec with BeforeAndAfter with Match
         }
       }
 
+      "interact with himself" when {
+        "start the resource timer" in {
+          gameLoopActor run StartLoop()
+          gameLoopActor.selfInbox() expectMessage  StartResourcesLoop()
+        }
+      }
+
       "interact with bullet actors" when{
         "find a collisions" in {
           gameLoopActor run UpdateLoop()
@@ -66,7 +73,7 @@ class GameLoopIntegrationTest extends AnyWordSpec with BeforeAndAfter with Match
       "interact with the view" when {
         "an entity is updated" in {
           gameLoopActor run EntityUpdated(seedActor.ref, bullet._2)
-          viewActor expectMessage Render(gameLoop.entities.map(_._2).toList, gameLoopActor.ref)
+          viewActor expectMessage Render(gameLoop.entities.map(_._2).toList, gameLoopActor.ref, MetaData())
         }
       }
       }
