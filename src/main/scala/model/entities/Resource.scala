@@ -12,8 +12,10 @@ case class Sun(override val value: Int = 25,
   @targetName("sum")
   def +(sun: Sun): Sun = Sun(this.value + sun.value)
 
-case class MetaData()
-
+case class MetaData(sun: Sun = Sun(0),
+                    availableEntities: Seq[Turret] = List.empty):
+  def addSun(newSun: Sun): MetaData = MetaData(sun + newSun, availableEntities)
+  def addAvailableTurret(turret: Turret): MetaData = MetaData(sun, availableEntities :+ turret)
 
 
 
