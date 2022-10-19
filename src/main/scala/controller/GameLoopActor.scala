@@ -29,12 +29,12 @@ object GameLoopActor:
         Behaviors.receive((ctx, msg) => {
           msg match
             case StartLoop() =>
-              startLoopTimer(timer)
+              startTimer(timer, UpdateLoop())
               ctx.self ! StartResourcesLoop()
               GameLoopActor(viewActor, createWave(ctx)).standardBehavior
 
             case StartResourcesLoop() =>
-              startResourcesTimer(timer)
+              startTimer(timer, UpdateResources())
               GameLoopActor(viewActor, entities).standardBehavior
 
             case StopLoop() => Behaviors.stopped
@@ -42,7 +42,7 @@ object GameLoopActor:
             case PauseLoop() => GameLoopActor(viewActor, entities, metaData).pauseBehavior
 
             case UpdateResources() =>
-              startResourcesTimer(timer)
+              startTimer(timer, UpdateResources())
               GameLoopActor(viewActor, entities,
                 MetaData(metaData.sun + Sun.Normal.value, metaData.turrets, metaData.velocity)).standardBehavior
 
@@ -50,7 +50,7 @@ object GameLoopActor:
               detectCollision foreach { e => e._1._1 ! Collision(e._2._2, ctx.self); e._2._1 ! Collision(e._1._2, ctx.self) }
               updateAll(ctx, detectInterest)
               val newWave: List[(ActorRef[ModelMessage], Entity)] = if isWaveOver then createWave(ctx) else List.empty
-              startLoopTimer(timer)
+              startTimer(timer, UpdateLoop())
               GameLoopActor(viewActor, newWave ++ entities, metaData).standardBehavior
 
             case EntityUpdated(ref, entity) =>
@@ -81,9 +81,7 @@ object GameLoopActor:
           case _ => Behaviors.same
       })
 
-    private def startLoopTimer(timer: TimerScheduler[Command]): Unit = timer.startSingleTimer(UpdateLoop(), updateTime)
-
-    private def startResourcesTimer(timer: TimerScheduler[Command]): Unit = timer.startSingleTimer(UpdateResources(), metaData.velocity.speed)
+    private def startTimer(timer: TimerScheduler[Command], msg: Command): Unit = timer.startSingleTimer(msg, metaData.velocity.speed)
 
     private def createWave(ctx: ActorContext[Command]) =
       waveGenerator.generateNextWave.enemies.map(e => (ctx.spawnAnonymous(EnemyActor(e)), e))
