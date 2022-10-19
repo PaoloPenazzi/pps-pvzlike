@@ -2,7 +2,7 @@ package model.entities
 
 import model.common.DefaultValues.*
 import model.entities.WorldSpace.{Position, given}
-import model.entities.{AttackingAbility, Bullet, Enemy, Entity, Seed, Turret, Zombie}
+import model.entities.{AttackingAbility, Bullet, Enemy, Entity, PeaBullet, Turret, Zombie}
 
 import scala.concurrent.duration.FiniteDuration
 
@@ -18,17 +18,17 @@ trait Turret extends Entity with AttackingAbility with Troop :
  *
  * @param position The position in which the plant is placed by the player.
  */
-case class Plant(override val position: Position)(override val life: Int = 300) extends Turret :
+case class PeaShooter(override val position: Position)(override val life: Int = 300) extends Turret :
   override def collideWith(bullet: Bullet): Option[Turret] =
-    val newLife = life - bullet.damage
-    newLife match
-      case 0 => None
-      case _ => Some(Plant(position)(newLife))
+    val newHPs: Int = life - bullet.damage
+    newHPs match
+      case x if x > 0 => Some(PeaShooter(position)(newHPs))
+      case _ => None
 
-  override def bullet: Bullet = new Seed(position)
+  override def bullet: Bullet = new PeaBullet(position)
 
   override def canAttack(enemy: Entity): Boolean =
     enemy.position.x.toInt <= range
 
-  override def update(elapsedTime: FiniteDuration, interests: List[Entity]): Plant =
-    Plant(position)()
+  override def update(elapsedTime: FiniteDuration, interests: List[Entity]): PeaShooter =
+    PeaShooter(position)()
