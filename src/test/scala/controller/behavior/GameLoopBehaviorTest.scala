@@ -57,7 +57,8 @@ class GameLoopBehaviorTest extends AnyWordSpec with BeforeAndAfter with Matchers
       }
 
       "start the resources timer" in {
-        gameLoopActor run StartResourcesLoop()
+        gameLoopActor run StartLoop()
+        gameLoopActor.retrieveEffect()
         gameLoopActor expectEffect Effect.TimerScheduled(UpdateResources(), UpdateResources(), resourcesTime, Effect.TimerScheduled.SingleMode, false)(null)
       }
 

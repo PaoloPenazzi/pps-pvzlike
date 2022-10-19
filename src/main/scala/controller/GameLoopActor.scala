@@ -30,12 +30,8 @@ object GameLoopActor:
           msg match
             case StartLoop() =>
               startTimer(timer, UpdateLoop())
-              ctx.self ! StartResourcesLoop()
-              GameLoopActor(viewActor, createWave(ctx)).standardBehavior
-
-            case StartResourcesLoop() =>
               startTimer(timer, UpdateResources())
-              GameLoopActor(viewActor, entities).standardBehavior
+              GameLoopActor(viewActor, createWave(ctx)).standardBehavior
 
             case StopLoop() => Behaviors.stopped
 
@@ -116,8 +112,6 @@ object GameLoopActor:
     sealed trait GameLoopCommand extends Command
 
     case class StartLoop() extends GameLoopCommand
-
-    case class StartResourcesLoop() extends GameLoopCommand
 
     case class StopLoop() extends GameLoopCommand
 

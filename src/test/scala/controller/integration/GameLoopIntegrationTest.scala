@@ -6,7 +6,7 @@ import model.entities.*
 import model.common.Utilities.*
 import controller.{Command, Render, ViewMessage}
 import controller.GameLoopActor.{GameLoopActor, updateTime}
-import controller.GameLoopActor.GameLoopCommands.{EntityUpdated, StartLoop, StartResourcesLoop, UpdateLoop}
+import controller.GameLoopActor.GameLoopCommands.{EntityUpdated, StartLoop, UpdateLoop}
 import model.actors.{Collision, ModelMessage, Update}
 import model.entities.WorldSpace.LanesLength
 import org.scalatest.BeforeAndAfter
@@ -49,13 +49,6 @@ class GameLoopIntegrationTest extends AnyWordSpec with BeforeAndAfter with Match
           gameLoopActor run UpdateLoop()
           seedActor expectMessage Collision(zombie._2, gameLoopActor.ref)
           zombieActor expectMessage Collision(bullet._2, gameLoopActor.ref)
-        }
-      }
-
-      "interact with himself" when {
-        "start the resource timer" in {
-          gameLoopActor run StartLoop()
-          gameLoopActor.selfInbox() expectMessage  StartResourcesLoop()
         }
       }
 
