@@ -5,20 +5,23 @@ import org.scalatest.*
 import org.scalatest.flatspec.*
 import org.scalatest.matchers.*
 import WorldSpace.{LanesLength, given}
-import model.entities.TroopState.Attacking
+import model.entities.TroopState.*
+
+import scala.concurrent.duration.FiniteDuration
 
 
 class EnemyModelTest extends AnyFlatSpec with should.Matchers:
 
-  "A zombie" should "attack a turrets that is in range" in {
-    val turret: Turret = PeaShooter((1, LanesLength / 2))
-    val zombie: Enemy =  Zombie((1, LanesLength / 2 + 5 ))
-    zombie.state shouldBe Attacking
+  "A zombie" should "enter attacking state if interests list is not empty" in {
+    val turret: Turret = PeaShooter((1, 0))
+    val zombie: Enemy =  Zombie((1, LanesLength / 2))
+    zombie.state shouldBe Moving
+    zombie.update(FiniteDuration(16, "milliseconds"), List(turret)).state shouldBe Attacking
   }
-  "A zombie" should "not attack a turret in another lane" in {
-    val turret: Turret = PeaShooter((1, LanesLength / 2))
-    val zombie: Enemy = Zombie((2, LanesLength / 2 + 5))
-    zombie.state should not be Attacking
+  "A zombie" should "not be in attacking state if interests list is empty" in {
+    val zombie: Enemy = Zombie((2, LanesLength / 2))
+    zombie.state shouldBe Moving
+    zombie.update(FiniteDuration(16, "milliseconds"), List.empty).state should not be Attacking
   }
   "A enemy" should "filter the interesting entities" in {
     val basicZombie: Enemy = Zombie((1, LanesLength / 2))
