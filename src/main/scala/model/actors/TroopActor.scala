@@ -32,11 +32,11 @@ object TroopActor:
             replyTo ! EntitySpawned(bulletActor, bullet)
             Behaviors.same
 
-          case Collision(bullet, replyTo) =>
-            val entityUpdated: Option[Troop] = troop collideWith bullet
+          case Collision(entity, replyTo) =>
+            val entityUpdated: Option[Troop] = troop collideWith entity.asInstanceOf[Bullet]
             entityUpdated match
               case None =>
-                replyTo ! EntityDead(ctx.self, troop)
+                replyTo ! EntityDead(ctx.self)
                 Behaviors.stopped
               case _ =>
                 replyTo ! EntityUpdated(ctx.self, entityUpdated.get)
