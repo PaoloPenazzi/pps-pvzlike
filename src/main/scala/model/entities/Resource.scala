@@ -1,5 +1,7 @@
 package model.entities
 
+import model.common.Utilities.Velocity
+
 import scala.annotation.targetName
 import scala.concurrent.duration.FiniteDuration
 
@@ -13,9 +15,8 @@ case class Sun(override val value: Int = 25,
   def +(sun: Sun): Sun = Sun(this.value + sun.value)
 
 case class MetaData(sun: Sun = Sun(0),
-                    availableEntities: Seq[Turret] = List.empty):
-  def addSun(newSun: Sun): MetaData = MetaData(sun + newSun, availableEntities)
-  def addAvailableTurret(turret: Turret): MetaData = MetaData(sun, availableEntities :+ turret)
+                    availableEntities: Seq[Turret] = List.empty,
+                    velocity: Velocity = Velocity.Normal)
 
 
 
