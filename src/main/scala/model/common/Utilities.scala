@@ -16,4 +16,4 @@ object Utilities:
     case Normal extends Sun(25)
     case Big extends Sun(50)
 
-  case class MetaData(sun: Int = 0, turrets: Seq[Turret] = List.empty, velocity: Velocity = Velocity.Normal)
+  case class MetaData(sun: Int = 0, velocity: Velocity = Velocity.Normal)

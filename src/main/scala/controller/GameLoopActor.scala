@@ -40,12 +40,12 @@ object GameLoopActor:
             case UpdateResources() =>
               startTimer(timer, UpdateResources())
               GameLoopActor(viewActor, entities,
-                MetaData(metaData.sun + Sun.Normal.value, metaData.turrets, metaData.velocity)).standardBehavior
+                MetaData(metaData.sun + Sun.Normal.value, metaData.velocity)).standardBehavior
 
             case UpdateLoop() =>
               detectCollision foreach { e => e._1._1 ! Collision(e._2._2, ctx.self); e._2._1 ! Collision(e._1._2, ctx.self) }
               updateAll(ctx, detectInterest)
-              val newWave: List[(ActorRef[ModelMessage], Entity)] = if isWaveOver then createWave(ctx) else List.empty
+              val newWave = if isWaveOver then createWave(ctx) else List.empty
               startTimer(timer, UpdateLoop())
               GameLoopActor(viewActor, newWave ++ entities, metaData).standardBehavior
 
@@ -56,7 +56,7 @@ object GameLoopActor:
 
             case EntitySpawned(ref, entity) => entity match
               case turret: Turret if metaData.sun < turret.cost => GameLoopActor(viewActor, entities, metaData).standardBehavior
-              case turret: Turret => GameLoopActor(viewActor, entities :+ (ref, entity), MetaData(metaData.sun - turret.cost, metaData.turrets, metaData.velocity)).standardBehavior
+              case turret: Turret => GameLoopActor(viewActor, entities :+ (ref, entity), MetaData(metaData.sun - turret.cost, metaData.velocity)).standardBehavior
               case _ => GameLoopActor(viewActor, entities :+ (ref, entity), metaData).standardBehavior
 
             case EntityDead(ref) =>
