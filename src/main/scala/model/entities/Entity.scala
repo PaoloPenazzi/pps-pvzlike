@@ -29,7 +29,6 @@ abstract class Troop extends Entity with AttackingAbility:
   def collideWith(bullet: Bullet): UpdatedEntity
   def life: Int
   def state: TroopState
-  override def copy(): UpdatedEntity
 
 enum TroopState:
   case Idle
