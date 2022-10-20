@@ -29,7 +29,10 @@ trait Troop extends Entity with AttackingAbility:
   override type UpdatedEntity = Troop
   def collideWith(bullet: Bullet): Option[UpdatedEntity]
   def life: Int
-    
+  def apply: Troop
+  def unapply[B <: Troop](t: B): (Position, Int, Double) 
+
+
 
 
 

@@ -1,13 +1,14 @@
 package model.entities
 
-import model.entities.Troops.{AdvancedPeaBullet, AdvancedPeashooter}
-import model.entities.Troops.TowerValues.*
+//import model.entities.Troops.{AdvancedPeaBullet, AdvancedPeashooter, BaseCake}
+//import model.entities.Troops.TowerValues.*
+import model.entities.Troops.BaseCake
 
 import scala.language.{implicitConversions, postfixOps}
 
 object Troops:
 
-  trait AdvancedBullet
+  /*trait AdvancedBullet
   case class AdvancedPeaBullet() extends AdvancedBullet
   case class AdvancedZombieBullet() extends AdvancedBullet
 
@@ -68,26 +69,26 @@ object Troops:
     }
     val towerDefaultLife: Int = 100
     val towerDefaultFireRatio: Int = 1
-    val towerDefaultSightRange: Int = 75
+    val towerDefaultSightRange: Int = 75*/
 
 
-/*  trait Apple
+  trait Apple
   trait Slice extends Apple
   trait Cake extends Apple
   case class BaseSlice() extends Slice
   case class BaseCake() extends Cake
 
   trait AppleBuilder[B <: Apple]:
-    def build[B]: B
+    def build: B
   given AppleBuilder[BaseSlice] with
-    override def build(): Slice = BaseSlice()
+    override def build: Apple = BaseSlice()
   given AppleBuilder[BaseCake] with
-    override def build(): Cake = BaseCake()
+    override def build: Apple = BaseCake()
 
-  def of[B <: Apple](impl: B)(using builder: AppleBuilder[B]): B =
-    builder.build[B]*/
+  def of[B <: Apple](m: B)(using builder: AppleBuilder[B]): B =
+    builder.build
 
 @main
 def test(): Unit =
-  val plant = Troops shooting AdvancedPeaBullet() withLife 200
+  Troops of BaseCake()
 
