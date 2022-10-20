@@ -5,7 +5,7 @@ import akka.actor.typed.ActorRef
 import model.entities.*
 import model.common.Utilities.*
 import controller.{Command, Render, ViewMessage}
-import controller.GameLoopActor.{GameLoopActor, updateTime}
+import controller.GameLoopActor.GameLoopActor
 import controller.GameLoopActor.GameLoopCommands.{EntityUpdated, StartLoop, UpdateLoop}
 import model.actors.{Collision, ModelMessage, Update}
 import model.entities.WorldSpace.LanesLength
@@ -56,10 +56,10 @@ class GameLoopIntegrationTest extends AnyWordSpec with BeforeAndAfter with Match
         "find a collisions" in {
           gameLoopActor run UpdateLoop()
           seedActor.receiveMessage()
-          seedActor expectMessage Update(updateTime, List(), gameLoopActor.ref)
+          seedActor expectMessage Update(gameLoop.metaData.velocity.speed, List(), gameLoopActor.ref)
           zombieActor.receiveMessage()
-          zombieActor expectMessage Update(updateTime, List(), gameLoopActor.ref)
-          plantActor expectMessage Update(updateTime, List(zombie._2), gameLoopActor.ref)
+          zombieActor expectMessage Update(gameLoop.metaData.velocity.speed, List(), gameLoopActor.ref)
+          plantActor expectMessage Update(gameLoop.metaData.velocity.speed, List(zombie._2), gameLoopActor.ref)
         }
       }
 

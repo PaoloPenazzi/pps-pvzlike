@@ -18,7 +18,6 @@ object GameLoopActor:
   val waveGenerator: WaveGenerator = Generator()
 
   import GameLoopCommands.*
-  val updateTime: FiniteDuration = FiniteDuration(16, "milliseconds")
 
   case class GameLoopActor(viewActor: ActorRef[ViewMessage],
                            entities: Seq[(ActorRef[ModelMessage], Entity)] = List.empty,
@@ -105,7 +104,7 @@ object GameLoopActor:
     private def isWaveOver: Boolean = entities map (_._2) collect { case enemy: Enemy => enemy } isEmpty
 
     private def updateAll(ctx: ActorContext[Command], interests: Seq[(ActorRef[ModelMessage], Seq[Entity])]): Unit =
-      interests.foreach(e => e._1 ! Update(updateTime, e._2.toList, ctx.self))
+      interests.foreach(e => e._1 ! Update(metaData.velocity.speed, e._2.toList, ctx.self))
 
     private def render(ctx: ActorContext[Command], renderedEntities: List[Entity]): Unit = viewActor ! Render(renderedEntities, ctx.self, metaData)
 
