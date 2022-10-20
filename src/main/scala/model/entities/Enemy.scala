@@ -9,7 +9,7 @@ import scala.concurrent.duration.FiniteDuration
 /**
  * Interface of an enemy model
  */
-trait Enemy extends MovingAbility with AttackingAbility with Troop:
+trait Enemy extends Troop with MovingAbility:
 
   override def isInterestedIn: Entity => Boolean =
     case turret: Turret => turret.position.y == position.y && position.x - turret.position.x.toInt <= range
