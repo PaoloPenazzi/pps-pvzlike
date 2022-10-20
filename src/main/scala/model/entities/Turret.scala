@@ -20,6 +20,8 @@ case class PeaShooter(override val position: Position,
                       override val life: Int = 300,
                       override val state: TroopState = Idle) extends Turret :
 
+  override def withLife(HPs: Int): Troop = copy(life = HPs)
+
   override def collideWith(bullet: Bullet): Turret =
     val newLife: Int = Math.max(life - bullet.damage, 0)
     PeaShooter(position, newLife, if newLife == 0 then Dead else state)

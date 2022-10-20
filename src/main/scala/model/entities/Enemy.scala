@@ -23,6 +23,8 @@ class Zombie(override val position: Position,
              override val state: TroopState = Moving,
              override val velocity: Float = -0.001) extends Enemy:
   
+  override def withLife(HPs: Int): Troop = copy(life = HPs)
+  
   override def bullet: Bullet = new PeaBullet(position)
 
   override def collideWith(bullet: Bullet): Troop =
