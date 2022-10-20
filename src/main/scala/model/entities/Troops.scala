@@ -6,7 +6,7 @@ package model.entities
 import scala.language.{implicitConversions, postfixOps}
 
 object Troops:
-
+  trait Apple
   /*trait AdvancedBullet
   case class AdvancedPeaBullet() extends AdvancedBullet
   case class AdvancedZombieBullet() extends AdvancedBullet
@@ -29,7 +29,7 @@ object Troops:
 
   case class BasicTroop(override val life: Int = towerDefaultLife) extends AdvancedTroop:
     override def withLife(hp: Int): AdvancedTroop = copy(life = hp)
-  
+
   trait TroopBuilder[B <: AdvancedBullet]:
     def build(bullet: B): AdvancedTroop
 
@@ -48,7 +48,7 @@ object Troops:
     override def bullet: AdvancedPeaBullet = ???
     override def withFireRate(rate: Int): AdvancedTroop = copy(fireRate = rate)
     override def withSightRange(range: Int): AdvancedTroop = copy(sightRange = range)
-    
+
 
   case class BaseZombie[B <: AdvancedBullet](
                                               override val fireRate: Int = towerDefaultFireRatio,

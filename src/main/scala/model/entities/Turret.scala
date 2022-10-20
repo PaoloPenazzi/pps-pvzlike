@@ -13,6 +13,8 @@ trait Turret extends Troop:
   override def isInterestedIn: Entity => Boolean =
     case enemy: Enemy => enemy.position.y == position.y
     case _ => false
+  
+  
 
 case class PeaShooter(override val position: Position,
                       override val life: Int = 300,
