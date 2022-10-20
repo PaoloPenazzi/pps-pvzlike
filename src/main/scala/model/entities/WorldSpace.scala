@@ -6,7 +6,8 @@ object WorldSpace:
   given Conversion[(Int, Double), Position] = tuple => Position(tuple._1,tuple._2.toFloat)
   
   val NumOfLanes: Int = 1
-  val LanesLength: Float = 100
+  val LanesLength: Float = 90
+  val cellLength = 10
 
   case class Position(y: Int, x: Float)
   

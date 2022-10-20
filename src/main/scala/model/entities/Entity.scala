@@ -21,18 +21,21 @@ trait MovingAbility extends Entity:
 
 trait AttackingAbility extends Entity:
   def bullet: Bullet
-  def canAttack(entity: Entity): Boolean
   def fireRate: Int = fireRates(this)
   def range: Int = ranges(this)
   
 trait Troop extends Entity with AttackingAbility:
   override type UpdatedEntity = Troop
-  def collideWith(bullet: Bullet): Option[UpdatedEntity]
+  def collideWith(bullet: Bullet): UpdatedEntity
   def life: Int
-  def apply: Troop
-  def unapply[B <: Troop](t: B): (Position, Int, Double) 
+  def state: TroopState
 
-
+enum TroopState:
+  case Idle
+  case Moving
+  case Attacking
+  case Dead
+    
 
 
 
