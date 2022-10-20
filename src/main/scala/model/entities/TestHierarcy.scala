@@ -5,7 +5,7 @@ package model.entities
 
 import scala.language.{implicitConversions, postfixOps}
 
-object Troops:
+object Test:
   trait Apple
   /*trait AdvancedBullet
   case class AdvancedPeaBullet() extends AdvancedBullet

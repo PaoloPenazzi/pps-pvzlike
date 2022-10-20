@@ -30,9 +30,15 @@ trait Troop extends Entity with AttackingAbility:
   def collideWith(bullet: Bullet): UpdatedEntity
   def life: Int
   def state: TroopState
-  
-trait TroopBuilder[T <: Troop]:
-  def build: T
+
+object Troops:
+  trait TroopBuilder[T <: Troop]:
+    def build: T
+
+  given TroopBuilder[PeaShooter] with
+    override def build: PeaShooter = PeaShooter((0,0))
+  given TroopBuilder[Zombie] with
+    override def build: Zombie = Zombie((0,0))
 
 enum TroopState:
   case Idle
