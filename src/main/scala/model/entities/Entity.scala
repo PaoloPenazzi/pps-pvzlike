@@ -24,18 +24,19 @@ trait AttackingAbility extends Entity:
   def fireRate: Int = fireRates(this)
   def range: Int = ranges(this)
   
-trait Troop extends Entity with AttackingAbility:
+abstract class Troop extends Entity with AttackingAbility:
   override type UpdatedEntity = Troop
   def collideWith(bullet: Bullet): UpdatedEntity
   def life: Int
   def state: TroopState
+  override def copy(): UpdatedEntity
 
 enum TroopState:
   case Idle
   case Moving
   case Attacking
   case Dead
-    
+
 
 
 
