@@ -31,6 +31,7 @@ trait Troop extends Entity with AttackingAbility:
   def life: Int
   def state: TroopState
   def withLife(HPs: Int): Troop
+  def withPosition(pos: Position): Troop
 
 object Troops:
   trait TroopBuilder[T <: Troop]:

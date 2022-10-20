@@ -19,7 +19,8 @@ trait Turret extends Troop:
 case class PeaShooter(override val position: Position,
                       override val life: Int = 300,
                       override val state: TroopState = Idle) extends Turret :
-
+  
+  override def withPosition(pos: Position): Troop = copy(position = pos)
   override def withLife(HPs: Int): Troop = copy(life = HPs)
 
   override def collideWith(bullet: Bullet): Turret =
