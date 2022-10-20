@@ -2,7 +2,7 @@ package model.entities
 
 //import model.entities.Troops.{AdvancedPeaBullet, AdvancedPeashooter, BaseCake}
 //import model.entities.Troops.TowerValues.*
-import model.entities.Troops.BaseCake
+import model.entities.Troops.{BaseCake, Apple}
 
 import scala.language.{implicitConversions, postfixOps}
 
@@ -80,15 +80,16 @@ object Troops:
 
   trait AppleBuilder[B <: Apple]:
     def build: B
-  given AppleBuilder[BaseSlice] with
-    override def build: Apple = BaseSlice()
-  given AppleBuilder[BaseCake] with
-    override def build: Apple = BaseCake()
 
-  def of[B <: Apple](m: B)(using builder: AppleBuilder[B]): B =
+  given AppleBuilder[BaseSlice] with
+    override def build: BaseSlice = BaseSlice()
+  given AppleBuilder[BaseCake] with
+    override def build: BaseCake = BaseCake()
+
+  def of[B <: Apple](using builder: AppleBuilder[B]): B =
     builder.build
 
 @main
 def test(): Unit =
-  Troops of BaseCake()
+  val test: Apple = Troops.of[BaseCake]
 
