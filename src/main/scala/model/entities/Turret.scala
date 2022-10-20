@@ -14,11 +14,6 @@ trait Turret extends Troop:
     case enemy: Enemy => enemy.position.y == position.y
     case _ => false
 
-/**
- * Basic turret.
- *
- * @param position The position in which the plant is placed by the player.
- */
 case class PeaShooter(override val position: Position,
                       override val life: Int = 300,
                       override val state: TroopState = Idle) extends Turret :

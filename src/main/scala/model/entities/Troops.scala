@@ -2,7 +2,6 @@ package model.entities
 
 //import model.entities.Troops.{AdvancedPeaBullet, AdvancedPeashooter, BaseCake}
 //import model.entities.Troops.TowerValues.*
-import model.entities.Troops.{BaseCake, Apple}
 
 import scala.language.{implicitConversions, postfixOps}
 
@@ -22,14 +21,17 @@ object Troops:
     def withSightRange(range: Int): AdvancedAttackingAbility
     def withLife(hp: Int): AdvancedAttackingAbility
 
-  trait AdvancedTroop[B <: AdvancedBullet] extends AdvancedEntity with AdvancedAttackingAbility:
-    def bullet: B
-    override def withFireRate(rate: Int): AdvancedTroop[B]
-    override def withSightRange(range: Int): AdvancedTroop[B]
-    override def withLife(hp: Int): AdvancedTroop[B]
+  trait AdvancedTroop extends AdvancedEntity with AdvancedAttackingAbility:
+    def bullet
+    override def withFireRate(rate: Int): AdvancedTroop
+    override def withSightRange(range: Int): AdvancedTroop
+    override def withLife(hp: Int): AdvancedTroop
 
+  case class BasicTroop(override val life: Int = towerDefaultLife) extends AdvancedTroop:
+    override def withLife(hp: Int): AdvancedTroop = copy(life = hp)
+  
   trait TroopBuilder[B <: AdvancedBullet]:
-    def build(bullet: B): AdvancedTroop[B]
+    def build(bullet: B): AdvancedTroop
 
   given TroopBuilder[AdvancedPeaBullet] with
     override def build(bullet: AdvancedPeaBullet): AdvancedPeashooter[AdvancedPeaBullet] = AdvancedPeashooter[AdvancedPeaBullet]()
@@ -39,16 +41,14 @@ object Troops:
   def shooting[B <: AdvancedBullet](bullet: B)(using troopBuilder: TroopBuilder[B]): AdvancedTroop[B] =
     troopBuilder.build(bullet)
 
-  case class AdvancedPeashooter[B <: AdvancedBullet](
-                                             override val fireRate: Int = towerDefaultFireRatio,
-                                             override val sightRange: Int = towerDefaultSightRange,
-                                             override val life: Int = towerDefaultLife
-                                           ) extends AdvancedTroop[AdvancedPeaBullet]:
+  case class AdvancedPeashooter(override val fireRate: Int = towerDefaultFireRatio,
+                                override val sightRange: Int = towerDefaultSightRange
+                               ) extends AdvancedTroop[AdvancedPeaBullet]:
 
     override def bullet: AdvancedPeaBullet = ???
-    override def withFireRate(rate: Int): AdvancedTroop[AdvancedPeaBullet] = copy(fireRate = rate)
-    override def withSightRange(range: Int): AdvancedTroop[AdvancedPeaBullet] = copy(sightRange = range)
-    override def withLife(hp: Int): AdvancedTroop[AdvancedPeaBullet] = copy(life = hp)
+    override def withFireRate(rate: Int): AdvancedTroop = copy(fireRate = rate)
+    override def withSightRange(range: Int): AdvancedTroop = copy(sightRange = range)
+    
 
   case class BaseZombie[B <: AdvancedBullet](
                                               override val fireRate: Int = towerDefaultFireRatio,
@@ -57,9 +57,9 @@ object Troops:
                                             ) extends AdvancedTroop[AdvancedZombieBullet]:
 
     override def bullet: AdvancedZombieBullet = ???
-    override def withFireRate(rate: Int): AdvancedTroop[AdvancedZombieBullet] = copy(fireRate = rate)
-    override def withSightRange(range: Int): AdvancedTroop[AdvancedZombieBullet] = copy(sightRange = range)
-    override def withLife(hp: Int): AdvancedTroop[AdvancedZombieBullet] = copy(life = hp)
+    override def withFireRate(rate: Int): AdvancedTroop = copy(fireRate = rate)
+    override def withSightRange(range: Int): AdvancedTroop = copy(sightRange = range)
+    override def withLife(hp: Int): AdvancedTroop = copy(life = hp)
 
   object TowerValues:
     val fireRates: AdvancedBullet => Int = {
@@ -71,7 +71,7 @@ object Troops:
     val towerDefaultFireRatio: Int = 1
     val towerDefaultSightRange: Int = 75*/
 
-
+/*
   trait Apple
   trait Slice extends Apple
   trait Cake extends Apple
@@ -91,5 +91,5 @@ object Troops:
 
 @main
 def test(): Unit =
-  val test: Apple = Troops.of[BaseCake]
+  val test: Apple = Troops.of[BaseCake]*/
 

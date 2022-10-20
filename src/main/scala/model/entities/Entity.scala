@@ -2,9 +2,10 @@ package model.entities
 
 import model.common.DefaultValues
 import model.common.DefaultValues.*
+import model.entities.TroopState.{Attacking, Dead, Idle}
 import model.entities.WorldSpace.{Position, given}
-import scala.language.implicitConversions
 
+import scala.language.implicitConversions
 import scala.concurrent.duration.FiniteDuration
 
 trait Entity:
@@ -24,7 +25,7 @@ trait AttackingAbility extends Entity:
   def fireRate: Int = fireRates(this)
   def range: Int = ranges(this)
   
-abstract class Troop extends Entity with AttackingAbility:
+trait Troop extends Entity with AttackingAbility:
   override type UpdatedEntity = Troop
   def collideWith(bullet: Bullet): UpdatedEntity
   def life: Int
