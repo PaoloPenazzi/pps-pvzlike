@@ -19,9 +19,13 @@ object GameLoopActor:
 
   import GameLoopCommands.*
 
-  case class GameLoopActor(viewActor: ActorRef[ViewMessage],
-                           entities: Seq[(ActorRef[ModelMessage], Entity)] = List.empty,
-                           metaData: MetaData = MetaData()) extends Controller with PauseAbility:
+  def apply(viewActor: ActorRef[ViewMessage],
+            entities: Seq[(ActorRef[ModelMessage], Entity)] = List.empty,
+            metaData: MetaData = MetaData()): Behavior[Command] = GameLoop(viewActor, entities, metaData).standardBehavior
+
+  private case class GameLoop(viewActor: ActorRef[ViewMessage],
+                           entities: Seq[(ActorRef[ModelMessage], Entity)],
+                           metaData: MetaData) extends Controller with PauseAbility:
 
     override def standardBehavior: Behavior[Command] =
       Behaviors.withTimers(timer =>
@@ -30,37 +34,38 @@ object GameLoopActor:
             case StartLoop() =>
               startTimer(timer, UpdateLoop())
               startTimer(timer, UpdateResources())
-              GameLoopActor(viewActor, createWave(ctx)).standardBehavior
+              GameLoopActor(viewActor, entities, metaData)
+
 
             case StopLoop() => Behaviors.stopped
 
-            case PauseLoop() => GameLoopActor(viewActor, entities, metaData).pauseBehavior
+            case PauseLoop() => pauseBehavior
 
             case UpdateResources() =>
               startTimer(timer, UpdateResources())
-              GameLoopActor(viewActor, entities, metaData + Sun.Normal.value).standardBehavior
+              GameLoopActor(viewActor, entities, metaData + Sun.Normal.value)
 
-            case ChangeVelocity(velocity) => GameLoopActor(viewActor, entities, metaData >>> velocity).standardBehavior
+            case ChangeVelocity(velocity) => GameLoopActor(viewActor, entities, metaData >>> velocity)
 
             case UpdateLoop() =>
               detectCollision foreach { e => e._1._1 ! Collision(e._2._2, ctx.self); e._2._1 ! Collision(e._1._2, ctx.self) }
               updateAll(ctx, detectInterest)
               val newWave = if isWaveOver then createWave(ctx) else List.empty
               startTimer(timer, UpdateLoop())
-              GameLoopActor(viewActor, newWave ++ entities, metaData).standardBehavior
+              GameLoopActor(viewActor, newWave ++ entities, metaData)
 
             case EntityUpdated(ref, entity) =>
               val newEntities = entities collect { case x if x._1 == ref => (ref, entity) case x => x}
               render(ctx, newEntities.map(_._2).toList)
-              GameLoopActor(viewActor, newEntities, metaData).standardBehavior
+              GameLoopActor(viewActor, newEntities, metaData)
 
             case EntitySpawned(ref, entity) => entity match
-              case turret: Turret if metaData.sun < turret.cost => GameLoopActor(viewActor, entities, metaData).standardBehavior
-              case turret: Turret => GameLoopActor(viewActor, entities :+ (ref, entity), metaData - turret.cost).standardBehavior
-              case _ => GameLoopActor(viewActor, entities :+ (ref, entity), metaData).standardBehavior
+              case turret: Turret if metaData.sun < turret.cost => GameLoopActor(viewActor, entities, metaData)
+              case turret: Turret => GameLoopActor(viewActor, entities :+ (ref, entity), metaData - turret.cost)
+              case _ => GameLoopActor(viewActor, entities :+ (ref, entity), metaData)
 
             case EntityDead(ref) =>
-              GameLoopActor(viewActor, entities filter { e => e._1 != ref }, metaData).standardBehavior
+              GameLoopActor(viewActor, entities filter { e => e._1 != ref }, metaData)
 
             case _ => Behaviors.same
         }))
@@ -72,7 +77,7 @@ object GameLoopActor:
 
           case ResumeLoop() =>
             ctx.self ! UpdateLoop()
-            GameLoopActor(viewActor, entities, metaData).standardBehavior
+            GameLoopActor(viewActor, entities, metaData)
 
           case _ => Behaviors.same
       })

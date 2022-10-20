@@ -32,7 +32,7 @@ class GameLoopBehaviorTest extends AnyWordSpec with BeforeAndAfter with Matchers
 
   before {
     viewActor = TestInbox[ViewMessage]()
-    gameLoopActor = BehaviorTestKit(controller.GameLoopActor.GameLoopActor(viewActor.ref).standardBehavior)
+    gameLoopActor = BehaviorTestKit(GameLoopActor(viewActor.ref))
   }
 
 

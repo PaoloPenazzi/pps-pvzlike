@@ -2,7 +2,7 @@ package controller
 
 import akka.actor.typed.Behavior
 import akka.actor.typed.scaladsl.Behaviors
-import controller.GameLoopActor.GameLoopActor
+import controller.GameLoopActor.*
 import controller.GameLoopActor.GameLoopCommands.StartLoop
 import view.Game
 
@@ -23,7 +23,7 @@ object RootActor:
       msg match
         case StartGame() => 
           val view = ctx.spawnAnonymous(ViewActor(Game.gameScreen))
-          val gameLoop = ctx.spawnAnonymous(GameLoopActor(view).standardBehavior)
+          val gameLoop = ctx.spawnAnonymous(GameLoopActor(view))
           gameLoop ! StartLoop()
           Behaviors.same
     })
