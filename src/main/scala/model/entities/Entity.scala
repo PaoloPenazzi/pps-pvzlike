@@ -40,6 +40,9 @@ object Troops:
   given TroopBuilder[Zombie] with
     override def build: Zombie = Zombie((0,0))
 
+  def ofType[T <: Troop](using troopBuilder: TroopBuilder[T]): T =
+    troopBuilder.build
+
 enum TroopState:
   case Idle
   case Moving
