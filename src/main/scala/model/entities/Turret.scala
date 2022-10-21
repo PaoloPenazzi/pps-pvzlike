@@ -7,7 +7,7 @@ import model.entities.{AttackingAbility, Bullet, Enemy, Entity, PeaBullet, Turre
 
 import scala.concurrent.duration.FiniteDuration
 
-trait Turret extends Troop:
+trait Turret() extends Troop:
   def cost: Int = costs(this)
 
   override def isInterestedIn: Entity => Boolean =
@@ -22,16 +22,15 @@ case class PeaShooter(override val position: Position,
   override def withLife(HPs: Int): Troop = copy(life = HPs)
   override def withState(newState: TroopState): Troop = copy(state = newState)
 
-  override def collideWith(bullet: Bullet): Turret =
+  override def collideWith(bullet: Bullet): Troop =
     val newLife: Int = Math.max(life - bullet.damage, 0)
-    PeaShooter(position, newLife, if newLife == 0 then Dead else state)
+    if newLife == 0 then this withState Dead else this
+
 
   override def bullet: Bullet = new PeaBullet(position)
 
-  override def update(elapsedTime: FiniteDuration, interests: List[Entity]): PeaShooter =
+  override def update(elapsedTime: FiniteDuration, interests: List[Entity]): Troop =
     state match
-      case Idle | Attacking => PeaShooter(
-        position,
-        life,
-        if interests.isEmpty then Idle else Attacking)
+      case Idle | Attacking =>
+        if interests.isEmpty then this withState Idle else this withState Attacking
       case _ => this
