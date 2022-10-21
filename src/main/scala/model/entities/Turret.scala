@@ -7,7 +7,7 @@ import model.entities.{AttackingAbility, Bullet, Enemy, Entity, PeaBullet, Turre
 
 import scala.concurrent.duration.FiniteDuration
 
-trait Turret extends Entity with AttackingAbility with Troop :
+trait Turret extends Troop:
   def cost: Int = costs(this)
 
   override def isInterestedIn: Entity => Boolean =
@@ -23,7 +23,8 @@ case class PeaShooter(override val position: Position,
                       override val life: Int = 300,
                       override val state: TroopState = Idle) extends Turret :
 
-  override def canAttack(entity: Entity): Boolean = ???
+  override def canAttack(entity: Entity): Boolean =
+    entity.position.x < position.x + range
 
   override def collideWith(bullet: Bullet): Turret =
     val newLife: Int = Math.max(life - bullet.damage, 0)
