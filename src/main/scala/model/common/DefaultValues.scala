@@ -4,8 +4,8 @@ import model.entities.{AttackingAbility, Bullet, Entity, PeaBullet, Zombie, PeaS
 
 object DefaultValues:
   val width: Entity => Int =
-    case _: Bullet => 5
-    case _ => 20
+    case _: Bullet => 2
+    case _ => 5
 
   val fireRates: AttackingAbility => Int =
     case _: PeaShooter => 2
