@@ -2,16 +2,119 @@ package controller
 
 import akka.actor.typed.*
 import akka.actor.typed.scaladsl.*
-import akka.actor.typed.scaladsl.adapter.*
+import controller.GameLoopActor.GameLoopCommands.{StartLoop, UpdateLoop}
+import model.actors.*
+import model.common.Utilities.{MetaData, Sun, Velocity}
+import model.entities.*
 import model.{Generator, WaveGenerator}
-import model.actors.{EnemyActor, ModelMessage, TroopActor, Update}
-import model.entities.{Bullet, Enemy, Entity, PeaShooter, Turret}
-import model.entities.WorldSpace.{Position, given}
 
+import scala.collection.immutable.Seq
 import scala.collection.mutable
 import scala.concurrent.duration.FiniteDuration
+import scala.language.postfixOps
 
+import scala.language.implicitConversions
+import WorldSpace.given
 object GameLoopActor:
+
+  val waveGenerator: WaveGenerator = Generator()
+
+  import GameLoopCommands.*
+
+  def apply(viewActor: ActorRef[ViewMessage],
+            entities: Seq[(ActorRef[ModelMessage], Entity)] = List.empty,
+            metaData: MetaData = MetaData()): Behavior[Command] = GameLoop(viewActor, entities, metaData).standardBehavior
+
+  private case class GameLoop(viewActor: ActorRef[ViewMessage],
+                           entities: Seq[(ActorRef[ModelMessage], Entity)],
+                           metaData: MetaData) extends Controller with PauseAbility:
+
+    override def standardBehavior: Behavior[Command] =
+      Behaviors.withTimers(timer =>
+        Behaviors.receive((ctx, msg) => {
+          msg match
+            case StartLoop() =>
+              startTimer(timer, UpdateLoop())
+              startTimer(timer, UpdateResources())
+              GameLoopActor(viewActor, entities, metaData)
+
+            case StopLoop() => Behaviors.stopped
+
+            case PauseLoop() => pauseBehavior
+
+            case UpdateResources() =>
+              startTimer(timer, UpdateResources())
+              GameLoopActor(viewActor, entities, metaData + Sun.Normal.value)
+
+            case ChangeVelocity(velocity) => GameLoopActor(viewActor, entities, metaData >>> velocity)
+
+            case UpdateLoop() =>
+              detectCollision foreach { e => e._1._1 ! Collision(e._2._2, ctx.self); e._2._1 ! Collision(e._1._2, ctx.self) }
+              updateAll(ctx, detectInterest)
+              val newWave = if isWaveOver then createWave(ctx) else List.empty
+              startTimer(timer, UpdateLoop())
+              GameLoopActor(viewActor, newWave ++ entities, metaData)
+
+            case EntityUpdated(ref, entity) =>
+              val newEntities = entities collect { case x if x._1 == ref => (ref, entity) case x => x}
+              render(ctx, newEntities.map(_._2).toList)
+              GameLoopActor(viewActor, newEntities, metaData)
+
+            case EntitySpawned(ref, entity) => GameLoopActor(viewActor, entities :+ (ref, entity), metaData)
+
+            case PlaceTurret(turret) =>
+              turret match
+                case turret if metaData.sun < turret.cost => GameLoopActor(viewActor, entities, metaData)
+                case _ => GameLoopActor(viewActor, entities :+ (ctx.spawnAnonymous(TroopActor(turret)), turret), metaData - turret.cost)
+
+            case EntityDead(ref) =>
+              GameLoopActor(viewActor, entities filter { e => e._1 != ref }, metaData)
+
+            case _ => Behaviors.same
+        }))
+
+    override def pauseBehavior: Behavior[Command] =
+      Behaviors.receive((ctx, msg) => {
+        msg match
+          case StopLoop() => Behaviors.stopped
+
+          case ResumeLoop() =>
+            ctx.self ! UpdateLoop()
+            GameLoopActor(viewActor, entities, metaData)
+
+          case _ => Behaviors.same
+      })
+
+    private def startTimer(timer: TimerScheduler[Command], msg: Command): Unit = timer.startSingleTimer(msg, metaData.velocity.speed)
+
+    private def createWave(ctx: ActorContext[Command]) =
+      waveGenerator.generateNextWave.enemies.map(e => (ctx.spawnAnonymous(TroopActor(e)), e))
+
+    private def detectCollision =
+      for
+        e1 <- entities
+        e2 <- entities
+        if e1 != e2
+        if e1._2.isInstanceOf[Bullet]
+        if e1._2.asInstanceOf[Bullet] checkCollisionWith e2._2
+      yield (e1, e2)
+
+    private def detectInterest =
+      for
+        e1 <- entities
+      yield
+        (e1._1, for
+          e2 <- entities
+          if e1 != e2
+          if e1._2 isInterestedIn e2._2
+        yield e2._2)
+
+    private def isWaveOver: Boolean = entities map (_._2) collect { case enemy: Enemy => enemy } isEmpty
+
+    private def updateAll(ctx: ActorContext[Command], interests: Seq[(ActorRef[ModelMessage], Seq[Entity])]): Unit =
+      interests.foreach(e => e._1 ! Update(metaData.velocity.speed, e._2.toList, ctx.self))
+
+    private def render(ctx: ActorContext[Command], renderedEntities: List[Entity]): Unit = viewActor ! Render(renderedEntities, ctx.self, metaData)
 
   object GameLoopCommands:
     sealed trait GameLoopCommand extends Command
@@ -26,118 +129,22 @@ object GameLoopActor:
 
     case class UpdateLoop() extends GameLoopCommand
 
-    case class EntityDead[E <: Entity](ref: ActorRef[ModelMessage], entity: E) extends GameLoopCommand
+    case class UpdateResources() extends GameLoopCommand
+
+    case class ChangeVelocity(velocity: Velocity) extends GameLoopCommand
+
+    case class EntityDead[E <: Entity](ref: ActorRef[ModelMessage]) extends GameLoopCommand
 
     case class EntityUpdated[E <: Entity](ref: ActorRef[ModelMessage], entity: E) extends GameLoopCommand
 
     case class EntitySpawned[E <: Entity](ref: ActorRef[ModelMessage], entity: E) extends GameLoopCommand
-
-    case class EntityUpgraded[E <: Entity](ref: ActorRef[ModelMessage], entity: E) extends GameLoopCommand
-
-
-  // TODO from here, make it better...
-  var enemiesWave: Seq[(ActorRef[ModelMessage], Enemy)] = List[(ActorRef[ModelMessage], Enemy)]()
-  var bullets: Seq[(ActorRef[ModelMessage], Bullet)] = List[(ActorRef[ModelMessage], Bullet)]()
-  var entities: Seq[(ActorRef[ModelMessage], Entity)] = List[(ActorRef[ModelMessage], Entity)]()
-  val waveGenerator: WaveGenerator = Generator()
-
-  def apply(viewActor: ActorRef[ViewMessage]): Behavior[Command] =
-    Behaviors.setup { _ => Behaviors.withTimers { timer => GameLoopActor(timer, viewActor).standardBehavior() } }
-
-  import GameLoopCommands.*
-
-  private case class GameLoopActor(timer: TimerScheduler[Command],
-                                   viewActor: ActorRef[ViewMessage]) extends Controller with PausableController:
-    override def standardBehavior(): Behavior[Command] = Behaviors.receive((ctx, msg) => {
-      msg match
-        case StartLoop() =>
-          entities = entities :+ (ctx.spawnAnonymous(TroopActor(PeaShooter(1,0)())), PeaShooter(1,0)())
-          createWave(ctx)
-          startTimer(timer)
-          Behaviors.same
-        case StopLoop() => Behaviors.stopped
-        case PauseLoop() => pauseBehavior()
-        case UpdateLoop() =>
-          // detectCollision
-          val interests = detectInterest
-          entities.foreach(e => e._1 ! Update(FiniteDuration(16, "milliseconds"), interests.filter(_._1 == e._1).head._2.toList, ctx.self))
-          if enemiesWave.isEmpty then createWave(ctx)
-          startTimer(timer)
-          Behaviors.same
-        case EntityUpdated(ref, entity) =>
-          // todo check if the wave is end
-          val oldEntity = entities.filter(e => e._1 == ref).head._2
-          entities = entities.updated(entities.indexOf((ref, oldEntity)), (ref, entity))
-          viewActor ! Render(entities.map(e => e._2).toList, ctx.self)
-          Behaviors.same
-        case EntitySpawned(ref, entity) =>
-          entities = entities :+ (ref, entity)
-          Behaviors.same
-//          entity match
-//          // todo after the addiction, do we want to send the message instantly?
-//          case _: Bullet => bullets = bullets :+ (ref, entity.asInstanceOf[Bullet]); Behaviors.same
-//          case _: Enemy => enemiesWave = enemiesWave :+ (ref, entity.asInstanceOf[Enemy]); Behaviors.same
-//          case _ => Behaviors.same
-
-        case EntityUpgraded(ref, entity) =>
-          entities = entities.updated(entities.indexOf(ref), (ref, entity))
-          entity match
-          // todo after the addiction, do we want to send the message instantly?
-          case _: Bullet => bullets = bullets.updated(bullets.indexOf(ref), (ref, entity.asInstanceOf[Bullet])); Behaviors.same
-          case _: Enemy => enemiesWave = enemiesWave.updated(enemiesWave.indexOf(ref), (ref, entity.asInstanceOf[Enemy])); Behaviors.same
-          case _ => Behaviors.same
-
-        case EntityDead(ref, entity) =>
-          entities = entities.filterNot(e => e == (ref, entity))
-          entity match
-            // todo after the addiction, do we want to send the message instantly?
-            case _: Bullet => bullets = bullets.filterNot(e => e == (ref, entity.asInstanceOf[Bullet])); Behaviors.same
-            case _: Enemy => enemiesWave = enemiesWave.filterNot(e => e == (ref, entity.asInstanceOf[Enemy])); Behaviors.same
-            case _ => Behaviors.same
-
-        case _ => Behaviors.same
-    })
-
-    override def pauseBehavior(): Behavior[Command] = Behaviors.receive((ctx, msg) => {
-      msg match
-        case StopLoop() => Behaviors.stopped
-        case ResumeLoop() =>
-          ctx.self ! UpdateLoop()
-          standardBehavior()
-        case _ => Behaviors.same
-    })
-
-    def startTimer(timer: TimerScheduler[Command]) = timer.startSingleTimer(UpdateLoop(), FiniteDuration(16, "milliseconds"))
-
-    def createWave(ctx: ActorContext[Command]): Unit =
-      val newWave = waveGenerator.generateNextWave
-      val newWaveWithActors = newWave.enemies.map(e => (ctx.spawnAnonymous(EnemyActor(e)), e))
-      // TODO: which one is correct? @Angelo
-      entities = entities :++ newWaveWithActors
-      enemiesWave = enemiesWave :++ newWaveWithActors
-
-    def detectCollision = ???
-      // todo provarlo a fare con for-yield o pimp-my-library
-      // controlla per ogni bullet nel gioco se questo ha colpito qualche entità (che non sia lui). Se il bullet ha colpito qualcuno (quindi
-      // la lista entitiesColl non è vuota) allora mando un messaggio di collisione ad ogni entità e al bullet in questione
-       /*bullets.foreach(b =>
-         val entitiesColl = entities.filter(e => (b._1 != e._1) && b._2.collideWith(e._2))
-         if entitiesColl.nonEmpty then entities.foreach(e => {e._1 ! CollisionWith(b._2); b._1 ! CollisionWith(e._2)}))*/
+    
+    case class PlaceTurret(turret: Turret) extends GameLoopCommand
+    
 
 
-    def detectInterest: Seq[(ActorRef[ModelMessage], Seq[Entity])] =
-      for
-        e1 <- entities
-      yield
-        (e1._1, for
-          e2 <- entities
-          if e1._1 != e2._1
-          if e1._2.isInterestedIn(e2._2)
-        yield e2._2)
 
-    def updateAll(interestForAll: Seq[(ActorRef[ModelMessage], Seq[Entity])]) = ???
-      // mando un messaggio di update ad ogni entità e gli allego le entità a cui è interessato
-      // interestForAll.foreach(e => e._1 ! UpdateModel(e._2.map( x => x._2)))
+
 
 
 

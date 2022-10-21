@@ -28,8 +28,15 @@ trait AttackingAbility extends Entity:
   
 trait Troop extends Entity with AttackingAbility:
   override type UpdatedEntity = Troop
-  def collideWith(bullet: Bullet): Option[UpdatedEntity]
+  def collideWith(bullet: Bullet): UpdatedEntity
   def life: Int
+  def state: TroopState
+
+enum TroopState:
+  case Idle
+  case Moving
+  case Attacking
+  case Dead
     
 
 
