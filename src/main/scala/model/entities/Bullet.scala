@@ -9,7 +9,7 @@ trait Bullet extends MovingAbility with Entity:
   def damage: Int = damages(this)
   def shouldDisappearAfterHitting(entity: Entity): Boolean = true
   def checkCollisionWith(entity: Entity): Boolean =
-    entity.position.x <= position.x + width
+    entity.position.x <= position.x
 
 class PeaBullet(override val position: Position) extends Bullet:
   override def velocity: Float = 0.1

@@ -23,7 +23,7 @@ class Zombie(override val position: Position,
              override val state: TroopState = Moving,
              override val velocity: Float = -0.001) extends Enemy:
 
-  override def canAttack(entity: Entity): Boolean = ???
+  override def canAttack(entity: Entity): Boolean = false
 
   override type BulletType = PeaBullet
   
