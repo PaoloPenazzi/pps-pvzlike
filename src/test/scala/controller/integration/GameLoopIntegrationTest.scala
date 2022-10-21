@@ -33,9 +33,9 @@ class GameLoopIntegrationTest extends AnyWordSpec with BeforeAndAfter with Match
     zombieActor = TestInbox[ModelMessage]("zombie")
     plantActor = TestInbox[ModelMessage]("plant")
 
-    bullet = (seedActor.ref, PeaBullet(1, LanesLength))
+    bullet = (seedActor.ref, PeaBullet((1, LanesLength)))
     zombie = (zombieActor.ref, Zombie((1, LanesLength)))
-    shooter = (plantActor.ref, PeaShooter(1, LanesLength / 2)())
+    shooter = (plantActor.ref, PeaShooter((1, LanesLength / 2)))
 
     entities = List(bullet, zombie, shooter)
     gameLoopActor = BehaviorTestKit(GameLoopActor(viewActor.ref, List(bullet, zombie, shooter)))

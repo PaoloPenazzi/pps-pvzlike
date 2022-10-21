@@ -6,8 +6,8 @@ import akka.actor.typed.scaladsl.Behaviors
 import akka.actor.typed.{ActorRef, Behavior}
 import controller.GameLoopActor.*
 import controller.GameLoopActor.GameLoopCommands.*
-import controller.{Command, GameLoopActor, ViewActor, ViewMessage}
-import model.actors.{EnemyActor, ModelMessage}
+import controller.{Command, GameLoopActor, ViewMessage}
+import model.actors.ModelMessage
 import model.common.Utilities.Velocity
 import model.entities.*
 import model.entities.WorldSpace.{LanesLength, given}
