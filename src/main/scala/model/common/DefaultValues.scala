@@ -21,7 +21,7 @@ object DefaultValues:
     case _       => 0
 
   val ranges: AttackingAbility => Int =
-    case _: PeaShooter => 500
+    case _: PeaShooter => 80
     case _: Zombie => 10
     case _ => 0
 
