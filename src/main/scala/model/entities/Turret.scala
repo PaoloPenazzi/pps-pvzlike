@@ -14,25 +14,17 @@ trait Turret extends Troop:
     case enemy: Enemy => enemy.position.y == position.y
     case _ => false
 
-/**
- * Basic turret.
- *
- * @param position The position in which the plant is placed by the player.
- */
 case class PeaShooter(override val position: Position,
                       override val life: Int = 300,
-                      override val state: TroopState = Idle) extends Turret :
+                      override val state: TroopState = Idle) extends Turret:
 
-  override def canAttack(entity: Entity): Boolean =
-    entity.position.x < position.x + range
+  override type BulletType = PeaBullet
+  override def canAttack(entity: Entity): Boolean = entity.position.x < position.x + range
+  override def bullet: BulletType = PeaBullet(position)
 
   override def collideWith(bullet: Bullet): Turret =
     val newLife: Int = Math.max(life - bullet.damage, 0)
     PeaShooter(position, newLife, if newLife == 0 then Dead else state)
-
-  override type BulletType = PeaBullet
-
-  override def bullet: BulletType = PeaBullet(position)
 
   override def update(elapsedTime: FiniteDuration, interests: List[Entity]): PeaShooter =
     state match
