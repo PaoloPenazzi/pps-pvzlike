@@ -3,11 +3,11 @@ package controller.integration
 import akka.actor.testkit.typed.scaladsl.{BehaviorTestKit, TestInbox}
 import akka.actor.typed.ActorRef
 import model.entities.*
-import controller.{Command, Render, ViewMessage}
-import controller.GameLoopActor.{GameLoopActor, updateTime}
-import controller.GameLoopActor.GameLoopCommands.{EntityUpdated, UpdateLoop}
+import model.common.Utilities.*
+import controller.{Command, GameLoopActor, Render, ViewMessage}
+import controller.GameLoopActor.*
+import controller.GameLoopActor.GameLoopCommands.{EntityUpdated, StartLoop, UpdateLoop}
 import model.actors.{Collision, ModelMessage, Update}
-import model.entities.*
 import model.entities.WorldSpace.LanesLength
 import org.scalatest.BeforeAndAfter
 import org.scalatest.matchers.should.Matchers
@@ -24,7 +24,7 @@ class GameLoopIntegrationTest extends AnyWordSpec with BeforeAndAfter with Match
   var zombie: (ActorRef[ModelMessage], Zombie) = _
   var shooter: (ActorRef[ModelMessage], PeaShooter) = _
 
-  var gameLoop: GameLoopActor = _
+  var entities: Seq[(ActorRef[ModelMessage], Entity)] = _
   var gameLoopActor: BehaviorTestKit[Command] = _
 
   before {
@@ -37,8 +37,8 @@ class GameLoopIntegrationTest extends AnyWordSpec with BeforeAndAfter with Match
     zombie = (zombieActor.ref, Zombie((1, LanesLength)))
     shooter = (plantActor.ref, PeaShooter((1, LanesLength / 2)))
 
-    gameLoop = controller.GameLoopActor.GameLoopActor(viewActor.ref, List(bullet, zombie, shooter))
-    gameLoopActor = BehaviorTestKit(gameLoop.standardBehavior)
+    entities = List(bullet, zombie, shooter)
+    gameLoopActor = BehaviorTestKit(GameLoopActor(viewActor.ref, List(bullet, zombie, shooter)))
   }
 
   "GameController" when {
@@ -56,17 +56,17 @@ class GameLoopIntegrationTest extends AnyWordSpec with BeforeAndAfter with Match
         "find a collisions" in {
           gameLoopActor run UpdateLoop()
           seedActor.receiveMessage()
-          seedActor expectMessage Update(updateTime, List(), gameLoopActor.ref)
+          seedActor expectMessage Update(Velocity.Normal.speed, List(), gameLoopActor.ref)
           zombieActor.receiveMessage()
-          zombieActor expectMessage Update(updateTime, List(), gameLoopActor.ref)
-          plantActor expectMessage Update(updateTime, List(zombie._2), gameLoopActor.ref)
+          zombieActor expectMessage Update(Velocity.Normal.speed, List(), gameLoopActor.ref)
+          plantActor expectMessage Update(Velocity.Normal.speed, List(zombie._2), gameLoopActor.ref)
         }
       }
 
       "interact with the view" when {
         "an entity is updated" in {
           gameLoopActor run EntityUpdated(seedActor.ref, bullet._2)
-          viewActor expectMessage Render(gameLoop.entities.map(_._2).toList, gameLoopActor.ref)
+          viewActor expectMessage Render(entities.map(_._2).toList, gameLoopActor.ref, MetaData())
         }
       }
       }
