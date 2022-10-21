@@ -15,6 +15,7 @@ class TurretModelTest extends AnyFlatSpec with should.Matchers:
   val turret: Troop = PeaShooter((1, 50))
   val lowHealthTurret: Troop = PeaShooter((1, LanesLength), 25)
   val dummyZombie1: Troop = Zombie((1, 60))
+  val dummyZombieTooFar: Troop = Zombie((1, 200))
   val dummyTurret2: Troop = PeaShooter((2, LanesLength))
   val dummyZombie2: Troop = Zombie((2, LanesLength))
   val dummyBullet: Bullet = PeaBullet(0,0)
@@ -30,6 +31,12 @@ class TurretModelTest extends AnyFlatSpec with should.Matchers:
   "A turret" should "lose HPs after getting hit" in {
     val updatedTurret = turret collideWith dummyBullet
     updatedTurret.life should be < turret.life
+  }
+  "A turret" should "not attack an enemy too far" in {
+    turret canAttack dummyZombieTooFar shouldBe false
+  }
+  "A turret" should "attack an enemy in range" in {
+    turret canAttack dummyZombie1 shouldBe true
   }
   "A turret" should "die if reaches 0 HP" in {
     val updatedTurret = lowHealthTurret collideWith dummyBullet
