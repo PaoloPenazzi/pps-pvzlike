@@ -27,8 +27,8 @@ class GameLoopBehaviorTest extends AnyWordSpec with BeforeAndAfter with Matchers
 
   var viewActor: TestInbox[ViewMessage] = _
   var gameLoopActor: BehaviorTestKit[Command] = _
-  var updateTime: FiniteDuration = FiniteDuration(16, "milliseconds")
-  val resourcesTime: FiniteDuration = Velocity.Normal.speed
+  var updateTime: FiniteDuration = Velocity.Normal.speed
+  val resourcesTime: FiniteDuration = FiniteDuration(3, "seconds")
 
   before {
     viewActor = TestInbox[ViewMessage]()
