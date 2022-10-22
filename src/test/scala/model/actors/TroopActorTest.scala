@@ -61,7 +61,7 @@ class TroopActorTest extends AnyWordSpec with BeforeAndAfterAll with Matchers :
         turretActor run Shoot(inbox.ref)
         assert(inbox.hasMessages)
         val message = inbox.receiveMessage()
-        assert(message.isInstanceOf[BulletSpawned[Bullet]])
+        assert(message.isInstanceOf[BulletSpawned])
       }
     }
     "colliding with a bullet" should {
@@ -79,7 +79,7 @@ class TroopActorTest extends AnyWordSpec with BeforeAndAfterAll with Matchers :
         lowHealthTurretActor run Collision(PeaBullet(1, 1), inbox.ref)
         assert(inbox.hasMessages)
         val message = inbox.receiveMessage()
-        assert(message.isInstanceOf[EntityDead[Entity]])
+        assert(message.isInstanceOf[EntityDead])
       }
     }
   }
@@ -109,7 +109,7 @@ class TroopActorTest extends AnyWordSpec with BeforeAndAfterAll with Matchers :
         zombieActor run Shoot(inbox.ref)
         assert(inbox.hasMessages)
         val message = inbox.receiveMessage()
-        assert(message.isInstanceOf[BulletSpawned[Bullet]])
+        assert(message.isInstanceOf[BulletSpawned])
       }
     }
   }

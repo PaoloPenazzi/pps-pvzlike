@@ -35,7 +35,7 @@ object GameLoopActor:
           msg match
             case StartLoop() =>
               startTimer(timer, UpdateLoop())
-              startTimer(timer, UpdateResources())
+              startTimer(timer, UpdateResources(), FiniteDuration(3, "seconds"))
               GameLoopActor(viewActor, entities, metaData)
 
             case StopLoop() => Behaviors.stopped
@@ -43,7 +43,7 @@ object GameLoopActor:
             case PauseLoop() => pauseBehavior
 
             case UpdateResources() =>
-              startTimer(timer, UpdateResources())
+              startTimer(timer, UpdateResources(), FiniteDuration(3, "seconds"))
               GameLoopActor(viewActor, entities, metaData + Sun.Normal.value)
 
             case ChangeVelocity(velocity) => GameLoopActor(viewActor, entities, metaData >>> velocity)
@@ -60,14 +60,21 @@ object GameLoopActor:
               render(ctx, newEntities.map(_._2).toList)
               GameLoopActor(viewActor, newEntities, metaData)
 
-            case BulletSpawned(ref, bullet) => GameLoopActor(viewActor, entities :+ (ref, bullet), metaData)
+            case BulletSpawned(ref, bullet) =>
+              System.out.println("Bullet spawned: " + bullet)
+              GameLoopActor(viewActor, entities :+ (ref, bullet), metaData)
 
             case PlaceTurret(turret) =>
               turret match
                 case turret if metaData.sun < turret.cost => GameLoopActor(viewActor, entities, metaData)
-                case _ => GameLoopActor(viewActor, entities :+ (ctx.spawnAnonymous(TroopActor(turret)), turret), metaData - turret.cost)
+                case _ =>
+                  System.out.println("Turret placed: " + turret)
+                  GameLoopActor(viewActor, entities :+ (ctx.spawnAnonymous(TroopActor(turret)), turret), metaData - turret.cost)
 
-            case EntityDead(ref) => GameLoopActor(viewActor, entities filter { e => e._1 != ref }, metaData)
+            case EntityDead(ref) =>
+              val entity = entities filter { e => e._1 == ref }
+              System.out.println("Entity dead: " + entity.head._2)
+              GameLoopActor(viewActor, entities filter { _._1 != ref }, metaData)
 
             case _ => Behaviors.same
         }))
@@ -84,7 +91,7 @@ object GameLoopActor:
           case _ => Behaviors.same
       })
 
-    private def startTimer(timer: TimerScheduler[Command], msg: Command): Unit = timer.startSingleTimer(msg, metaData.velocity.speed)
+    private def startTimer(timer: TimerScheduler[Command], msg: Command, time: FiniteDuration = metaData.velocity.speed): Unit = timer.startSingleTimer(msg, time)
 
     private def createWave(ctx: ActorContext[Command]) =
       waveGenerator.generateNextWave.enemies.map(e => (ctx.spawnAnonymous(TroopActor(e)), e))
@@ -132,7 +139,7 @@ object GameLoopActor:
 
     case class ChangeVelocity(velocity: Velocity) extends GameLoopCommand
 
-    case class EntityDead[E <: Entity](ref: ActorRef[ModelMessage]) extends GameLoopCommand
+    case class EntityDead(ref: ActorRef[ModelMessage]) extends GameLoopCommand
 
     case class EntityUpdated[E <: Entity](ref: ActorRef[ModelMessage], entity: E) extends GameLoopCommand
 
