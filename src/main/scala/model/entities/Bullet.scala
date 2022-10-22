@@ -16,8 +16,8 @@ class PeaBullet(override val position: Position) extends Bullet:
 
   override def checkCollisionWith(entity: Entity): Boolean =
     entity match
-      case _: Turret => false
       case _: Enemy => super.checkCollisionWith(entity)
+      case _ => false
 
   override def update(elapsedTime: FiniteDuration, interests: List[Entity]): Bullet =
     PeaBullet(updatePosition(elapsedTime))
@@ -27,8 +27,8 @@ class Paw(override val position: Position) extends Bullet:
 
   override def checkCollisionWith(entity: Entity): Boolean =
     entity match
-      case _: Enemy => false
       case _: Turret => super.checkCollisionWith(entity)
+      case _ => false
 
   override def update(elapsedTime: FiniteDuration, interests: List[Entity]): Bullet =
     Paw(updatePosition(elapsedTime))
