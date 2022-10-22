@@ -61,19 +61,15 @@ object GameLoopActor:
               GameLoopActor(viewActor, newEntities, metaData)
 
             case BulletSpawned(ref, bullet) =>
-              System.out.println("Bullet spawned: " + bullet)
               GameLoopActor(viewActor, entities :+ (ref, bullet), metaData)
 
             case PlaceTurret(turret) =>
               turret match
                 case turret if metaData.sun < turret.cost => GameLoopActor(viewActor, entities, metaData)
                 case _ =>
-                  System.out.println("Turret placed: " + turret)
                   GameLoopActor(viewActor, entities :+ (ctx.spawnAnonymous(TroopActor(turret)), turret), metaData - turret.cost)
 
             case EntityDead(ref) =>
-              val entity = entities filter { e => e._1 == ref }
-              System.out.println("Entity dead: " + entity.head._2)
               GameLoopActor(viewActor, entities filter { _._1 != ref }, metaData)
 
             case _ => Behaviors.same
