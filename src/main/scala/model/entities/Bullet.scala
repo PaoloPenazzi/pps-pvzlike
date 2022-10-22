@@ -29,7 +29,7 @@ class Paw(override val position: Position) extends Bullet:
     entity match
       case _: Enemy => false
       case _: Turret => super.checkCollisionWith(entity)
-  
+
   override def update(elapsedTime: FiniteDuration, interests: List[Entity]): Bullet =
     Paw(updatePosition(elapsedTime))
 
