@@ -18,7 +18,7 @@ trait Enemy extends MovingAbility with AttackingAbility with Troop:
 /**
  * Basic Enemy.
  */
-class Zombie(override val position: Position,
+case class Zombie(override val position: Position,
              override val life: Int = 100,
              override val state: TroopState = Moving,
              override val velocity: Float = -0.01) extends Enemy:
@@ -30,16 +30,10 @@ class Zombie(override val position: Position,
     Zombie(position, newLife, if newLife == 0 then Dead else state)
   
   override def update(elapsedTime: FiniteDuration, interests: List[Entity]): Enemy =
-    val shouldBeAttacking = interests.nonEmpty
+    val nextState = if interests.nonEmpty then Attacking else Moving
     state match
-      case Moving => Zombie(
-        updatePosition(elapsedTime),
-        life,
-        if shouldBeAttacking then Attacking else state)
-      case Attacking => Zombie(
-        position,
-        life,
-        if shouldBeAttacking then state else Moving)
+      case Moving => copy(position = updatePosition(elapsedTime), state = nextState)
+      case Attacking => copy(state = nextState)
       case _ => this
 
 
