@@ -6,7 +6,7 @@ import akka.actor.testkit.typed.scaladsl.{ActorTestKit, BehaviorTestKit, ScalaTe
 import akka.actor.typed.scaladsl.Behaviors
 import akka.testkit.{ImplicitSender, TestActors, TestKit}
 import controller.Command
-import controller.GameLoopActor.GameLoopCommands.{EntityDead, EntitySpawned, EntityUpdated, GameLoopCommand}
+import controller.GameLoopActor.GameLoopCommands.{EntityDead, BulletSpawned, EntityUpdated, GameLoopCommand}
 import model.actors.{BulletActor, Shoot, Update}
 import model.common.DefaultValues.*
 import model.entities.*
@@ -61,7 +61,7 @@ class TroopActorTest extends AnyWordSpec with BeforeAndAfterAll with Matchers :
         turretActor run Shoot(inbox.ref)
         assert(inbox.hasMessages)
         val message = inbox.receiveMessage()
-        assert(message.isInstanceOf[EntitySpawned[Bullet]])
+        assert(message.isInstanceOf[BulletSpawned[Bullet]])
       }
     }
     "colliding with a bullet" should {
@@ -109,7 +109,7 @@ class TroopActorTest extends AnyWordSpec with BeforeAndAfterAll with Matchers :
         zombieActor run Shoot(inbox.ref)
         assert(inbox.hasMessages)
         val message = inbox.receiveMessage()
-        assert(message.isInstanceOf[EntitySpawned[Bullet]])
+        assert(message.isInstanceOf[BulletSpawned[Bullet]])
       }
     }
   }

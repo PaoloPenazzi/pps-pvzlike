@@ -60,15 +60,14 @@ object GameLoopActor:
               render(ctx, newEntities.map(_._2).toList)
               GameLoopActor(viewActor, newEntities, metaData)
 
-            case EntitySpawned(ref, entity) => GameLoopActor(viewActor, entities :+ (ref, entity), metaData)
+            case BulletSpawned(ref, bullet) => GameLoopActor(viewActor, entities :+ (ref, bullet), metaData)
 
             case PlaceTurret(turret) =>
               turret match
                 case turret if metaData.sun < turret.cost => GameLoopActor(viewActor, entities, metaData)
                 case _ => GameLoopActor(viewActor, entities :+ (ctx.spawnAnonymous(TroopActor(turret)), turret), metaData - turret.cost)
 
-            case EntityDead(ref) =>
-              GameLoopActor(viewActor, entities filter { e => e._1 != ref }, metaData)
+            case EntityDead(ref) => GameLoopActor(viewActor, entities filter { e => e._1 != ref }, metaData)
 
             case _ => Behaviors.same
         }))
@@ -137,7 +136,7 @@ object GameLoopActor:
 
     case class EntityUpdated[E <: Entity](ref: ActorRef[ModelMessage], entity: E) extends GameLoopCommand
 
-    case class EntitySpawned[E <: Entity](ref: ActorRef[ModelMessage], entity: E) extends GameLoopCommand
+    case class BulletSpawned(ref: ActorRef[ModelMessage], bullet: Bullet) extends GameLoopCommand
     
     case class PlaceTurret(turret: Turret) extends GameLoopCommand
     
