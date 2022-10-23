@@ -1,33 +1,37 @@
 package model.entities
 
 import model.common.DefaultValues.*
+import model.entities.TroopState.*
 import model.entities.WorldSpace.{Position, given}
-import model.entities.{AttackingEntity, Bullet, Enemy, Entity, Seed, Turret, Zombie}
+import model.entities.{AttackingAbility, Bullet, Enemy, Entity, PeaBullet, Turret, Zombie}
 
 import scala.concurrent.duration.FiniteDuration
 
-trait Turret extends Entity with AttackingEntity:
-  override type UpdatedEntity = Turret
+trait Turret extends Entity with AttackingAbility with Troop :
   def cost: Int = costs(this)
 
-  def canAttack(enemy: Enemy): Boolean =
-    isOnMyPath(enemy) && isInRange(enemy)
-
-  private def isOnMyPath(enemy: Enemy): Boolean =
-    enemy.position.y == position.y
-
-  private def isInRange(enemy: Enemy): Boolean =
-    enemy.position.x.toInt <= range
-
-  override def filter: Entity => Boolean =
-      case enemy: Enemy => enemy.position.y == position.y
-      case _ => false
+  override def isInterestedIn: Entity => Boolean =
+    case enemy: Enemy => enemy.position.y == position.y && enemy.position.x >= position.x
+    case _ => false
 
 /**
  * Basic turret.
  *
  * @param position The position in which the plant is placed by the player.
  */
-case class Plant(override val position: Position) extends Turret:
-  override def update(elapsedTime: FiniteDuration, interests: List[Entity]): Plant =
-    Plant(position)
+case class PeaShooter(override val position: Position,
+                      override val life: Int = 300,
+                      override val state: TroopState = Idle) extends Turret :
+  override def collideWith(bullet: Bullet): Turret =
+    val newLife: Int = Math.max(life - bullet.damage, 0)
+    PeaShooter(position, newLife, if newLife == 0 then Dead else state)
+
+  override def bullet: Bullet = new PeaBullet(position)
+
+  override def update(elapsedTime: FiniteDuration, interests: List[Entity]): PeaShooter =
+    state match
+      case Idle | Attacking => PeaShooter(
+        position,
+        life,
+        if interests.isEmpty then Idle else Attacking)
+      case _ => this
