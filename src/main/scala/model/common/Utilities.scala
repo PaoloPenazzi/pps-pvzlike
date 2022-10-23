@@ -22,7 +22,7 @@ object Utilities:
     def +(quantity: Int): MetaData = MetaData(quantity + sun, velocity)
 
     @targetName("subtraction")
-    def -(quantity: Int): MetaData = MetaData(quantity - sun, velocity)
+    def -(quantity: Int): MetaData = MetaData(sun - quantity, velocity)
 
     @targetName("change velocity")
     def >>>(newVelocity: Velocity): MetaData = MetaData(sun, newVelocity)
