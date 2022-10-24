@@ -22,34 +22,32 @@ import WorldSpace.LanesLength
 
 class TroopActorTest extends AnyWordSpec with BeforeAndAfterAll with Matchers :
 
-  val dummyPlant: Turret = PeaShooter((1, LanesLength))
-  val dummyZombie: Zombie = Zombie((1, LanesLength + 2))
-  val lowHealthPlant: Turret = PeaShooter((1, LanesLength), 25)
-  val turretActor: BehaviorTestKit[ModelMessage] = BehaviorTestKit(TroopActor(dummyPlant))
-  val zombieActor: BehaviorTestKit[ModelMessage] = BehaviorTestKit(TroopActor(dummyZombie))
-  val lowHealthTurretActor: BehaviorTestKit[ModelMessage] = BehaviorTestKit(TroopActor(lowHealthPlant))
+  val plant: Troop = Troops.ofType[PeaShooter] withPosition (1, 10)
+  val zombie: Troop = Zombie((1, LanesLength + 2))
+  val plantActor: BehaviorTestKit[ModelMessage] = BehaviorTestKit(TroopActor(plant))
+  val zombieActor: BehaviorTestKit[ModelMessage] = BehaviorTestKit(TroopActor(zombie))
+  val lowHealthPlantActor: BehaviorTestKit[ModelMessage] = BehaviorTestKit(TroopActor(plant withLife 15))
 
   "The troop actor" when {
     "created" should {
       "be alive" in {
-        turretActor.isAlive must be(true)
+        plantActor.isAlive must be(true)
       }
     }
   }
-
   "The troop actor (turret)" when {
     "updated" should {
       "attack the zombie" in {
         val inbox = TestInbox[Command]()
-        turretActor run Update(FiniteDuration(32, MILLISECONDS), List(dummyZombie), inbox.ref)
-        turretActor expectEffect Effect.TimerScheduled("Shooting",
+        plantActor run Update(FiniteDuration(32, MILLISECONDS), List(zombie), inbox.ref)
+        plantActor expectEffect Effect.TimerScheduled("Shooting",
           Shoot(inbox.ref),
-          dummyPlant.fireRate.seconds,
+          plant.fireRate.seconds,
           Effect.TimerScheduled.SingleMode, false)(null)
       }
       "update his position" in {
         val inbox = TestInbox[Command]()
-        turretActor run Update(FiniteDuration(32, MILLISECONDS), List(dummyZombie), inbox.ref)
+        plantActor run Update(FiniteDuration(32, MILLISECONDS), List(zombie), inbox.ref)
         assert(inbox.hasMessages)
         val message = inbox.receiveMessage()
         assert(message.isInstanceOf[EntityUpdated[Entity]])
@@ -58,7 +56,7 @@ class TroopActorTest extends AnyWordSpec with BeforeAndAfterAll with Matchers :
     "shooting" should {
       "spawn a bullet" in {
         val inbox = TestInbox[Command]()
-        turretActor run Shoot(inbox.ref)
+        plantActor run Shoot(inbox.ref)
         assert(inbox.hasMessages)
         val message = inbox.receiveMessage()
         assert(message.isInstanceOf[BulletSpawned])
@@ -67,7 +65,7 @@ class TroopActorTest extends AnyWordSpec with BeforeAndAfterAll with Matchers :
     "colliding with a bullet" should {
       "update himself" in {
         val inbox = TestInbox[Command]()
-        turretActor run Collision(PeaBullet(1,1), inbox.ref)
+        plantActor run Collision(PeaBullet(1,1), inbox.ref)
         assert(inbox.hasMessages)
         val message = inbox.receiveMessage()
         assert(message.isInstanceOf[EntityUpdated[Entity]])
@@ -76,7 +74,7 @@ class TroopActorTest extends AnyWordSpec with BeforeAndAfterAll with Matchers :
     "colliding with a bullet" should {
       "die if has 0 HPs" in {
         val inbox = TestInbox[Command]()
-        lowHealthTurretActor run Collision(PeaBullet(1, 1), inbox.ref)
+        lowHealthPlantActor run Collision(PeaBullet(1, 1), inbox.ref)
         assert(inbox.hasMessages)
         val message = inbox.receiveMessage()
         assert(message.isInstanceOf[EntityDead])
@@ -89,15 +87,15 @@ class TroopActorTest extends AnyWordSpec with BeforeAndAfterAll with Matchers :
     "is updated" should {
       "attack the plant" in {
         val inbox = TestInbox[Command]()
-        zombieActor run Update(FiniteDuration(32, MILLISECONDS), List(dummyPlant), inbox.ref)
+        zombieActor run Update(FiniteDuration(32, MILLISECONDS), List(plant), inbox.ref)
         zombieActor expectEffect Effect.TimerScheduled("Shooting",
           Shoot(inbox.ref),
-          dummyZombie.fireRate.seconds,
+          zombie.fireRate.seconds,
           Effect.TimerScheduled.SingleMode, false)(null)
       }
       "update his position" in {
         val inbox = TestInbox[Command]()
-        zombieActor run Update(FiniteDuration(32, MILLISECONDS), List(dummyPlant), inbox.ref)
+        zombieActor run Update(FiniteDuration(32, MILLISECONDS), List(plant), inbox.ref)
         assert(inbox.hasMessages)
         val message = inbox.receiveMessage()
         assert(message.isInstanceOf[EntityUpdated[Entity]])

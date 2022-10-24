@@ -3,7 +3,7 @@ package model
 import akka.actor.typed.ActorRef
 import model.GameData.GameSeq.GameSeqBuilder
 import model.actors.ModelMessage
-import model.entities.{Bullet, Enemy, Entity, PeaShooter, Turret}
+import model.entities.{Bullet, Enemy, Entity, PeaShooter, Plant}
 
 object GameData :
   
@@ -14,9 +14,9 @@ object GameData :
     trait GameSeqBuilder[T, E <: Entity]:
       def of(seq: Seq[GameEntity[T, Entity]]) : Seq[GameEntity[T, E]]
 
-    given GameSeqBuilder[ModelMessage, Turret] with
-      override def of(seq: Seq[GameEntity[ModelMessage, Entity]]): Seq[GameEntity[ModelMessage, Turret]] =
-        seq.collect{ case e if e.entity.isInstanceOf[Turret] => GameEntity(e.ref, e.entity.asInstanceOf[Turret]) }
+    given GameSeqBuilder[ModelMessage, Plant] with
+      override def of(seq: Seq[GameEntity[ModelMessage, Entity]]): Seq[GameEntity[ModelMessage, Plant]] =
+        seq.collect{ case e if e.entity.isInstanceOf[Plant] => GameEntity(e.ref, e.entity.asInstanceOf[Plant]) }
 
   case class GameSeq[T](seq: Seq[GameEntity[T, Entity]]):
 

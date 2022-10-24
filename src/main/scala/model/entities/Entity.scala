@@ -2,9 +2,10 @@ package model.entities
 
 import model.common.DefaultValues
 import model.common.DefaultValues.*
+import model.entities.TroopState.{Attacking, Dead, Idle}
 import model.entities.WorldSpace.{Position, given}
-import scala.language.implicitConversions
 
+import scala.language.implicitConversions
 import scala.concurrent.duration.FiniteDuration
 
 trait Entity:
@@ -20,8 +21,7 @@ trait MovingAbility extends Entity:
     (position.y, position.x + (elapsedTime.length * velocity))
 
 trait AttackingAbility extends Entity:
-  type BulletType <: Bullet
-  def bullet: BulletType
+  def bullet: Bullet
   def canAttack(entity: Entity): Boolean
   def fireRate: Int = fireRates(this)
   def range: Int = ranges(this)
@@ -31,13 +31,31 @@ trait Troop extends Entity with AttackingAbility:
   def collideWith(bullet: Bullet): UpdatedEntity
   def life: Int
   def state: TroopState
+  def pointOfShoot: Position
+  def withState(newState: TroopState): Troop
+  def withLife(HPs: Int): Troop
+  def withPosition(pos: Position): Troop
+
+object Troops:
+  trait TroopBuilder[T <: Troop]:
+    def build: T
+
+  given TroopBuilder[PeaShooter] with
+    override def build: PeaShooter = PeaShooter()
+  given TroopBuilder[Zombie] with
+    override def build: Zombie = Zombie()
+  given TroopBuilder[Wallnut] with
+    override def build: Wallnut = Wallnut()  
+
+  def ofType[T <: Troop](using troopBuilder: TroopBuilder[T]): T =
+    troopBuilder.build
 
 enum TroopState:
   case Idle
   case Moving
   case Attacking
   case Dead
-    
+
 
 
 

@@ -6,7 +6,7 @@ import controller.{GameLoopActor, ViewMessage}
 import model.GameData.{GameEntity, GameSeq}
 import model.actors.ModelMessage
 import model.entities.WorldSpace.{LanesLength, Position}
-import model.entities.{Bullet, Enemy, Entity, PeaBullet, PeaShooter, Turret, Zombie}
+import model.entities.{Bullet, Enemy, Entity, PeaBullet, PeaShooter, Plant, Zombie}
 import org.scalatest.BeforeAndAfter
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
@@ -38,6 +38,6 @@ class GameDataTest extends AnyFlatSpec with BeforeAndAfter with Matchers :
   import GameData.GameSeq.*
 
   "a seq" should "make seq of turret" in {
-    assertResult(seq.ofType[Turret])(List(shooter))
+    assertResult(seq.ofType[Plant])(List(shooter))
   }
 
