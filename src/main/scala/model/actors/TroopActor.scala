@@ -10,7 +10,7 @@ import model.entities.TroopState.*
 import concurrent.duration.DurationInt
 
 object TroopActor:
-  private val ShootingTimer: String = "Shooting"
+  private val ShootingTimerKey: String = "Shooting"
   def apply(troop: Troop): Behavior[ModelMessage] =
     standardBehaviour(troop)
 
@@ -22,26 +22,31 @@ object TroopActor:
             val entityUpdated: Troop = troop.update(elapsedTime, entities)
             replyTo ! EntityUpdated(ctx.self, entityUpdated)
             entityUpdated.state match
-              case Attacking => if !timer.isTimerActive(ShootingTimer)
-                then timer.startSingleTimer(ShootingTimer, Shoot(replyTo), troop.fireRate.seconds)
-              case _ => timer.cancel(ShootingTimer)
+              case Attacking =>
+                if !timer.isTimerActive(ShootingTimerKey)
+                then timer.startSingleTimer(ShootingTimerKey, Shoot(replyTo), troop.fireRate.seconds)
+              case _ => timer cancel ShootingTimerKey
             standardBehaviour(entityUpdated)
 
           case Shoot(replyTo) =>
-            val bullet: Bullet = troop.asInstanceOf[AttackingAbility].bullet
+            val bullet: Bullet = troop.bullet
             val bulletActor = ctx.spawnAnonymous(BulletActor(bullet))
             replyTo ! BulletSpawned(bulletActor, bullet)
             Behaviors.same
 
           case Collision(entity, replyTo) =>
-            val entityUpdated: Troop = troop collideWith entity.asInstanceOf[Bullet]
-            entityUpdated.state match
-              case Dead =>
-                replyTo ! EntityDead(ctx.self)
-                Behaviors.stopped
-              case _ =>
-                replyTo ! EntityUpdated(ctx.self, entityUpdated)
-                standardBehaviour(entityUpdated)
+            entity match {
+              case bullet: Bullet =>
+                val entityUpdated: Troop = troop collideWith bullet
+                entityUpdated.state match
+                  case Dead =>
+                    replyTo ! EntityDead(ctx.self)
+                    Behaviors.stopped
+                  case _ =>
+                    replyTo ! EntityUpdated(ctx.self, entityUpdated)
+                    standardBehaviour(entityUpdated)
+              case _ => Behaviors.same
+            }
 
           case _ => Behaviors.same
       })
