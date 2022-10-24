@@ -19,7 +19,7 @@ case class PeaShooter(override val position: Position,
                       override val state: TroopState = Idle) extends Turret:
 
   override type BulletType = PeaBullet
-  override def canAttack(entity: Entity): Boolean = entity.position.x < position.x + range
+  override def canAttack(entity: Entity): Boolean = isInRange(entity) && isNotBehindMe(entity)
   override def bullet: BulletType = PeaBullet(position)
 
   override def collideWith(bullet: Bullet): Turret =
@@ -33,3 +33,6 @@ case class PeaShooter(override val position: Position,
         life,
         if interests.isEmpty then Idle else Attacking)
       case _ => this
+
+  private def isInRange(entity: Entity): Boolean = entity.position.x < position.x + range
+  private def isNotBehindMe(entity: Entity): Boolean = entity.position.x > position.x

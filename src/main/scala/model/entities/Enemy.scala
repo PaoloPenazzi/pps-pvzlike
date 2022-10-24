@@ -9,7 +9,7 @@ import scala.concurrent.duration.FiniteDuration
 /**
  * Interface of an enemy model
  */
-trait Enemy extends MovingAbility with AttackingAbility with Troop:
+trait Enemy extends Troop with MovingAbility:
 
   override def isInterestedIn: Entity => Boolean =
     case turret: Turret => turret.position.y == position.y && turret.position.x < position.x && position.x - turret.position.x.toInt <= range
@@ -22,8 +22,12 @@ case class Zombie(override val position: Position,
              override val life: Int = 100,
              override val state: TroopState = Moving,
              override val velocity: Float = -0.01) extends Enemy:
-  
-  override def bullet: Bullet = new Paw(position)
+
+  override def canAttack(entity: Entity): Boolean =
+    entity.position.y == position.y && entity.position.x < position.x && position.x - entity.position.x.toInt <= range
+
+  override type BulletType = Paw
+  override def bullet: BulletType = new Paw(position)
 
   override def collideWith(bullet: Bullet): Troop =
     val newLife = Math.max(life - bullet.damage, 0)
