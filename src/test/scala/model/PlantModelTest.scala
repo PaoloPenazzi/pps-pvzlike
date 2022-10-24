@@ -5,7 +5,7 @@ import org.scalatest.*
 import org.scalatest.flatspec.*
 import org.scalatest.matchers.*
 
-import scala.language.implicitConversions
+import scala.language.{implicitConversions, postfixOps}
 import WorldSpace.{LanesLength, given}
 import model.entities.TroopState.{Attacking, Dead, Idle}
 
@@ -14,12 +14,12 @@ import scala.concurrent.duration.FiniteDuration
 class PlantModelTest extends AnyFlatSpec with should.Matchers:
   val testingLane = 1
   val otherLane = 2
-  val peashooter: Troop = PeaShooter((testingLane, 10))
-  val wallnut: Troop = Wallnut((testingLane, 10))
-  val zombieInTheSameLane: Troop = Zombie((testingLane, 50))
-  val zombieOutOfRange: Troop = Zombie((testingLane, 100))
-  val dummyPlant: Troop = PeaShooter((otherLane, 50))
-  val dummyZombie: Troop = Zombie((otherLane, 50))
+  val peashooter: Troop = Troops.ofType[PeaShooter] withPosition (testingLane, 10)
+  val wallnut: Troop = Troops.ofType[Wallnut] withPosition (testingLane, 10)
+  val zombieInTheSameLane: Troop = Troops.ofType[Zombie] withPosition (testingLane, 50)
+  val zombieOutOfRange: Troop = Troops.ofType[Zombie] withPosition (testingLane, 100)
+  val dummyPlant: Troop = Troops.ofType[PeaShooter] withPosition (otherLane, 50)
+  val dummyZombie: Troop = Troops.ofType[Zombie] withPosition (otherLane, 50)
   val dummyBullet: Bullet = Paw(0,0)
 
   "A Peashooter" should "be in Idle state if it can't attack any enemy" in {
