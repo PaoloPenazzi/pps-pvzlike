@@ -2,7 +2,7 @@ package model.actors
 
 import akka.actor.typed.Behavior
 import akka.actor.typed.scaladsl.Behaviors
-import controller.GameLoopActor.GameLoopCommands.{EntityDead, EntitySpawned, EntityUpdated}
+import controller.GameLoopActor.GameLoopCommands.{EntityDead, BulletSpawned, EntityUpdated}
 import model.entities.*
 import model.actors.BulletActor
 import model.entities.TroopState.*
@@ -30,7 +30,7 @@ object TroopActor:
           case Shoot(replyTo) =>
             val bullet: Bullet = troop.bullet
             val bulletActor = ctx.spawnAnonymous(BulletActor(bullet))
-            replyTo ! EntitySpawned(bulletActor, bullet)
+            replyTo ! BulletSpawned(bulletActor, bullet)
             Behaviors.same
 
           case Collision(entity, replyTo) =>

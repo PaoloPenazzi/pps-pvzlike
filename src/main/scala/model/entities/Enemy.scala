@@ -12,7 +12,7 @@ import scala.concurrent.duration.FiniteDuration
 trait Enemy extends Troop with MovingAbility:
 
   override def isInterestedIn: Entity => Boolean =
-    case turret: Turret => turret.position.y == position.y && position.x - turret.position.x.toInt <= range
+    case turret: Turret => turret.position.y == position.y && turret.position.x < position.x && position.x - turret.position.x.toInt <= range
     case _ => false
 
 /**
@@ -21,29 +21,22 @@ trait Enemy extends Troop with MovingAbility:
 case class Zombie(override val position: Position,
              override val life: Int = 100,
              override val state: TroopState = Moving,
-             override val velocity: Float = -0.001) extends Enemy:
-
+             override val velocity: Float = -0.01) extends Enemy:
+  
+  override def bullet: Bullet = new Paw(position)
   override def withPosition(pos: Position): Troop = copy(position = pos)
   override def withLife(HPs: Int): Troop = copy(life = HPs)
   override def withState(newState: TroopState): Troop = copy(state = newState)
-  
-  //override def bullet: Bullet = new PeaBullet(position)
 
   override def collideWith(bullet: Bullet): Troop =
     val newLife = Math.max(life - bullet.damage, 0)
     Zombie(position, newLife, if newLife == 0 then Dead else state)
   
   override def update(elapsedTime: FiniteDuration, interests: List[Entity]): Enemy =
-    val shouldBeAttacking = interests.nonEmpty
+    val nextState = if interests.nonEmpty then Attacking else Moving
     state match
-      case Moving => Zombie(
-        updatePosition(elapsedTime),
-        life,
-        if shouldBeAttacking then Attacking else state)
-      case Attacking => Zombie(
-        position,
-        life,
-        if shouldBeAttacking then state else Moving)
+      case Moving => copy(position = updatePosition(elapsedTime), state = nextState)
+      case Attacking => copy(state = nextState)
       case _ => this
 
 

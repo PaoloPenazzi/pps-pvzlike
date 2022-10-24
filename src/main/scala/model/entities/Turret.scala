@@ -25,7 +25,7 @@ abstract class Turret(override val position: Position,
   def cost: Int = costs(this)
 
   override def isInterestedIn: Entity => Boolean =
-    case enemy: Enemy => enemy.position.y == position.y
+    case enemy: Enemy => enemy.position.y == position.y && enemy.position.x >= position.x
     case _ => false
 
   override def collideWith(bullet: Bullet): Troop =

@@ -1,7 +1,7 @@
 package view
 
-import com.badlogic.gdx.graphics.g2d.{SpriteBatch, TextureRegion}
-import com.badlogic.gdx.graphics.{GL20, OrthographicCamera, Texture}
+import com.badlogic.gdx.graphics.g2d.{BitmapFont, GlyphLayout, SpriteBatch, TextureRegion}
+import com.badlogic.gdx.graphics.{Color, GL20, OrthographicCamera, Texture}
 import com.badlogic.gdx.math.{Vector2, Vector3}
 import com.badlogic.gdx.physics.box2d.{Box2DDebugRenderer, World}
 import com.badlogic.gdx.utils.viewport.Viewport
@@ -11,8 +11,20 @@ import model.entities.*
 import View.EntityRenderer
 import Sprites.*
 import ViewportSpace.*
-import com.badlogic.gdx.scenes.scene2d.ui.ImageButton
+import com.badlogic.gdx.scenes.scene2d.ui.{HorizontalGroup, ImageButton, Table}
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable
+import com.badlogic.gdx.Gdx
+import com.badlogic.gdx.Input.Buttons
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter
+import com.badlogic.gdx.scenes.scene2d.actions.Actions
+import com.badlogic.gdx.scenes.scene2d.{InputEvent, Stage}
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener
+import com.badlogic.gdx.utils.Align
+import controller.ViewActor.sendPlaceTurret
+import model.common.Utilities
+import model.common.Utilities.MetaData
+
 
 object Screen:
   val Framerate: Float = 60
@@ -23,8 +35,17 @@ class Screen(private val viewport: Viewport) extends ScreenAdapter with EntityRe
   private val world: World = World(Vector2(0, 0), false)
   private val camera = viewport.getCamera
   private var entities: List[Entity] = List.empty
-  private lazy val batch: SpriteBatch = SpriteBatch()
 
+  private lazy val batch: SpriteBatch = SpriteBatch()
+  private lazy val stage = new Stage(viewport); //Set up a stage for the ui
+  var pendingTroop: Option[Troop] = None
+
+  lazy val background: Texture = Texture(Gdx.files.classpath("assets/background/day.png"))
+  lazy val gamingWindowNumberOfSun: Texture = Texture(Gdx.files.classpath("assets/gameWindow/numberOfSun.png"))
+
+  private var metaData: MetaData = MetaData()
+  private lazy val font: BitmapFont = BitmapFont(Gdx.files.internal("assets/gameWindow/font.fnt"), Gdx.files.internal("assets/gameWindow/font.png"), false)
+  //private val layout: GlyphLayout = GlyphLayout();
 
   override def render(delta: Float): Unit =
     world.step(1 / Screen.Framerate, 6, 2)
@@ -32,30 +53,61 @@ class Screen(private val viewport: Viewport) extends ScreenAdapter with EntityRe
     Gdx.gl.glClearColor(0, 0, 0, 1)
     Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
 
-    val background: Texture = new Texture(Gdx.files.classpath("assets/background/day.png"))
-
-    val gamingWindowPlants: Texture = new Texture(Gdx.files.classpath("assets/gameWindow/pea-shooter-button.png"))
-    val peaShooterButton = createButtonFromImage(gamingWindowPlants)
-    val gamingWindowSunFlowers: Texture = new Texture(Gdx.files.classpath("assets/gameWindow/sunflower-button.png"))
-    val sunFlowerButton = createButtonFromImage(gamingWindowSunFlowers)
-    val gamingWindowWallnut: Texture = new Texture(Gdx.files.classpath("assets/gameWindow/wallnut-button.png"))
-    val wallnutButton = createButtonFromImage(gamingWindowWallnut)
-    val gamingWindowNumberOfSun: Texture = Texture(Gdx.files.classpath("assets/gameWindow/numberOfSun.png"))
+    //enerator.dispose(); // don't forget to dispose to avoid memory leaks!
+    //layout.setText(font, metaData.sun.toString, Color.WHITE, targetWidth, Align.center, true);
+    /*
+    layout.setText(font, metaData.sun.toString, Color.WHITE, 1, Align.center, true);
+    layout.height = HUDHeight
+    layout.width = 3
+    */
 
     batch.begin()
-    batch.draw(background, -3, projectY(0), 25, 7.5f)
-    batch.draw(gamingWindowPlants, 0, 7.5f, 1.5f, 1.5f)
-    batch.draw(gamingWindowSunFlowers, 1.5f, 7.5f, 1.5f, 1.5f)
-    batch.draw(gamingWindowWallnut, 3, 7.5f, 1.5f, 1.5f)
-    batch.draw(gamingWindowNumberOfSun, 12, 7.5f, 4, 1.5f)
+    batch.draw(background, -3, 0, 25, ViewportHeight - HUDHeight)
+    font.getData.setScale(.05f)
+    font.draw(batch, metaData.sun.toString, 12, 7.5f)
+    //batch.draw(gamingWindowNumberOfSun, 10, ViewportHeight - HUDHeight, 6, HUDHeight)
     entities.foreach(e => batch.draw(texture(e), projectX(e.position.x), projectY(e.position.y), width(e), height(e)))
 
     batch.end()
+    stage.draw(); //Draw the ui
+    stage.act(delta)
 
-  private def createButtonFromImage(texture: Texture): ImageButton =
-    val textureRegion = new TextureRegion(texture)
-    val regionDrawable = new TextureRegionDrawable(textureRegion)
-    val button = new ImageButton(regionDrawable)
+
+
+  override def show(): Unit =
+    stage.clear()
+    val gamingWindowPlants: Texture = new Texture(Gdx.files.classpath("assets/gameWindow/pea-shooter-button.png"))
+    createButtonFromImage(gamingWindowPlants, 0, ViewportHeight - HUDHeight, 1.5f, 1.2f)
+    Gdx.input.setInputProcessor(stage)
+    stage.addListener(new ClickListener {
+      override def touchDown(event: InputEvent, x: Float, y: Float, pointerId: Int, buttonId: Int): Boolean =
+        super.touchDown(event, x, y, pointerId, buttonId)
+        if buttonId == Buttons.LEFT && pendingTroop.isDefined then
+            turretCoordinates(Vector2(x,y)) foreach (t => sendPlaceTurret(PeaShooter(t)))
+        if y < HUD.y then
+          pendingTroop = None
+        true
+    })
+
+  private def createButtonFromImage(texture: Texture, x: Float, y: Float, width: Float, height: Float): ImageButton =
+    val textureRegionDrawable = new TextureRegion(texture)
+    val button = new ImageButton(new TextureRegionDrawable(textureRegionDrawable))
+    button.setBounds(x, y, width, height)
+    button.setTransform(true)
+    button.addListener(new ClickListener {
+      override def touchDown(event: InputEvent, x: Float, y: Float, pointerId: Int, buttonId: Int): Boolean =
+        super.touchDown(event, x, y, pointerId, buttonId)
+        if buttonId == Buttons.LEFT then
+          button.clearActions()
+          button.setScale(1.2f)
+          pendingTroop = Option(PeaShooter((0,0)))
+          true 
+        else false  
+      override def touchUp(event: InputEvent, x: Float, y: Float, pointerId: Int, buttonId: Int): Unit =
+        super.touchUp(event, x, y, pointerId, buttonId)
+        button.addAction(Actions.scaleTo(1f,1f, 0.5f))
+      })
+    stage.addActor(button)
     button
 
 
@@ -66,6 +118,8 @@ class Screen(private val viewport: Viewport) extends ScreenAdapter with EntityRe
     camera.update()
 
   def renderEntities(entities: List[Entity]): Unit = this.entities = entities
+
+  def renderMetadata(metaData: MetaData): Unit = this.metaData = metaData
 
   val texture: Entity => Texture = memoizedTexture
 
@@ -79,5 +133,3 @@ class Screen(private val viewport: Viewport) extends ScreenAdapter with EntityRe
         cache.update(entity.getClass.getSimpleName, texture(entity))
         cache(entity.getClass.getSimpleName)
       })
-
-
