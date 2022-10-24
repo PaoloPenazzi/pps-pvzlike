@@ -1,10 +1,11 @@
 package model.common
 
 import model.entities.*
+import scala.language.implicitConversions
 
 object DefaultValues:
   val bullets: Troop => Bullet =
-    case _: PeaShooter => PeaBullet(0,0)
+    case p: PeaShooter => PeaBullet(p.position)
 
   val width: Entity => Int =
     case _: Bullet => 2
