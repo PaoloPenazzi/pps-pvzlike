@@ -29,7 +29,7 @@ class Paw(override val position: Position) extends Bullet:
 
   override def checkCollisionWith(entity: Entity): Boolean =
     entity match
-      case _: Turret => super.checkCollisionWith(entity)
+      case _: Plant => super.checkCollisionWith(entity)
       case _ => false
 
   override def update(elapsedTime: FiniteDuration, interests: List[Entity]): Bullet =

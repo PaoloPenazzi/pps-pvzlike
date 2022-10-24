@@ -21,7 +21,7 @@ import com.badlogic.gdx.scenes.scene2d.actions.Actions
 import com.badlogic.gdx.scenes.scene2d.{InputEvent, Stage}
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener
 import com.badlogic.gdx.utils.Align
-import controller.ViewActor.sendPlaceTurret
+import controller.ViewActor.sendPlacePlant
 import model.common.Utilities
 import model.common.Utilities.MetaData
 
@@ -83,7 +83,7 @@ class Screen(private val viewport: Viewport) extends ScreenAdapter with EntityRe
       override def touchDown(event: InputEvent, x: Float, y: Float, pointerId: Int, buttonId: Int): Boolean =
         super.touchDown(event, x, y, pointerId, buttonId)
         if buttonId == Buttons.LEFT && pendingTroop.isDefined then
-            turretCoordinates(Vector2(x,y)) foreach (t => sendPlaceTurret(PeaShooter(t)))
+            plantCoordinates(Vector2(x,y)) foreach (t => sendPlacePlant(PeaShooter(t)))
         if y < HUD.y then
           pendingTroop = None
         true

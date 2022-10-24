@@ -11,7 +11,7 @@ import model.entities.TroopState.{Attacking, Dead}
 
 import scala.concurrent.duration.FiniteDuration
 
-class TurretModelTest extends AnyFlatSpec with should.Matchers:
+class PlantModelTest extends AnyFlatSpec with should.Matchers:
   val turret: Troop = PeaShooter((1, 50))
   val lowHealthTurret: Troop = PeaShooter((1, LanesLength), 25)
   val dummyZombie1: Troop = Zombie((1, 60))

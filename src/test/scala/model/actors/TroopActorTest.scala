@@ -22,9 +22,9 @@ import WorldSpace.LanesLength
 
 class TroopActorTest extends AnyWordSpec with BeforeAndAfterAll with Matchers :
 
-  val dummyPlant: Turret = PeaShooter((1, LanesLength))
+  val dummyPlant: Plant = PeaShooter((1, LanesLength))
   val dummyZombie: Zombie = Zombie((1, LanesLength + 2))
-  val lowHealthPlant: Turret = PeaShooter((1, LanesLength), 25)
+  val lowHealthPlant: Plant = PeaShooter((1, LanesLength), 25)
   val turretActor: BehaviorTestKit[ModelMessage] = BehaviorTestKit(TroopActor(dummyPlant))
   val zombieActor: BehaviorTestKit[ModelMessage] = BehaviorTestKit(TroopActor(dummyZombie))
   val lowHealthTurretActor: BehaviorTestKit[ModelMessage] = BehaviorTestKit(TroopActor(lowHealthPlant))

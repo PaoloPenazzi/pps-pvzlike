@@ -12,7 +12,7 @@ import scala.concurrent.duration.FiniteDuration
 trait Enemy extends Troop with MovingAbility:
 
   override def isInterestedIn: Entity => Boolean =
-    case turret: Turret => turret.position.y == position.y && turret.position.x < position.x && position.x - turret.position.x.toInt <= range
+    case plant: Plant => plant.position.y == position.y && plant.position.x < position.x && position.x - plant.position.x.toInt <= range
     case _ => false
 
 /**

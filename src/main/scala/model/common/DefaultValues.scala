@@ -11,7 +11,7 @@ object DefaultValues:
     case _: Bullet => 2
     case _ => 2
 
-  val defaultTurretState: TroopState = TroopState.Idle
+  val defaultPlantState: TroopState = TroopState.Idle
   val peashooterDefaultLife: Int = 100
   val wallnutDefaultLife: Int = 300
 
@@ -20,7 +20,7 @@ object DefaultValues:
     case _: Zombie => 3
     case _ => 0
 
-  val costs: Turret => Int =
+  val costs: Plant => Int =
     case _: PeaShooter => 100
     case _  => 0
 
