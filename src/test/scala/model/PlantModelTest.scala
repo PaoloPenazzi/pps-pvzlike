@@ -7,31 +7,35 @@ import org.scalatest.matchers.*
 
 import scala.language.implicitConversions
 import WorldSpace.{LanesLength, given}
-import model.entities.TroopState.{Attacking, Dead}
+import model.entities.TroopState.{Attacking, Dead, Idle}
 
 import scala.concurrent.duration.FiniteDuration
 
 class PlantModelTest extends AnyFlatSpec with should.Matchers:
-  val turret: Troop = PeaShooter((1, 50))
-  val lowHealthTurret: Troop = PeaShooter((1, LanesLength), 25)
-  val dummyZombie1: Troop = Zombie((1, 60))
-  val dummyTurret2: Troop = PeaShooter((2, LanesLength))
-  val dummyZombie2: Troop = Zombie((2, LanesLength))
-  val dummyBullet: Bullet = PeaBullet(0,0)
+  val testingLane = 1
+  val otherLane = 2
+  val peashooter: Troop = PeaShooter((testingLane, 10))
+  val zombieInTheSameLane: Troop = Zombie((testingLane, 50))
+  val zombieOutOfRange: Troop = Zombie((testingLane, 100))
+  val lowHealthPeashooter: Troop = PeaShooter((1, LanesLength)) withLife 25
+  val dummyPlant: Troop = PeaShooter((otherLane, 50))
+  val dummyZombie: Troop = Zombie((otherLane, 50))
+  val dummyBullet: Bullet = Paw(0,0)
 
-  "A turret" should "enter attacking state if interests list is not empty" in {
-      turret.update(FiniteDuration(16, "milliseconds"), List(dummyZombie1)).state shouldBe Attacking
+  "A peashooter" should "be in Idle state if it can't attack any enemy" in {
+    peashooter.update(FiniteDuration(16, "milliseconds"), List()).state shouldBe Idle
   }
-  "A turret" should "filter the interesting entities" in {
-    val entities: List[Entity] = List(dummyTurret2, dummyZombie1, dummyZombie2)
-    val entitiesFiltered = entities.filter(turret.isInterestedIn)
-    assertResult(entitiesFiltered)(List(dummyZombie1))
+  "A peashooter" should "enter attacking state if it can attack an enemy" in {
+    peashooter.update(FiniteDuration(16, "milliseconds"), List(zombieInTheSameLane)).state shouldBe Attacking
   }
-  "A turret" should "lose HPs after getting hit" in {
-    val updatedTurret = turret collideWith dummyBullet
-    updatedTurret.life should be < turret.life
+  "A peashooter" should "filter the interesting entities" in {
+    val entitiesFiltered = List(dummyPlant, zombieInTheSameLane, dummyZombie).filter(peashooter.isInterestedIn)
+    assertResult(entitiesFiltered)(List(zombieInTheSameLane))
   }
-  "A turret" should "die if reaches 0 HP" in {
-    val updatedTurret = lowHealthTurret collideWith dummyBullet
-    updatedTurret.state shouldBe Dead
+  "A peashooter" should "lose HPs after getting hit" in {
+    val updatedTurret = peashooter collideWith dummyBullet
+    updatedTurret.life should be < peashooter.life
+  }
+  "A peashooter" should "die if reaches 0 HP" in {
+    (lowHealthPeashooter collideWith dummyBullet).state shouldBe Dead
   }
