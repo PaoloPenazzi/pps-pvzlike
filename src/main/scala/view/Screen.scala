@@ -76,14 +76,16 @@ class Screen(private val viewport: Viewport) extends ScreenAdapter with EntityRe
 
   override def show(): Unit =
     stage.clear()
-    val gamingWindowPlants: Texture = new Texture(Gdx.files.classpath("assets/gameWindow/pea-shooter-button.png"))
-    createButtonFromImage(gamingWindowPlants, 0, ViewportHeight - HUDHeight, 1.5f, 1.2f)
+    val peashooterCard: Texture = new Texture(Gdx.files.classpath("assets/gameWindow/peashooter-button.png"))
+    val wallnutCard: Texture = new Texture(Gdx.files.classpath("assets/gameWindow/wallnut-card.png"))
+    createButtonFromImage(peashooterCard, 0, ViewportHeight - HUDHeight, 1.5f, 1.2f)
+    createButtonFromImage(wallnutCard, 1.5f, ViewportHeight - HUDHeight, 1.5f, 1.2f)
     Gdx.input.setInputProcessor(stage)
     stage.addListener(new ClickListener {
       override def touchDown(event: InputEvent, x: Float, y: Float, pointerId: Int, buttonId: Int): Boolean =
         super.touchDown(event, x, y, pointerId, buttonId)
         if buttonId == Buttons.LEFT && pendingTroop.isDefined then
-            plantCoordinates(Vector2(x,y)) foreach (t => sendPlacePlant(PeaShooter(t)))
+            plantCoordinates(Vector2(x,y)) foreach (t => sendPlacePlant(pendingTroop.get withPosition t))
         if y < HUD.y then
           pendingTroop = None
         true
@@ -100,7 +102,10 @@ class Screen(private val viewport: Viewport) extends ScreenAdapter with EntityRe
         if buttonId == Buttons.LEFT then
           button.clearActions()
           button.setScale(1.2f)
-          pendingTroop = Option(PeaShooter((0,0)))
+          texture.toString match
+            case s if s.matches("""\S*peashooter\S*""") => pendingTroop = Option(Troops.ofType[PeaShooter])
+            case s if s.matches("""\S*wallnut\S*""") => pendingTroop = Option(Troops.ofType[Wallnut])
+            case _ => pendingTroop = None
           true 
         else false  
       override def touchUp(event: InputEvent, x: Float, y: Float, pointerId: Int, buttonId: Int): Unit =

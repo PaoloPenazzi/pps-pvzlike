@@ -64,11 +64,11 @@ object GameLoopActor:
             case BulletSpawned(ref, bullet) =>
               GameLoopActor(viewActor, entities :+ (ref, bullet), metaData)
 
-            case PlacePlant(plant) =>
-              plant match
+            case PlacePlant(troop) =>
+              troop.asInstanceOf[Plant] match
                 case plant if metaData.sun < plant.cost => GameLoopActor(viewActor, entities, metaData)
                 case _ =>
-                  GameLoopActor(viewActor, entities :+ (ctx.spawnAnonymous(TroopActor(plant)), plant), metaData - plant.cost)
+                  GameLoopActor(viewActor, entities :+ (ctx.spawnAnonymous(TroopActor(troop)), troop), metaData - troop.asInstanceOf[Plant].cost)
 
             case EntityDead(ref) =>
               GameLoopActor(viewActor, entities filter { _._1 != ref }, metaData)
@@ -142,7 +142,7 @@ object GameLoopActor:
 
     case class BulletSpawned(ref: ActorRef[ModelMessage], bullet: Bullet) extends GameLoopCommand
 
-    case class PlacePlant(plant: Plant) extends GameLoopCommand
+    case class PlacePlant(troop: Troop) extends GameLoopCommand
     
 
 
