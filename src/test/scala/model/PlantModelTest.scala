@@ -29,7 +29,7 @@ class PlantModelTest extends AnyFlatSpec with should.Matchers:
     peashooter.update(FiniteDuration(16, "milliseconds"), List(zombieInTheSameLane)).state shouldBe Attacking
   }
   "A Peashooter" should "filter the interesting entities" in {
-    List(dummyPlant, zombieInTheSameLane, dummyZombie).filter(peashooter.isInterestedIn) shouldBe List(zombieInTheSameLane)
+    List(dummyPlant, zombieInTheSameLane, dummyZombie) filter peashooter.isInterestedIn shouldBe List(zombieInTheSameLane)
   }
   "A Peashooter" should "lose HPs after getting hit" in {
     (peashooter collideWith dummyBullet).life should be < peashooter.life
@@ -38,7 +38,7 @@ class PlantModelTest extends AnyFlatSpec with should.Matchers:
     (peashooter withLife 15 collideWith dummyBullet).state shouldBe Dead
   }
   "A Wallnut" should "not have interests" in {
-    List(dummyPlant, zombieInTheSameLane, dummyZombie).filter(wallnut.isInterestedIn) shouldBe List.empty
+    List(dummyPlant, zombieInTheSameLane, dummyZombie) filter wallnut.isInterestedIn shouldBe List.empty
   }
   "A Wallnut" should "lose HPs after getting hit" in {
     (wallnut collideWith dummyBullet).life should be < wallnut.life

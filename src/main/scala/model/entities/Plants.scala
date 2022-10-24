@@ -70,7 +70,6 @@ case class Wallnut(override val position: Position = (0,0),
   override def withPosition(pos: Position): Troop = copy(position = pos)
   override def withLife(HPs: Int): Troop = copy(life = HPs)
   override def withState(newState: TroopState): Troop = copy(state = newState)
-
   override def update(elapsedTime: FiniteDuration, interests: List[Entity]): Troop = this
 
   override def isInterestedIn: Entity => Boolean =
