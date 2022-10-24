@@ -15,7 +15,7 @@ trait Turret extends Troop:
     case _ => false
 
 case class PeaShooter(override val position: Position,
-                      override val life: Int = 300,
+                      override val life: Int = 100,
                       override val state: TroopState = Idle) extends Turret:
 
   override type BulletType = PeaBullet
