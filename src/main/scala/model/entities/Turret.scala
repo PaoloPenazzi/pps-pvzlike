@@ -8,9 +8,20 @@ import model.entities.{AttackingAbility, Bullet, Enemy, Entity, PeaBullet, Turre
 import scala.concurrent.duration.FiniteDuration
 import scala.language.implicitConversions
 
+/**
+ * A turret is an abstract entity that models the common behaviour of different types of turrets.
+ *
+ * @param position the position in which the turret is placed.
+ * @param life the life that the turret currently has.
+ * @param state the state of the turret.
+ */
 abstract class Turret(override val position: Position,
                           override val life: Int,
                           override val state: TroopState) extends Troop :
+  /**
+   * The price that the player has to pay to place the turret.
+   * @return the cost of the turret.
+   */
   def cost: Int = costs(this)
 
   override def isInterestedIn: Entity => Boolean =
@@ -48,7 +59,7 @@ case class PeaShooter(override val position: Position,
  *
  * @param position the position in which the turret is placed.
  * @param life the life that the turret currently has.
- * @param state the state of the turret.
+ * @param state the state of the turret. Can only be 'Idle' or 'Dead'.
  */
 case class Wallnut(override val position: Position,
                    override val life: Int = wallnutDeafultLife,
