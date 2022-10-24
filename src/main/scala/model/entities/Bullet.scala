@@ -14,7 +14,7 @@ trait Bullet extends MovingAbility with Entity:
     entity.position.x <= position.x && position.x <= entity.position.x + entity.width
 
 class PeaBullet(override val position: Position) extends Bullet:
-  override def velocity: Float = 0.1
+  override def velocity: Float = 0.06
 
   override def checkCollisionWith(entity: Entity): Boolean =
     entity match
