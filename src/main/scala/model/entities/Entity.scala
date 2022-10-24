@@ -40,9 +40,11 @@ object Troops:
     def build: T
 
   given TroopBuilder[PeaShooter] with
-    override def build: PeaShooter = PeaShooter((0,0))
+    override def build: PeaShooter = PeaShooter()
   given TroopBuilder[Zombie] with
-    override def build: Zombie = Zombie((0,0))
+    override def build: Zombie = Zombie()
+  given TroopBuilder[Wallnut] with
+    override def build: Wallnut = Wallnut()  
 
   def ofType[T <: Troop](using troopBuilder: TroopBuilder[T]): T =
     troopBuilder.build

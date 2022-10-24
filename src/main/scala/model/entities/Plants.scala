@@ -47,7 +47,7 @@ abstract class Plant(override val position: Position,
  * @param life the life that the plant currently has.
  * @param state the state of the plant.
  */
-case class PeaShooter(override val position: Position,
+case class PeaShooter(override val position: Position = (0,0),
                       override val life: Int = peashooterDefaultLife,
                       override val state: TroopState = defaultPlantState) extends Plant(position, life, state):
 
@@ -64,7 +64,7 @@ case class PeaShooter(override val position: Position,
  * @param life the life that the plant currently has.
  * @param state the state of the plant. Can only be 'Idle' or 'Dead'.
  */
-case class Wallnut(override val position: Position,
+case class Wallnut(override val position: Position = (0,0),
                    override val life: Int = wallnutDefaultLife,
                    override val state: TroopState = defaultPlantState) extends Plant(position, life, state):
   override def withPosition(pos: Position): Troop = copy(position = pos)

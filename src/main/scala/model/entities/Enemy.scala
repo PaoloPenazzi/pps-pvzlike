@@ -18,7 +18,7 @@ trait Enemy extends Troop with MovingAbility:
 /**
  * Basic Enemy.
  */
-case class Zombie(override val position: Position,
+case class Zombie(override val position: Position = (0,0),
              override val life: Int = 100,
              override val state: TroopState = Moving,
              override val velocity: Float = -0.01) extends Enemy:
