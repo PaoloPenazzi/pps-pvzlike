@@ -31,7 +31,7 @@ case class PeaShooter(override val position: Position,
       case Idle | Attacking => PeaShooter(
         position,
         life,
-        if interests.exists(enemy => this canAttack enemy) then Idle else Attacking)
+        if interests.exists(enemy => this canAttack enemy) then Attacking else Idle)
       case _ => this
 
   private def isInRange(entity: Entity): Boolean = entity.position.x < position.x + range
