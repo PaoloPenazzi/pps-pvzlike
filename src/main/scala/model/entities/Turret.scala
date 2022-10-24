@@ -30,7 +30,7 @@ abstract class Turret(override val position: Position,
 
   override def collideWith(bullet: Bullet): Troop =
     val newLife: Int = Math.max(life - bullet.damage, 0)
-    if newLife == 0 then this withState Dead else this
+    if newLife == 0 then this withState Dead else this withLife newLife
 
   override def update(elapsedTime: FiniteDuration, interests: List[Entity]): Troop =
     state match
@@ -62,7 +62,7 @@ case class PeaShooter(override val position: Position,
  * @param state the state of the turret. Can only be 'Idle' or 'Dead'.
  */
 case class Wallnut(override val position: Position,
-                   override val life: Int = walnutDefaultLife,
+                   override val life: Int = wallnutDefaultLife,
                    override val state: TroopState = defaultTurretState) extends Turret(position, life, state):
   override def withPosition(pos: Position): Troop = copy(position = pos)
   override def withLife(HPs: Int): Troop = copy(life = HPs)
