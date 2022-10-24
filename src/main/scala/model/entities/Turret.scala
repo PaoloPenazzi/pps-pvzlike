@@ -28,6 +28,13 @@ abstract class Turret(override val position: Position,
 
   override def bullet: Bullet = bullets(this)
 
+/**
+ * The Peashooter is the base turret of the game.
+ *
+ * @param position the position in which the turret is placed.
+ * @param life the life that the turret currently has.
+ * @param state the state of the turret.
+ */
 case class PeaShooter(override val position: Position,
                       override val life: Int = peashooterDefaultLife,
                       override val state: TroopState = defaultTurretState) extends Turret(position, life, state):
