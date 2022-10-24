@@ -62,7 +62,7 @@ case class PeaShooter(override val position: Position,
  * @param state the state of the turret. Can only be 'Idle' or 'Dead'.
  */
 case class Wallnut(override val position: Position,
-                   override val life: Int = wallnutDeafultLife,
+                   override val life: Int = walnutDefaultLife,
                    override val state: TroopState = defaultTurretState) extends Turret(position, life, state):
   override def withPosition(pos: Position): Troop = copy(position = pos)
   override def withLife(HPs: Int): Troop = copy(life = HPs)
