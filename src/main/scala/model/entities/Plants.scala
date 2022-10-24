@@ -37,6 +37,7 @@ abstract class Plant(override val position: Position,
       case Idle | Attacking => if interests.isEmpty then this withState Idle else this withState Attacking
       case _ => this
 
+  override def pointOfShoot: Position = position
   override def bullet: Bullet = bullets(this)
 
 /**
@@ -49,6 +50,8 @@ abstract class Plant(override val position: Position,
 case class PeaShooter(override val position: Position,
                       override val life: Int = peashooterDefaultLife,
                       override val state: TroopState = defaultPlantState) extends Plant(position, life, state):
+
+  override def pointOfShoot: Position = (position.y, position.x.toInt + width)
   override def withPosition(pos: Position): Troop = copy(position = pos)
   override def withLife(HPs: Int): Troop = copy(life = HPs)
   override def withState(newState: TroopState): Troop = copy(state = newState)

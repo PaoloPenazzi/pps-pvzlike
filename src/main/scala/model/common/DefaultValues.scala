@@ -5,10 +5,12 @@ import scala.language.implicitConversions
 
 object DefaultValues:
   val bullets: Troop => Bullet =
-    case p: PeaShooter => PeaBullet(p.position)
+    case p: PeaShooter =>
+      PeaBullet(p.pointOfShoot)
 
   val width: Entity => Int =
     case _: Bullet => 2
+    case _: PeaShooter => 5
     case _ => 2
 
   val defaultPlantState: TroopState = TroopState.Idle

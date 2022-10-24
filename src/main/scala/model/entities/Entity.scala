@@ -30,6 +30,7 @@ trait Troop extends Entity with AttackingAbility:
   def collideWith(bullet: Bullet): UpdatedEntity
   def life: Int
   def state: TroopState
+  def pointOfShoot: Position
   def withState(newState: TroopState): Troop
   def withLife(HPs: Int): Troop
   def withPosition(pos: Position): Troop
