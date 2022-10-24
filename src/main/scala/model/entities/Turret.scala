@@ -8,14 +8,10 @@ import model.entities.{AttackingAbility, Bullet, Enemy, Entity, PeaBullet, Turre
 import scala.concurrent.duration.FiniteDuration
 import scala.language.implicitConversions
 
-case class Turret(override val position: Position,
-                          override val life: Int = 300,
-                          override val state: TroopState = Idle) extends Troop :
+abstract class Turret(override val position: Position,
+                          override val life: Int,
+                          override val state: TroopState) extends Troop :
   def cost: Int = costs(this)
-
-  override def withPosition(pos: Position): Troop = copy(position = pos)
-  override def withLife(HPs: Int): Troop = copy(life = HPs)
-  override def withState(newState: TroopState): Troop = copy(state = newState)
 
   override def isInterestedIn: Entity => Boolean =
     case enemy: Enemy => enemy.position.y == position.y
@@ -32,10 +28,22 @@ case class Turret(override val position: Position,
 
   override def bullet: Bullet = bullets(this)
 
-class PeaShooter(position: Position) extends Turret(position)
+case class PeaShooter(override val position: Position,
+                      override val life: Int = peashooterDefaultLife,
+                      override val state: TroopState = defaultTurretState) extends Turret(position, life, state):
+  override def withPosition(pos: Position): Troop = copy(position = pos)
+  override def withLife(HPs: Int): Troop = copy(life = HPs)
+  override def withState(newState: TroopState): Troop = copy(state = newState)
 
-class Wallnut(position: Position) extends Turret(position) :
-  override def isInterestedIn: Entity => Boolean =
-    case _ => false
+case class Wallnut(override val position: Position,
+                   override val life: Int = wallnutDeafultLife,
+                   override val state: TroopState = defaultTurretState) extends Turret(position, life, state):
+
+  override def withPosition(pos: Position): Troop = copy(position = pos)
+  override def withLife(HPs: Int): Troop = copy(life = HPs)
+  override def withState(newState: TroopState): Troop = copy(state = newState)
 
   override def update(elapsedTime: FiniteDuration, interests: List[Entity]): Troop = this
+
+  override def isInterestedIn: Entity => Boolean =
+    case _ => false

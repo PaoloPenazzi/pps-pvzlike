@@ -1,6 +1,6 @@
 package model.common
 
-import model.entities.{AttackingAbility, Bullet, Entity, PeaBullet, PeaShooter, Troop, Turret, Zombie}
+import model.entities.{AttackingAbility, Bullet, Entity, PeaBullet, PeaShooter, Troop, Turret, Wallnut, Zombie, TroopState}
 
 object DefaultValues:
   val bullets: Troop => Bullet =
@@ -9,6 +9,10 @@ object DefaultValues:
   val width: Entity => Int =
     case _: Bullet => 5
     case _ => 20
+
+  val defaultTurretState = TroopState.Idle
+  val peashooterDefaultLife = 100
+  val wallnutDeafultLife = 300
 
   val fireRates: AttackingAbility => Int =
     case _: PeaShooter => 2
