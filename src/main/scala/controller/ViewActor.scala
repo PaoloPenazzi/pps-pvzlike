@@ -22,6 +22,7 @@ object ViewActor:
       msg match
         case Render(list, replyTo, metaData) =>
           renderer.renderEntities(list)
+          renderer.renderMetadata(metaData)
           gameLoopActor = Some(replyTo)
           Behaviors.same
     })

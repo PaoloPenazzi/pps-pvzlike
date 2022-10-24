@@ -11,7 +11,7 @@ trait Turret extends Troop:
   def cost: Int = costs(this)
 
   override def isInterestedIn: Entity => Boolean =
-    case enemy: Enemy => enemy.position.y == position.y
+    case enemy: Enemy => enemy.position.y == position.y && enemy.position.x >= position.x
     case _ => false
 
 case class PeaShooter(override val position: Position,

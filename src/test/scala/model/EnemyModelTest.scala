@@ -25,7 +25,7 @@ class EnemyModelTest extends AnyFlatSpec with should.Matchers:
   }
   "A enemy" should "filter the interesting entities" in {
     val basicZombie: Enemy = Zombie((1, LanesLength / 2))
-    val firstTurretInFirstLane: Turret = PeaShooter((1, LanesLength))
+    val firstTurretInFirstLane: Turret = PeaShooter((1, LanesLength /2 - 1))
     val secondTurretInSecondLane: Turret = PeaShooter((2, LanesLength * 0.75))
     val firstZombieFirstLane: Enemy = Zombie((1, LanesLength))
     val thirdZombieInSecondLane: Enemy = Zombie((2, LanesLength))
