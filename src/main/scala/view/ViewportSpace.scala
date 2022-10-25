@@ -28,4 +28,4 @@ object ViewportSpace:
   def unprojectY(y: Float): Int = (y - bottomOffsetGrid * (NumOfLanes/gridHeight)).toInt
   def unprojectX(x: Float): Float = (x - leftOffsetGrid) * (LanesLength/gridWidth)
   def plantCoordinates(point: Vector2): Option[Position] =
-    cells.find(_.contains(point)).map(cell => Position(unprojectY(cell.y), unprojectX(cell.x + cell.width/2)))
+    cells.find(_.contains(point)).map(cell => Position(unprojectY(cell.y), unprojectX(cell.x + cell.width/4)))
