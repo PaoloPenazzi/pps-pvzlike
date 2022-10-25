@@ -78,7 +78,7 @@ class Screen(private val viewport: Viewport) extends ScreenAdapter with EntityRe
 
   override def show(): Unit =
     stage.clear()
-    val peashooterCard: Texture = new Texture(Gdx.files.classpath("assets/gameWindow/peashooter-button.png"))
+    val peashooterCard: Texture = new Texture(Gdx.files.classpath("assets/gameWindow/peashooter-card.png"))
     val wallnutCard: Texture = new Texture(Gdx.files.classpath("assets/gameWindow/wallnut-card.png"))
     createButtonFromImage(peashooterCard, 0, ViewportHeight - HUDHeight, 1.5f, 1.2f)
     createButtonFromImage(wallnutCard, 1.5f, ViewportHeight - HUDHeight, 1.5f, 1.2f)
