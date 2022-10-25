@@ -1,6 +1,6 @@
 package model
 
-import model.entities.{Enemy, Entity, PeaShooter, TroopState, Turret, WorldSpace, Zombie}
+import model.entities.{Enemy, Entity, PeaShooter, TroopState, Plant, WorldSpace, Zombie}
 import org.scalatest.*
 import org.scalatest.flatspec.*
 import org.scalatest.matchers.*
@@ -13,7 +13,7 @@ import scala.concurrent.duration.FiniteDuration
 class EnemyModelTest extends AnyFlatSpec with should.Matchers:
 
   "A zombie" should "enter attacking state if interests list is not empty" in {
-    val turret: Turret = PeaShooter((1, 0))
+    val turret: Plant = PeaShooter((1, 0))
     val zombie: Enemy =  Zombie((1, LanesLength / 2))
     zombie.state shouldBe Moving
     zombie.update(FiniteDuration(16, "milliseconds"), List(turret)).state shouldBe Attacking
@@ -25,8 +25,8 @@ class EnemyModelTest extends AnyFlatSpec with should.Matchers:
   }
   "A enemy" should "filter the interesting entities" in {
     val basicZombie: Enemy = Zombie((1, LanesLength / 2))
-    val firstTurretInFirstLane: Turret = PeaShooter((1, LanesLength /2 - 1))
-    val secondTurretInSecondLane: Turret = PeaShooter((2, LanesLength * 0.75))
+    val firstTurretInFirstLane: Plant = PeaShooter((1, LanesLength /2 - 1))
+    val secondTurretInSecondLane: Plant = PeaShooter((2, LanesLength * 0.75))
     val firstZombieFirstLane: Enemy = Zombie((1, LanesLength))
     val thirdZombieInSecondLane: Enemy = Zombie((2, LanesLength))
     val entities: List[Entity] = List(firstTurretInFirstLane, secondTurretInSecondLane,
