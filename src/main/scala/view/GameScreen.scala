@@ -36,16 +36,14 @@ class Screen(private val viewport: Viewport) extends ScreenAdapter with EntityRe
   private val camera = viewport.getCamera
   private var entities: List[Entity] = List.empty
 
-  private lazy val batch: SpriteBatch = SpriteBatch()
   private lazy val stage = new Stage(viewport); //Set up a stage for the ui
   var pendingTroop: Option[Troop] = None
 
   lazy val background: Texture = Texture(Gdx.files.classpath("assets/background/day.png"))
   lazy val gamingWindowNumberOfSun: Texture = Texture(Gdx.files.classpath("assets/gameWindow/numberOfSun.png"))
 
+
   private var metaData: MetaData = MetaData()
-  private lazy val font: BitmapFont = BitmapFont(Gdx.files.internal("assets/gameWindow/font.fnt"), Gdx.files.internal("assets/gameWindow/font.png"), false)
-  //private val layout: GlyphLayout = GlyphLayout();
 
   override def render(delta: Float): Unit =
     world.step(1 / Screen.Framerate, 6, 2)
