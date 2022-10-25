@@ -26,17 +26,17 @@ import model.common.Utilities
 import model.common.Utilities.MetaData
 
 
-object Screen:
+object GameScreen:
   val Framerate: Float = 60
 
-  def apply(viewport: Viewport) = new Screen(viewport)
+  def apply() = new GameScreen()
 
-class Screen(private val viewport: Viewport) extends ScreenAdapter with EntityRenderer :
+class GameScreen() extends ScreenAdapter with EntityRenderer :
   private val world: World = World(Vector2(0, 0), false)
-  private val camera = viewport.getCamera
+  private val camera = Game.viewport.getCamera
   private var entities: List[Entity] = List.empty
 
-  private lazy val stage = new Stage(viewport); //Set up a stage for the ui
+  private lazy val stage = new Stage(Game.viewport); //Set up a stage for the ui
   var pendingTroop: Option[Troop] = None
 
   lazy val background: Texture = Texture(Gdx.files.classpath("assets/background/day.png"))
@@ -46,8 +46,8 @@ class Screen(private val viewport: Viewport) extends ScreenAdapter with EntityRe
   private var metaData: MetaData = MetaData()
 
   override def render(delta: Float): Unit =
-    world.step(1 / Screen.Framerate, 6, 2)
-    batch.setProjectionMatrix(camera.combined)
+    world.step(1 / GameScreen.Framerate, 6, 2)
+    Game.batch.setProjectionMatrix(camera.combined)
     Gdx.gl.glClearColor(0, 0, 0, 1)
     Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
 
@@ -59,14 +59,14 @@ class Screen(private val viewport: Viewport) extends ScreenAdapter with EntityRe
     layout.width = 3
     */
 
-    batch.begin()
-    batch.draw(background, -3, 0, 25, ViewportHeight - HUDHeight)
-    font.getData.setScale(.05f)
-    font.draw(batch, metaData.sun.toString, 12, 7.5f)
+    Game.batch.begin()
+    Game.batch.draw(background, -3, 0, 25, ViewportHeight - HUDHeight)
+    Game.font.getData.setScale(.05f)
+    Game.font.draw(Game.batch, metaData.sun.toString, 12, 7.5f)
     //batch.draw(gamingWindowNumberOfSun, 10, ViewportHeight - HUDHeight, 6, HUDHeight)
-    entities.foreach(e => batch.draw(texture(e), projectX(e.position.x), projectY(e.position.y), width(e), height(e)))
+    entities.foreach(e => Game.batch.draw(texture(e), projectX(e.position.x), projectY(e.position.y), width(e), height(e)))
 
-    batch.end()
+    Game.batch.end()
     stage.draw(); //Draw the ui
     stage.act(delta)
 
@@ -111,7 +111,7 @@ class Screen(private val viewport: Viewport) extends ScreenAdapter with EntityRe
 
 
   override def resize(width: Int, height: Int): Unit =
-    viewport.update(width, height)
+    Game.viewport.update(width, height)
     camera.position.set(camera.viewportWidth / 2, camera.viewportHeight / 2, 0)
     camera.update()
 
