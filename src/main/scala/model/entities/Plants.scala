@@ -59,7 +59,7 @@ case class PeaShooter(override val position: Position = (0,0),
                       override val state: TroopState = defaultPlantState) extends Plant(position, life, state):
   override def pointOfShoot: Position = (position.y, position.x.toInt + width)
   override def withPosition(pos: Position): Troop = copy(position = pos)
-  override def withLife(HPs: Int): Troop = copy(life = HPs)
+  override def withLife(HealthPoints: Int): Troop = copy(life = HealthPoints)
   override def withState(newState: TroopState): Troop = copy(state = newState)
 
 /**
@@ -74,7 +74,7 @@ case class Wallnut(override val position: Position = (0,0),
                    override val life: Int = wallnutDefaultLife,
                    override val state: TroopState = defaultPlantState) extends Plant(position, life, state):
   override def withPosition(pos: Position): Troop = copy(position = pos)
-  override def withLife(HPs: Int): Troop = copy(life = HPs)
+  override def withLife(HealthPoints: Int): Troop = copy(life = HealthPoints)
   override def withState(newState: TroopState): Troop = copy(state = newState)
   override def update(elapsedTime: FiniteDuration, interests: List[Entity]): Troop = this
   override def isInterestedIn: Entity => Boolean =

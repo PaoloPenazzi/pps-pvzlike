@@ -25,7 +25,7 @@ case class Zombie(override val position: Position = (0,0),
   override def bullet: Bullet = new Paw(position)
   override def pointOfShoot: Position = position
   override def withPosition(pos: Position): Troop = copy(position = pos)
-  override def withLife(HPs: Int): Troop = copy(life = HPs)
+  override def withLife(HealthPoints: Int): Troop = copy(life = HealthPoints)
 
   override def withState(newState: TroopState): Troop = copy(state = newState)
 
