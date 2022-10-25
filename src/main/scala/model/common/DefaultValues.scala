@@ -6,7 +6,7 @@ import scala.language.implicitConversions
 object DefaultValues:
   val defaultPlantState: TroopState = TroopState.Idle
   val peashooterDefaultLife: Int = 100
-  val wallnutDefaultLife: Int = 300
+  val wallnutDefaultLife: Int = 150
   
   val bullets: Troop => Bullet =
     case p: PeaShooter => PeaBullet(p.pointOfShoot)

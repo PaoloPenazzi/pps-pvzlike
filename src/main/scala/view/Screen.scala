@@ -66,7 +66,9 @@ class Screen(private val viewport: Viewport) extends ScreenAdapter with EntityRe
     font.getData.setScale(.05f)
     font.draw(batch, metaData.sun.toString, 12, 7.5f)
     //batch.draw(gamingWindowNumberOfSun, 10, ViewportHeight - HUDHeight, 6, HUDHeight)
-    entities.foreach(e => batch.draw(texture(e), projectX(e.position.x), projectY(e.position.y), width(e), height(e)))
+    entities.foreach(e =>
+      {if e.isInstanceOf[Wallnut] then updateTexture(e)
+      batch.draw(texture(e), projectX(e.position.x), projectY(e.position.y), width(e), height(e))})
 
     batch.end()
     stage.draw(); //Draw the ui
@@ -128,13 +130,19 @@ class Screen(private val viewport: Viewport) extends ScreenAdapter with EntityRe
 
   val texture: Entity => Texture = memoizedTexture
 
+  def updateTexture(entity: Entity): Unit = cache.update(entity.getClass.getSimpleName,
+    new Texture(Gdx.files.classpath("assets/" + spriteName(entity))))
+
+  val cache = collection.mutable.Map.empty[String, Texture]
+
   def memoizedTexture: Entity => Texture =
+
     def texture(entity: Entity): Texture = new Texture(Gdx.files.classpath("assets/" + spriteName(entity)))
 
-    val cache = collection.mutable.Map.empty[String, Texture]
-
     entity =>
-      cache.getOrElse(entity.getClass.getSimpleName, {
+        cache.getOrElse(entity.getClass.getSimpleName, {
         cache.update(entity.getClass.getSimpleName, texture(entity))
         cache(entity.getClass.getSimpleName)
       })
+
+
