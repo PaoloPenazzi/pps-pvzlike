@@ -1,0 +1,33 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+title Troop Actor
+
+control TroopActor
+control GameLoop
+
+loop
+
+GameLoop -> TroopActor: Update()
+TroopActor -> GameLoop: EntityUpdated()
+
+alt Enemy in sight
+    TroopActor --> TroopActor: Shoot()
+    TroopActor --> GameLoop: BulletSpawned()
+end
+end
+
+GameLoop -> TroopActor: Collision()
+alt Collision killed the troop
+TroopActor -> GameLoop: EntityDead()
+else Troop is still alive
+TroopActor -> GameLoop: EntityUpdated()
+end
+
+
+
+
+
+
+
+@enduml
