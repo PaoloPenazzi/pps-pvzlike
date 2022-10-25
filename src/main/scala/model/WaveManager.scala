@@ -7,11 +7,27 @@ import model.entities.{Enemy, Zombie}
 
 import scala.annotation.tailrec
 
+/**
+ * A wave of [[Enemy]].
+ */
 trait Wave:
+  /**
+   * @return The number of the current [[Wave]]
+   */
   def waveNumber: Int
+
+  /**
+   * @return The list of [[Enemy]] spawned.
+   */
   def enemies: List[Enemy]
 
+/**
+ * A generator of waves. It's not possible to specify the wave number.
+ */
 trait WaveGenerator:
+  /**
+   * @return The next [[Wave]]
+   */
   def generateNextWave: Wave
 
 object Generator:
