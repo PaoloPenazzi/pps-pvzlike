@@ -6,7 +6,7 @@ import model.entities.WorldSpace.{Position, given}
 
 import scala.concurrent.duration.FiniteDuration
 
-trait Bullet extends MovingAbility with Entity:
+trait Bullet extends Entity with MovingAbility:
   override type UpdatedEntity = Bullet
   def damage: Int = damages(this)
   def shouldDisappearAfterHitting(entity: Entity): Boolean = true
@@ -25,6 +25,10 @@ class PeaBullet(override val position: Position) extends Bullet:
   override def update(elapsedTime: FiniteDuration, interests: List[Entity]): Bullet =
     PeaBullet(updatePosition(elapsedTime))
 
+  private def updatePosition(elapsedTime: FiniteDuration): Position =
+    (position.y, position.x + (elapsedTime.length * velocity))
+
+
 class Paw(override val position: Position) extends Bullet:
   override def velocity: Float = -0.1
 
@@ -35,4 +39,8 @@ class Paw(override val position: Position) extends Bullet:
 
   override def update(elapsedTime: FiniteDuration, interests: List[Entity]): Bullet =
     Paw(updatePosition(elapsedTime))
+
+  private def updatePosition(elapsedTime: FiniteDuration): Position =
+    (position.y, position.x + (elapsedTime.length * velocity))
+
 

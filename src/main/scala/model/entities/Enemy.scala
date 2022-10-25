@@ -43,5 +43,6 @@ case class Zombie(override val position: Position = (0,0),
       case Attacking => copy(state = nextState)
       case _ => this
 
-
+  private def updatePosition(elapsedTime: FiniteDuration): Position =
+    (position.y, position.x + (elapsedTime.length * velocity))
 

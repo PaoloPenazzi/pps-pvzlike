@@ -42,8 +42,7 @@ trait MovingAbility extends Entity:
    */
   def velocity: Float
 
-  def updatePosition(elapsedTime: FiniteDuration): Position =
-    (position.y, position.x + (elapsedTime.length * velocity))
+  
 
 /**
  * Add the ability to attack to an [[Entity]].
