@@ -8,8 +8,8 @@ interface Troop <<trait>>
 abstract class Plant
 abstract class Zombie
 abstract class Bullet
-class Peabullet
-class Pawbullet
+class PeaBullet
+class PawBullet
 class Peashooter
 class Wallnut
 class BasicZombie
@@ -26,8 +26,8 @@ Troop <|-down- Zombie
 Plant <|-down- Peashooter
 Plant <|-down- Wallnut
 Zombie <|-down- BasicZombie
-Bullet <|-down- Peabullet
-Bullet <|-down- Pawbullet
+Bullet <|-down- PeaBullet
+Bullet <|-down- PawBullet
 
 
 @enduml
