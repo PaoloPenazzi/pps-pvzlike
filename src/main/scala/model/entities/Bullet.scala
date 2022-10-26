@@ -57,8 +57,8 @@ case class PeaBullet(override val position: Position) extends Bullet(position):
  * The [[Bullet]] shoot by the [[Zombie]]. It has no strange effects on the plants beside dealing damage.
  * @param position The initial position of the [[Bullet]].
  */
-case class Paw(override val position: Position) extends Bullet(position):
-  override def update(elapsedTime: FiniteDuration, interests: List[Entity]): Bullet = Paw(updatePosition(elapsedTime))
+case class PawBullet(override val position: Position) extends Bullet(position):
+  override def update(elapsedTime: FiniteDuration, interests: List[Entity]): Bullet = PawBullet(updatePosition(elapsedTime))
   override def checkCollisionWith(entity: Entity): Boolean =
     entity match
       case _: Plant => super.checkCollisionWith(entity)
