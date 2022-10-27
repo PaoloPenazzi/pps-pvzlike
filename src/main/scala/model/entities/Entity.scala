@@ -12,7 +12,11 @@ import scala.concurrent.duration.FiniteDuration
  * Basic entity of the game.
  */
 trait Entity:
+  /**
+   * The type that the [[update()]] method of an [[Entity]] should return.
+   */
   type UpdatedEntity <: Entity
+  
   def width: Int = DefaultValues.width(this)
 
   /**
