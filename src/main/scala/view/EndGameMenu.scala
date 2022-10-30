@@ -9,6 +9,10 @@ import com.badlogic.gdx.physics.box2d.World
 import com.badlogic.gdx.utils.ScreenUtils
 import controller.RootActor
 import controller.RootActor.RootCommands.StartGame
+import model.entities.WorldSpace.Position
+
+case class Button(text: String, position: Position)(func: => Boolean)
+
 
 object EndGameMenu :
   def apply() = new EndGameMenu()
