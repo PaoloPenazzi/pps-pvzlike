@@ -15,6 +15,7 @@ class EnemyModelTest extends AnyFlatSpec with should.Matchers:
   private val testingLane = 1
   private val otherLane = 2
   private val zombie: Troop = Troops.ofType[Zombie] withPosition (testingLane, 80)
+  private val fastZombie: Troop = Troops.ofType[FastZombie] withPosition (testingLane, 80)
 
   private val plantInOtherLane: Troop = Troops.ofType[PeaShooter] withPosition (otherLane, 10)
   private val plantInTheSameLane: Troop = Troops.ofType[PeaShooter] withPosition (testingLane, 10)
@@ -25,24 +26,44 @@ class EnemyModelTest extends AnyFlatSpec with should.Matchers:
   private val dummyBullet: Bullet = PeaBullet(0,0)
 
 
-  "A zombie" should "be in Moving state if it can't attack any plant" in {
+  "A Zombie" should "be in Moving state if it can't attack any plant" in {
     zombie.update(FiniteDuration(16, "milliseconds"), List()).state shouldBe Moving
   }
-  "A zombie" should "enter attacking state if it can attack an enemy" in {
+  "A Zombie" should "enter attacking state if it can attack an enemy" in {
     zombie.update(FiniteDuration(16, "milliseconds"), List(plantInTheSameLane)).state shouldBe Attacking
   }
-  "A zombie" should "filter the interesting entities" in {
+  "A Zombie" should "filter the interesting entities" in {
     println(zombie.isInterestedIn(plantInRange))
     List(dummyPlant, plantInTheSameLane, dummyZombie, dummyBullet, plantInRange) filter zombie.isInterestedIn shouldBe List(plantInRange)
   }
-  "A zombie" should "lose HPs after getting hit" in {
+  "A Zombie" should "lose HPs after getting hit" in {
     (zombie collideWith dummyBullet).life should be < zombie.life
   }
   "A Zombie" should "die if reaches 0 or less HP" in {
     (zombie withLife 25 collideWith dummyBullet).state shouldBe Dead
   }
-  "A zombie" should "not have interests" in {
+  "A Zombie" should "not have interests" in {
     List(dummyZombie, plantInTheSameLane, dummyBullet) filter zombie.isInterestedIn shouldBe List.empty
+  }
+
+  "A FastZombie" should "be in Moving state if it can't attack any plant" in {
+    fastZombie.update(FiniteDuration(16, "milliseconds"), List()).state shouldBe Moving
+  }
+  "A FastZombie" should "enter attacking state if it can attack an enemy" in {
+    fastZombie.update(FiniteDuration(16, "milliseconds"), List(plantInTheSameLane)).state shouldBe Attacking
+  }
+  "A FastZombie" should "filter the interesting entities" in {
+    println(fastZombie.isInterestedIn(plantInRange))
+    List(dummyPlant, plantInTheSameLane, dummyZombie, dummyBullet, plantInRange) filter fastZombie.isInterestedIn shouldBe List(plantInRange)
+  }
+  "A FastZombie" should "lose HPs after getting hit" in {
+    (fastZombie collideWith dummyBullet).life should be < fastZombie.life
+  }
+  "A FastZombie" should "die if reaches 0 or less HP" in {
+    (fastZombie withLife 25 collideWith dummyBullet).state shouldBe Dead
+  }
+  "A FastZombie" should "not have interests" in {
+    List(dummyZombie, plantInTheSameLane, dummyBullet) filter fastZombie.isInterestedIn shouldBe List.empty
   }
 
 
