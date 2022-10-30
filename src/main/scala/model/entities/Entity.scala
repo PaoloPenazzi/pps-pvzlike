@@ -58,13 +58,6 @@ trait AttackingAbility extends Entity:
   def bullet: Bullet
 
   /**
-   *
-   * @param entity The [[Entity]] to be attacked.
-   * @return True if the [[Entity]] can be attacked, false otherwise.
-   */
-  def canAttack(entity: Entity): Boolean
-
-  /**
    * @return The rate of fire of the [[Entity]].
    */
   def fireRate: Int = fireRates(this)

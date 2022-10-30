@@ -37,12 +37,6 @@ abstract class Plant(override val position: Position,
       case Idle | Attacking => if interests.isEmpty then this withState Idle else this withState Attacking
       case _ => this
 
-  override def canAttack(entity: Entity): Boolean = isInRange(entity) && isNotBehindMe(entity)
-
-  private def isInRange(entity: Entity): Boolean = entity.position.x < position.x + range
-
-  private def isNotBehindMe(entity: Entity): Boolean = entity.position.x > position.x
-
   override def pointOfShoot: Position = position
 
   override def bullet: Bullet = bullets(this)

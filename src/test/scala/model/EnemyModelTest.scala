@@ -1,10 +1,10 @@
 package model
 
-import model.entities.{Enemy, Entity, PeaShooter, TroopState, Plant, WorldSpace, Zombie}
+
+import model.entities.{Bullet, PeaBullet, PeaShooter, Troop, Troops, Zombie}
 import org.scalatest.*
 import org.scalatest.flatspec.*
 import org.scalatest.matchers.*
-import WorldSpace.{LanesLength, given}
 import model.entities.TroopState.*
 
 import scala.concurrent.duration.FiniteDuration
@@ -12,27 +12,39 @@ import scala.concurrent.duration.FiniteDuration
 
 class EnemyModelTest extends AnyFlatSpec with should.Matchers:
 
-  "A zombie" should "enter attacking state if interests list is not empty" in {
-    val turret: Plant = PeaShooter((1, 0))
-    val zombie: Enemy =  Zombie((1, LanesLength / 2))
-    zombie.state shouldBe Moving
-    zombie.update(FiniteDuration(16, "milliseconds"), List(turret)).state shouldBe Attacking
+  private val testingLane = 1
+  private val otherLane = 2
+  private val zombie: Troop = Troops.ofType[Zombie] withPosition (testingLane, 80)
+
+  private val plantInOtherLane: Troop = Troops.ofType[PeaShooter] withPosition (otherLane, 10)
+  private val plantInTheSameLane: Troop = Troops.ofType[PeaShooter] withPosition (testingLane, 10)
+  private val plantInRange: Troop = Troops.ofType[PeaShooter] withPosition (testingLane, 70)
+
+  private val dummyPlant: Troop = Troops.ofType[PeaShooter] withPosition (otherLane, 50)
+  private val dummyZombie: Troop = Troops.ofType[Zombie] withPosition (otherLane, 50)
+  private val dummyBullet: Bullet = PeaBullet(0,0)
+
+
+  "A zombie" should "be in Moving state if it can't attack any plant" in {
+    zombie.update(FiniteDuration(16, "milliseconds"), List()).state shouldBe Moving
   }
-  "A zombie" should "not be in attacking state if interests list is empty" in {
-    val zombie: Enemy = Zombie((2, LanesLength / 2))
-    zombie.state shouldBe Moving
-    zombie.update(FiniteDuration(16, "milliseconds"), List.empty).state should not be Attacking
+  "A zombie" should "enter attacking state if it can attack an enemy" in {
+    zombie.update(FiniteDuration(16, "milliseconds"), List(plantInTheSameLane)).state shouldBe Attacking
   }
-  "A enemy" should "filter the interesting entities" in {
-    val basicZombie: Enemy = Zombie((1, LanesLength / 2))
-    val firstTurretInFirstLane: Plant = PeaShooter((1, LanesLength /2 - 1))
-    val secondTurretInSecondLane: Plant = PeaShooter((2, LanesLength * 0.75))
-    val firstZombieFirstLane: Enemy = Zombie((1, LanesLength))
-    val thirdZombieInSecondLane: Enemy = Zombie((2, LanesLength))
-    val entities: List[Entity] = List(firstTurretInFirstLane, secondTurretInSecondLane,
-      firstZombieFirstLane, thirdZombieInSecondLane)
-    assert(entities.filter(basicZombie.isInterestedIn) == List(firstTurretInFirstLane))
+  "A zombie" should "filter the interesting entities" in {
+    println(zombie.isInterestedIn(plantInRange))
+    List(dummyPlant, plantInTheSameLane, dummyZombie, dummyBullet, plantInRange) filter zombie.isInterestedIn shouldBe List(plantInRange)
   }
+  "A zombie" should "lose HPs after getting hit" in {
+    (zombie collideWith dummyBullet).life should be < zombie.life
+  }
+  "A Zombie" should "die if reaches 0 or less HP" in {
+    (zombie withLife 25 collideWith dummyBullet).state shouldBe Dead
+  }
+  "A zombie" should "not have interests" in {
+    List(dummyZombie, plantInTheSameLane, dummyBullet) filter zombie.isInterestedIn shouldBe List.empty
+  }
+
 
 
   import org.scalatest.funsuite.AnyFunSuite
