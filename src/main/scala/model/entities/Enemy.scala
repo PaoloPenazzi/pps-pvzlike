@@ -7,16 +7,21 @@ import model.entities.WorldSpace.Position
 import scala.concurrent.duration.FiniteDuration
 
 /**
- * Interface of an enemy model
+ * A Enemy is an abstract entity that models the common behaviour of different types of enemy.
+ *
+ * @param position the position in which the enemy is placed.
+ * @param life the life that the enemy currently has.
+ * @param state the state of the enemy.
  */
 abstract class Enemy(override val position: Position,
             override val life: Int,
-            override val state: TroopState,
-            override val velocity: Float) extends Troop with MovingAbility:
+            override val state: TroopState) extends Troop with MovingAbility:
 
   override def isInterestedIn: Entity => Boolean =
     case plant: Plant => plant.position.y == position.y && plant.position.x < position.x && position.x - plant.position.x.toInt <= range
     case _ => false
+
+
 
   /*
   override def canAttack(entity: Entity): Boolean =
@@ -44,15 +49,37 @@ abstract class Enemy(override val position: Position,
 
 
 /**
- * Basic Zombie Enemy.
+ * Zombie is the base enemy of the game.
+ *
+ * @param position the position in which the zombie is placed.
+ * @param life the life that the zombie currently has.
+ * @param state the state of the zombie.
  */
 case class Zombie(override val position: Position = (0,0),
              override val life: Int = 100,
-             override val state: TroopState = Moving,
-             override val velocity: Float = -0.01) extends Enemy(position, life, state, velocity):
+             override val state: TroopState = Moving) extends Enemy(position, life, state):
+  override val velocity: Float = -0.01
   override def bullet: Bullet = PawBullet(position)
   override def pointOfShoot: Position = position
   override def withPosition(pos: Position): Troop = copy(position = pos)
   override def withLife(healthPoints: Int): Troop = copy(life = healthPoints)
   override def withState(newState: TroopState): Troop = copy(state = newState)
+
+/**
+ * A zombie that moves and attacks faster but has less life than a base zombie.
+ *
+ * @param position the position in which the zombie is placed.
+ * @param life the life that the zombie currently has.
+ * @param state the state of the zombie.
+ */
+case class FastZombie(override val position: Position = (0,0),
+                      override val life: Int = 80,
+                      override val state: TroopState = Moving) extends Enemy(position, life, state):
+  override val velocity: Float = -0.03
+  override def bullet: Bullet = PawBullet(position)
+  override def pointOfShoot: Position = position
+  override def withPosition(pos: Position): Troop = copy(position = pos)
+  override def withLife(healthPoints: Int): Troop = copy(life = healthPoints)
+  override def withState(newState: TroopState): Troop = copy(state = newState)
+
 

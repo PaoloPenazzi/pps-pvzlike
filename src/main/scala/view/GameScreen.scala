@@ -51,14 +51,6 @@ class GameScreen() extends ScreenAdapter with EntityRenderer :
     Gdx.gl.glClearColor(0, 0, 0, 1)
     Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
 
-    //enerator.dispose(); // don't forget to dispose to avoid memory leaks!
-    //layout.setText(font, metaData.sun.toString, Color.WHITE, targetWidth, Align.center, true);
-    /*
-    layout.setText(font, metaData.sun.toString, Color.WHITE, 1, Align.center, true);
-    layout.height = HUDHeight
-    layout.width = 3
-    */
-
     Game.batch.begin()
     Game.batch.draw(background, -3, 0, 25, ViewportHeight - HUDHeight)
     Game.font.getData.setScale(.05f)

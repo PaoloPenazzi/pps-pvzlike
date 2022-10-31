@@ -1,7 +1,7 @@
 package model
 
 
-import model.entities.{Bullet, PeaBullet, PeaShooter, Troop, Troops, Zombie}
+import model.entities.{Bullet, FastZombie, PeaBullet, PeaShooter, Troop, Troops, Zombie}
 import org.scalatest.*
 import org.scalatest.flatspec.*
 import org.scalatest.matchers.*
@@ -33,7 +33,6 @@ class EnemyModelTest extends AnyFlatSpec with should.Matchers:
     zombie.update(FiniteDuration(16, "milliseconds"), List(plantInTheSameLane)).state shouldBe Attacking
   }
   "A Zombie" should "filter the interesting entities" in {
-    println(zombie.isInterestedIn(plantInRange))
     List(dummyPlant, plantInTheSameLane, dummyZombie, dummyBullet, plantInRange) filter zombie.isInterestedIn shouldBe List(plantInRange)
   }
   "A Zombie" should "lose HPs after getting hit" in {
