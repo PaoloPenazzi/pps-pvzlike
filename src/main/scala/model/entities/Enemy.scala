@@ -2,9 +2,10 @@ package model.entities
 
 import model.common.DefaultValues
 import model.entities.TroopState.*
-import model.entities.WorldSpace.Position
+import model.entities.WorldSpace.{LanesLength, NumOfLanes, Position}
 
 import scala.concurrent.duration.FiniteDuration
+import scala.util.Random
 
 /**
  * A Enemy is an abstract entity that models the common behaviour of different types of enemy.
@@ -55,7 +56,7 @@ abstract class Enemy(override val position: Position,
  * @param life the life that the zombie currently has.
  * @param state the state of the zombie.
  */
-case class Zombie(override val position: Position = (0,0),
+case class Zombie(override val position: Position = (Random.between(0, NumOfLanes), LanesLength + Random.between(0, 20)),
              override val life: Int = 100,
              override val state: TroopState = Moving) extends Enemy(position, life, state):
   override val velocity: Float = -0.01
@@ -66,20 +67,22 @@ case class Zombie(override val position: Position = (0,0),
   override def withState(newState: TroopState): Troop = copy(state = newState)
 
 /**
- * A zombie that moves and attacks faster but has less life than a base zombie.
+ * A FastZombie is a zombie that moves and attacks faster but has less life than a base zombie.
  *
  * @param position the position in which the zombie is placed.
  * @param life the life that the zombie currently has.
  * @param state the state of the zombie.
  */
-case class FastZombie(override val position: Position = (0,0),
+case class FastZombie(override val position: Position = (Random.between(0, NumOfLanes), LanesLength + Random.between(0, 20)),
                       override val life: Int = 80,
                       override val state: TroopState = Moving) extends Enemy(position, life, state):
-  override val velocity: Float = -0.03
+  override val velocity: Float = -0.02
   override def bullet: Bullet = PawBullet(position)
   override def pointOfShoot: Position = position
   override def withPosition(pos: Position): Troop = copy(position = pos)
   override def withLife(healthPoints: Int): Troop = copy(life = healthPoints)
   override def withState(newState: TroopState): Troop = copy(state = newState)
+
+
 
 
