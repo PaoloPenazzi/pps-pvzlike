@@ -14,7 +14,7 @@ import controller.Command
 
 object Game extends com.badlogic.gdx.Game:
   val viewport: Viewport = FitViewport(ViewportWidth.toFloat, ViewportHeight.toFloat)
-  var mainMenuScreen: ScreenAdapter = EndGameMenu()
+  var mainMenuScreen: ScreenAdapter = MainMenuScreen()
   var actorSystem: Option[ActorSystem[Command]] = None
   lazy val batch: SpriteBatch = SpriteBatch()
   lazy val font: BitmapFont = BitmapFont(Gdx.files.internal("assets/gameWindow/font.fnt"), Gdx.files.internal("assets/gameWindow/font.png"), false)
