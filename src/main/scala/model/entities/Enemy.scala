@@ -84,5 +84,21 @@ case class FastZombie(override val position: Position = (Random.between(0, NumOf
   override def withState(newState: TroopState): Troop = copy(state = newState)
 
 
+/**
+ * A WarriorZombie is a zombie that moves more slowly but does a lot of damage.
+ *
+ * @param position the position in which the zombie is placed.
+ * @param life the life that the zombie currently has.
+ * @param state the state of the zombie.
+ */
+case class WarriorZombie(override val position: Position = (Random.between(0, NumOfLanes), LanesLength + Random.between(0, 20)),
+                         override val life: Int = 200,
+                         override val state: TroopState = Moving) extends Enemy(position, life, state):
+  override val velocity: Float = -0.005
+  override def bullet: Bullet = PawBullet(position)
+  override def pointOfShoot: Position = position
+  override def withPosition(pos: Position): Troop = copy(position = pos)
+  override def withLife(healthPoints: Int): Troop = copy(life = healthPoints)
+  override def withState(newState: TroopState): Troop = copy(state = newState)
 
 
