@@ -5,6 +5,7 @@ import model.common.DefaultValues.*
 import model.entities.WorldSpace.{Position, given}
 
 import scala.concurrent.duration.FiniteDuration
+import scala.language.implicitConversions
 
 /**
  * An [[Entity]] shoot by a [[Troop]].
@@ -39,33 +40,34 @@ abstract class Bullet(position: Position) extends Entity with MovingAbility:
 
   protected def newPositionAfter(elapsedTime: FiniteDuration): Position =
     (position.y, position.x + (elapsedTime.length * velocity))
-    
+
   def withPosition(position: Position): Bullet
 
 /**
  * The [[Bullet]] shoot by the [[Peashooter]]. It has no strange effects on the zombies beside dealing damage.
  * @param position The initial position of the [[Bullet]].
  */
-case class PeaBullet(override val position: Position) extends Bullet(position):
+case class PeaBullet(override val position: Position = (0,0)) extends Bullet(position):
   override def checkCollisionWith(entity: Entity): Boolean =
     entity match
       case _: Enemy => super.checkCollisionWith(entity)
       case _ => false
 
   override def update(elapsedTime: FiniteDuration, interests: List[Entity]): Bullet =
-    PeaBullet(newPositionAfter(elapsedTime))
+    PeaBullet() withPosition newPositionAfter(elapsedTime)
 
-  override def withPosition(pos: Position): Bullet = copy(position = pos)  
+  override def withPosition(pos: Position): Bullet = copy(position = pos)
 
 /**
  * The [[Bullet]] shoot by the [[Zombie]]. It has no strange effects on the plants beside dealing damage.
  * @param position The initial position of the [[Bullet]].
  */
-case class PawBullet(override val position: Position) extends Bullet(position):
-  override def update(elapsedTime: FiniteDuration, interests: List[Entity]): Bullet = PawBullet(newPositionAfter(elapsedTime))
+case class PawBullet(override val position: Position = (0,0)) extends Bullet(position):
+  override def update(elapsedTime: FiniteDuration, interests: List[Entity]): Bullet =
+    PawBullet withPosition newPositionAfter(elapsedTime)
   override def checkCollisionWith(entity: Entity): Boolean =
     entity match
       case _: Plant => super.checkCollisionWith(entity)
       case _ => false
 
-  override def withPosition(pos: Position): Bullet = copy(position = pos)  
+  override def withPosition(pos: Position): Bullet = copy(position = pos)
