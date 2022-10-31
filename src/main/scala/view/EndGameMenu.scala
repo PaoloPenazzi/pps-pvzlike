@@ -55,17 +55,19 @@ class EndGameMenu() extends ScreenAdapter :
     Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
 
     TestGame.batch.begin()
-
+    TestGame.font.getData.setScale(0.05f)
+    TestGame.font.draw(TestGame.batch, "PVZ", ViewportWidth.toFloat / 2.3f, ViewportHeight - HUDHeight / 2)
     TestGame.batch.end()
     stage.draw(); //Draw the ui
     stage.act(delta)
 
   override def show(): Unit =
     stage.clear()
-    val restart = SimpleButton("Restart", ViewportWidth.toFloat / 2.5f, ViewportHeight - HUDHeight) {
+    val restart = SimpleButton("Restart", ViewportWidth.toFloat / 2.5f, ViewportHeight - HUDHeight / 0.25f) {
       // TODO restart the game here
       true
     }
+
     stage.addActor(restart)
     Gdx.input.setInputProcessor(stage)
 
