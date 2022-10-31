@@ -37,8 +37,10 @@ abstract class Bullet(position: Position) extends Entity with MovingAbility:
 
   override def velocity: Float = DefaultValues.velocity(this)
 
-  protected def updatePosition(elapsedTime: FiniteDuration): Position =
+  protected def newPositionAfter(elapsedTime: FiniteDuration): Position =
     (position.y, position.x + (elapsedTime.length * velocity))
+    
+  def withPosition(position: Position): Bullet
 
 /**
  * The [[Bullet]] shoot by the [[Peashooter]]. It has no strange effects on the zombies beside dealing damage.
@@ -51,16 +53,19 @@ case class PeaBullet(override val position: Position) extends Bullet(position):
       case _ => false
 
   override def update(elapsedTime: FiniteDuration, interests: List[Entity]): Bullet =
-    PeaBullet(updatePosition(elapsedTime))
+    PeaBullet(newPositionAfter(elapsedTime))
+
+  override def withPosition(pos: Position): Bullet = copy(position = pos)  
 
 /**
  * The [[Bullet]] shoot by the [[Zombie]]. It has no strange effects on the plants beside dealing damage.
  * @param position The initial position of the [[Bullet]].
  */
 case class PawBullet(override val position: Position) extends Bullet(position):
-  override def update(elapsedTime: FiniteDuration, interests: List[Entity]): Bullet = PawBullet(updatePosition(elapsedTime))
+  override def update(elapsedTime: FiniteDuration, interests: List[Entity]): Bullet = PawBullet(newPositionAfter(elapsedTime))
   override def checkCollisionWith(entity: Entity): Boolean =
     entity match
       case _: Plant => super.checkCollisionWith(entity)
       case _ => false
 
+  override def withPosition(pos: Position): Bullet = copy(position = pos)  

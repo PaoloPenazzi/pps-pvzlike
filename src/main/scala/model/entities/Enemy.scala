@@ -48,7 +48,6 @@ case class Zombie(override val position: Position = (0,0),
              override val state: TroopState = Moving,
              override val velocity: Float = -0.01) extends Enemy(position, life, state, velocity):
   override def bullet: Bullet = PawBullet(position)
-  override def pointOfShoot: Position = position
   override def withPosition(pos: Position): Troop = copy(position = pos)
   override def withLife(healthPoints: Int): Troop = copy(life = healthPoints)
   override def withState(newState: TroopState): Troop = copy(state = newState)

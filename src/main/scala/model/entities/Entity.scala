@@ -97,11 +97,6 @@ trait Troop extends Entity with AttackingAbility:
   def state: TroopState
 
   /**
-   * @return The position in which the bullet should be spawned.
-   */
-  def pointOfShoot: Position
-
-  /**
    * @param newState The new [[TroopState]] of the [[Troop]].
    * @return The same [[Troop]] with the state updated.
    */
