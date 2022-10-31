@@ -44,7 +44,7 @@ abstract class Enemy(override val position: Position,
  * Basic Zombie Enemy.
  */
 case class Zombie(override val position: Position = (0,0),
-             override val life: Int = 100,
+             override val life: Int = 150,
              override val state: TroopState = Moving,
              override val velocity: Float = -0.01) extends Enemy(position, life, state, velocity):
   override def bullet: Bullet = PawBullet(position)
