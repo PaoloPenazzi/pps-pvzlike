@@ -29,8 +29,6 @@ case class Zombie(override val position: Position = (0,0),
 
   override def withState(newState: TroopState): Troop = copy(state = newState)
 
-  override def canAttack(entity: Entity): Boolean =
-  entity.position.y == position.y && entity.position.x < position.x && position.x - entity.position.x.toInt <= range
 
   override def collideWith(bullet: Bullet): Troop =
     val newLife = Math.max(life - bullet.damage, 0)

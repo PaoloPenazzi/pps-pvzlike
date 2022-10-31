@@ -53,16 +53,14 @@ trait MovingAbility extends Entity:
  */
 trait AttackingAbility extends Entity:
   /**
+   * @return The position in which the bullet should be spawned.
+   */
+  def pointOfShoot: Position
+
+  /**
    * @return The [[Bullet]] that the [[Entity]] shoots.
    */
   def bullet: Bullet
-
-  /**
-   *
-   * @param entity The [[Entity]] to be attacked.
-   * @return True if the [[Entity]] can be attacked, false otherwise.
-   */
-  def canAttack(entity: Entity): Boolean
 
   /**
    * @return The rate of fire of the [[Entity]].
@@ -97,11 +95,6 @@ trait Troop extends Entity with AttackingAbility:
   def state: TroopState
 
   /**
-   * @return The position in which the bullet should be spawned.
-   */
-  def pointOfShoot: Position
-
-  /**
    * @param newState The new [[TroopState]] of the [[Troop]].
    * @return The same [[Troop]] with the state updated.
    */
@@ -130,11 +123,21 @@ object Troops:
      */
     def build: T
 
+  trait ShooterBuilder[B <: Bullet]:
+    def build: Troop
+  given ShooterBuilder[PeaBullet]  with
+    override def build: Troop = Shooter[PeaBullet](PeaBullet(0,0))
+  given ShooterBuilder[SnowBullet] with
+    override def build: Troop = Shooter[SnowBullet](SnowBullet(0,0))
   /**
    * A given instance to create [[Troop]] depending on the type.
    */
-  given TroopBuilder[PeaShooter] with
-    override def build: PeaShooter = PeaShooter()
+  /*given TroopBuilder[PeaShooter] with
+    override def build: PeaShooter = PeaShooter()*/
+  /*given TroopBuilder[Shooter[PeaBullet]] with
+    override def build: Shooter[PeaBullet] = Shooter()
+  given TroopBuilder[Shooter[SnowBullet]] with
+    override def build: Shooter[SnowBullet] = Shooter()*/
   given TroopBuilder[Zombie] with
     override def build: Zombie = Zombie()
   given TroopBuilder[Wallnut] with
@@ -142,10 +145,13 @@ object Troops:
 
   /**
    * A DSL method to create [[Troop]].
+   *
    * @param troopBuilder The [[TroopBuilder]] of the type needed.
    * @tparam T The [[Troop]] type.
    * @return The [[Troop]] of the specified type with position (0,0).
    */
+  def thatShoot[B <: Bullet](using shooterBuilder: ShooterBuilder[B]): Troop =
+    shooterBuilder.build
   def ofType[T <: Troop](using troopBuilder: TroopBuilder[T]): T =
     troopBuilder.build
 
