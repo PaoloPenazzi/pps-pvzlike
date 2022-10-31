@@ -64,7 +64,8 @@ case class PeaBullet(override val position: Position = (0,0)) extends Bullet(pos
  */
 case class PawBullet(override val position: Position = (0,0)) extends Bullet(position):
   override def update(elapsedTime: FiniteDuration, interests: List[Entity]): Bullet =
-    PawBullet withPosition newPositionAfter(elapsedTime)
+    PawBullet() withPosition newPositionAfter(elapsedTime)
+
   override def checkCollisionWith(entity: Entity): Boolean =
     entity match
       case _: Plant => super.checkCollisionWith(entity)
