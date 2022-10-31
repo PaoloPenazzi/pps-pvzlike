@@ -1,7 +1,7 @@
 package model
 
 
-import model.entities.{Bullet, FastZombie, PeaBullet, PeaShooter, Troop, Troops, Zombie}
+import model.entities.{Bullet, FastZombie, PeaBullet, PeaShooter, Troop, Troops, Zombie, WarriorZombie}
 import org.scalatest.*
 import org.scalatest.flatspec.*
 import org.scalatest.matchers.*
@@ -20,7 +20,7 @@ class EnemyModelTest extends AnyFlatSpec with should.Matchers:
 
   private val plantInOtherLane: Troop = Troops.ofType[PeaShooter] withPosition (otherLane, 10)
   private val plantInTheSameLane: Troop = Troops.ofType[PeaShooter] withPosition (testingLane, 10)
-  private val plantInRange: Troop = Troops.ofType[PeaShooter] withPosition (testingLane, 70)
+  private val plantInRange: Troop = Troops.ofType[PeaShooter] withPosition (testingLane, 75)
 
   private val dummyPlant: Troop = Troops.ofType[PeaShooter] withPosition (otherLane, 50)
   private val dummyZombie: Troop = Troops.ofType[Zombie] withPosition (otherLane, 50)
@@ -53,7 +53,6 @@ class EnemyModelTest extends AnyFlatSpec with should.Matchers:
     fastZombie.update(FiniteDuration(16, "milliseconds"), List(plantInTheSameLane)).state shouldBe Attacking
   }
   "A FastZombie" should "filter the interesting entities" in {
-    println(fastZombie.isInterestedIn(plantInRange))
     List(dummyPlant, plantInTheSameLane, dummyZombie, dummyBullet, plantInRange) filter fastZombie.isInterestedIn shouldBe List(plantInRange)
   }
   "A FastZombie" should "lose HPs after getting hit" in {
