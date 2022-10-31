@@ -22,6 +22,7 @@ object Sprites {
     case _: PeaBullet => 0.4
     case _: PawBullet => 0.4
     case _: Zombie => 1
+    case _: FastZombie => 1
 
   def height(entity: Entity): Float = entity match
     case _: PeaShooter => 1
@@ -29,4 +30,5 @@ object Sprites {
     case _: PeaBullet => 0.4
     case _: PawBullet => 0.4
     case _: Zombie => 1.5
+    case _: FastZombie => 1.5
 }
