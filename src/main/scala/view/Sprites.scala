@@ -14,6 +14,7 @@ object Sprites {
     case _: PeaBullet => "peabullet.png"
     case _: PawBullet => "paw.png"
     case _: Zombie => "zombie.png"
+    case _: FastZombie => "fastzombie.png"
 
   def width(entity: Entity): Float = entity match
     case _: PeaShooter => 1
