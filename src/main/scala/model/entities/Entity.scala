@@ -131,7 +131,9 @@ object Troops:
   given TroopBuilder[Zombie] with
     override def build: Zombie = Zombie()
   given TroopBuilder[FastZombie] with
-    override def build: FastZombie = FastZombie()  
+    override def build: FastZombie = FastZombie()
+  given TroopBuilder[WarriorZombie] with
+    override def build: WarriorZombie = WarriorZombie()
   given TroopBuilder[Wallnut] with
     override def build: Wallnut = Wallnut()
 
