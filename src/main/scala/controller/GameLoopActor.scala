@@ -18,6 +18,7 @@ import view.Game
 object GameLoopActor:
 
   val waveGenerator: WaveGenerator = Generator()
+  val resourceTimer: FiniteDuration = FiniteDuration(3, "seconds")
 
   import GameLoopCommands.*
 
@@ -36,7 +37,7 @@ object GameLoopActor:
             case StartLoop() =>
               waveGenerator.resetWaves()
               startTimer(timer, UpdateLoop())
-              startTimer(timer, UpdateResources(), FiniteDuration(3, "seconds"))
+              startTimer(timer, UpdateResources(), resourceTimer)
               GameLoopActor(viewActor, entities, metaData)
 
             case EndGame() => 
@@ -46,14 +47,13 @@ object GameLoopActor:
             case PauseLoop() => pauseBehavior
 
             case UpdateResources() =>
-              startTimer(timer, UpdateResources(), FiniteDuration(3, "seconds"))
+              startTimer(timer, UpdateResources(), resourceTimer)
               GameLoopActor(viewActor, entities, metaData + Sun.Normal.value)
 
             case ChangeVelocity(velocity) => GameLoopActor(viewActor, entities, metaData >>> velocity)
 
             case UpdateLoop() =>
-              detectCollision foreach { e => e._1._1 ! Collision(e._2._2, ctx.self); e._2._1 ! Collision(e._1._2, ctx.self);
-              println("Collision between: " + e._2._2 + " AND " + e._1._2)}
+              detectCollision foreach { e => e._1._1 ! Collision(e._2._2, ctx.self); e._2._1 ! Collision(e._1._2, ctx.self)}
               updateAll(ctx, detectInterest)
               val newWave = if isWaveOver then createWave(ctx) else List.empty
               startTimer(timer, UpdateLoop())
