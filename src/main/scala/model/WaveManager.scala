@@ -25,6 +25,7 @@ trait Wave:
  * A generator of waves. It's not possible to specify the wave number.
  */
 trait WaveGenerator:
+  def resetWaves(): Unit
   /**
    * @return The next [[Wave]]
    */
@@ -37,6 +38,8 @@ object Generator:
 
   private case class WaveGeneratorImpl() extends WaveGenerator:
     private var waveNumber: Int = 0
+    
+    override def resetWaves(): Unit = waveNumber = 0
 
     override def generateNextWave: Wave =
       waveNumber = waveNumber + 1
