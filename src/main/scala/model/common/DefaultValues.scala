@@ -20,8 +20,8 @@ object DefaultValues:
   val fireRates: AttackingAbility => Int =
     case _: PeaShooter => 2
     case _: Zombie => 3
-    case _: FastZombie => 4
-    case _: WarriorZombie => 2
+    case _: FastZombie => 2
+    case _: WarriorZombie => 4
     case _ => 0
 
   val costs: Plant => Int =

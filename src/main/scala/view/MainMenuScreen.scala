@@ -1,14 +1,9 @@
 package view
 
 import akka.actor.typed.ActorSystem
-import com.badlogic.gdx.math.Vector2
-import com.badlogic.gdx.physics.box2d.World
 import com.badlogic.gdx.ScreenAdapter
-import view.View.EntityRenderer
-import com.badlogic.gdx.utils.viewport.{FitViewport, Viewport}
 import com.badlogic.gdx.utils.ScreenUtils
 import com.badlogic.gdx.Gdx
-import view.ViewportSpace.{ViewportHeight, ViewportWidth}
 import com.badlogic.gdx.graphics.{GL20, OrthographicCamera}
 import com.badlogic.gdx.graphics.g2d.BitmapFont
 import controller.RootActor
@@ -18,8 +13,6 @@ object MainMenuScreen:
   def apply() = new MainMenuScreen()
 
   class MainMenuScreen() extends ScreenAdapter:
-    private val world: World = World(Vector2(0, 0), false)
-    //private val camera = Game.viewport.getCamera
     lazy val font: BitmapFont = BitmapFont()
   
     private lazy val camera: OrthographicCamera = OrthographicCamera()

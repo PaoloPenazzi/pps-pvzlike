@@ -1,12 +1,9 @@
 package view
 
 import akka.actor.typed.ActorSystem
-import com.badlogic.gdx.graphics.g2d.{BitmapFont, Sprite, SpriteBatch}
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer
-import com.badlogic.gdx.graphics.{Color, GL20, OrthographicCamera, Texture}
-import com.badlogic.gdx.utils.ScreenUtils
+import com.badlogic.gdx.graphics.g2d.{BitmapFont, SpriteBatch}
 import com.badlogic.gdx.utils.viewport.{FitViewport, Viewport}
-import com.badlogic.gdx.{ApplicationAdapter, Game, Gdx, Screen, ScreenAdapter}
+import com.badlogic.gdx.{Game, Gdx, ScreenAdapter}
 import controller.RootActor
 import controller.RootActor.RootCommands.StartGame
 import ViewportSpace.*

@@ -1,29 +1,23 @@
 package view
 
-import com.badlogic.gdx.graphics.g2d.{BitmapFont, GlyphLayout, SpriteBatch, TextureRegion}
-import com.badlogic.gdx.graphics.{Color, GL20, OrthographicCamera, Texture}
-import com.badlogic.gdx.math.{Vector2, Vector3}
-import com.badlogic.gdx.physics.box2d.{Box2DDebugRenderer, World}
-import com.badlogic.gdx.utils.viewport.Viewport
-import com.badlogic.gdx.{Gdx, Input, ScreenAdapter}
-import model.entities.WorldSpace.{LanesLength, given}
-import model.entities.*
-import View.EntityRenderer
-import Sprites.*
-import ViewportSpace.*
-import com.badlogic.gdx.scenes.scene2d.ui.{HorizontalGroup, ImageButton, Table}
-import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable
-import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Input.Buttons
-import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator
-import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter
-import com.badlogic.gdx.scenes.scene2d.actions.Actions
+import com.badlogic.gdx.graphics.g2d.TextureRegion
+import com.badlogic.gdx.graphics.{GL20, Texture}
+import com.badlogic.gdx.math.Vector2
+import com.badlogic.gdx.physics.box2d.World
 import com.badlogic.gdx.scenes.scene2d.{InputEvent, Stage}
-import com.badlogic.gdx.scenes.scene2d.utils.ClickListener
-import com.badlogic.gdx.utils.Align
-import controller.ViewActor.sendPlacePlant
-import model.common.Utilities
+import com.badlogic.gdx.scenes.scene2d.ui.ImageButton
+import com.badlogic.gdx.scenes.scene2d.utils.{ClickListener, TextureRegionDrawable}
+import com.badlogic.gdx.scenes.scene2d.actions.Actions
+import com.badlogic.gdx.{Gdx, ScreenAdapter}
+import view.View.EntityRenderer
+import view.ViewportSpace.*
+import view.Sprites.{height, width, spriteName}
+import model.entities.{Entity, Troop, Troops, Wallnut, PeaShooter}
 import model.common.Utilities.MetaData
+import controller.ViewActor.sendPlacePlant
+
+
 
 
 object GameScreen:
