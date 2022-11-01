@@ -34,6 +34,7 @@ object GameLoopActor:
         Behaviors.receive((ctx, msg) => {
           msg match
             case StartLoop() =>
+              waveGenerator.resetWaves()
               startTimer(timer, UpdateLoop())
               startTimer(timer, UpdateResources(), FiniteDuration(3, "seconds"))
               GameLoopActor(viewActor, entities, metaData)
