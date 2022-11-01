@@ -4,9 +4,10 @@ import model.entities.*
 import scala.language.implicitConversions
 
 object DefaultValues:
+  val endGameLimit: Int = -5
   val defaultPlantState: TroopState = TroopState.Idle
   val peashooterDefaultLife: Int = 100
-  val wallnutDefaultLife: Int = 150
+  val walnutDefaultLife: Int = 150
   
   val bullets: Troop => Bullet =
     case p: PeaShooter => PeaBullet(p.pointOfShoot)
