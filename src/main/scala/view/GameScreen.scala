@@ -126,7 +126,9 @@ class GameScreen() extends ScreenAdapter with EntityRenderer :
 
   def memoizedTexture: Entity => Texture =
 
-    def texture(entity: Entity): Texture = new Texture(Gdx.files.classpath("assets/" + spriteName(entity)))
+    def texture(entity: Entity): Texture =
+      val spritename = spriteName(entity)
+      new Texture(Gdx.files.classpath("assets/" + spriteName(entity)))
 
     entity =>
         cache.getOrElse(entity.getClass.getSimpleName, {

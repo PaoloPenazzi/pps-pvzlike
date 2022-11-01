@@ -3,7 +3,7 @@ package model
 import scala.util.Random
 import model.Generator.WaveImpl
 import model.entities.WorldSpace.*
-import model.entities.{Enemy, Zombie, FastZombie}
+import model.entities.{Enemy, Zombie, FastZombie, WarriorZombie}
 
 import scala.annotation.tailrec
 
@@ -47,4 +47,4 @@ object Generator:
     private def createEnemyList(n: Int)(l: List[Enemy]): List[Enemy] =
       n match
         case 0 => l
-        case _ => createEnemyList(n - 1)(l = l :+ FastZombie())
+        case _ => createEnemyList(n - 1)(l = l :+ WarriorZombie())

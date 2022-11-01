@@ -50,7 +50,7 @@ object GameLoopActor:
 
             case UpdateLoop() =>
               detectCollision foreach { e => e._1._1 ! Collision(e._2._2, ctx.self); e._2._1 ! Collision(e._1._2, ctx.self);
-              println("Collision between: " + e._2._2 + " AND " + e._1._2)}
+                println("Collision between: " + e._2._2 + " AND " + e._1._2)}
               updateAll(ctx, detectInterest)
               val newWave = if isWaveOver then createWave(ctx) else List.empty
               startTimer(timer, UpdateLoop())
