@@ -41,3 +41,10 @@ class GameDataTest extends AnyFlatSpec with BeforeAndAfter with Matchers :
     assertResult(seq.ofType[Plant])(List(shooter))
   }
 
+  "a seq" should "make seq of bullet" in {
+    assertResult(seq.ofType[Bullet])(List(bullet))
+  }
+
+  "a seq" should "make seq of enemy" in {
+    assertResult(seq.ofType[Enemy])(List(zombie))
+  }
