@@ -1,6 +1,6 @@
 package model.actors
 
-import akka.actor.typed.Behavior
+import akka.actor.typed.{ActorRef, Behavior}
 import akka.actor.typed.scaladsl.Behaviors
 import controller.GameLoopActor.GameLoopCommands.{BulletSpawned, EntityDead, EntityUpdated, EndGame}
 import model.entities.*
@@ -46,6 +46,7 @@ object TroopActor:
                 entityUpdated.state match
                   case Dead =>
                     replyTo ! EntityDead(ctx.self)
+                    ctx.children collect {case a: ActorRef[ModelMessage] => a} foreach (ref => replyTo ! EntityDead(ref))
                     Behaviors.stopped
                   case _ =>
                     replyTo ! EntityUpdated(ctx.self, entityUpdated)
