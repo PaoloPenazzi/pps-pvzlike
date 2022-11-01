@@ -35,16 +35,18 @@ class GameDataTest extends AnyFlatSpec with BeforeAndAfter with Matchers :
     seq = GameSeq(List(bullet, zombie, shooter))
   }
 
-  import GameData.GameSeq.*
+  import GameData.*
 
   "a seq" should "make seq of turret" in {
     assertResult(seq.ofType[Plant])(List(shooter))
   }
+//
+//  "a seq" should "make seq of bullet" in {
+//    assertResult(seq.ofType[Bullet])(List(bullet))
+//  }
+//
+//  "a seq" should "make seq of enemy" in {
+//    assertResult(seq.ofType[Enemy])(List(zombie))
+//  }
 
-  "a seq" should "make seq of bullet" in {
-    assertResult(seq.ofType[Bullet])(List(bullet))
-  }
 
-  "a seq" should "make seq of enemy" in {
-    assertResult(seq.ofType[Enemy])(List(zombie))
-  }

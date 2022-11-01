@@ -1,22 +1,23 @@
 package model
 
 import akka.actor.typed.ActorRef
-import model.GameData.GameSeq.GameSeqBuilder
+// import model.GameData.GameSeq.GameSeqBuilder
+import model.GameData.GameSelector.GameSelectorBuilder
 import model.actors.ModelMessage
 import model.entities.{Bullet, Enemy, Entity, PeaShooter, Plant, Zombie}
 
 object GameData :
-  
+
   case class GameEntity[T, E <: Entity](ref: ActorRef[T], entity: E)
 
 
-  object GameSeq:
+/*  object GameSeq:
     trait GameSeqBuilder[T, E <: Entity]:
       def of(seq: Seq[GameEntity[T, Entity]]) : Seq[GameEntity[T, E]]
 
     given GameSeqBuilder[ModelMessage, Plant] with
       override def of(seq: Seq[GameEntity[ModelMessage, Entity]]): Seq[GameEntity[ModelMessage, Plant]] =
-        seq.collect{ case e if e.entity.isInstanceOf[Plant] => GameEntity(e.ref, e.entity.asInstanceOf[Plant]) }
+        seq.collect { case e if e.entity.isInstanceOf[Plant] => GameEntity(e.ref, e.entity.asInstanceOf[Plant]) }
 
     given GameSeqBuilder[ModelMessage, Bullet] with
       override def of(seq: Seq[GameEntity[ModelMessage, Entity]]): Seq[GameEntity[ModelMessage, Bullet]] =
@@ -28,7 +29,22 @@ object GameData :
 
   case class GameSeq[T](seq: Seq[GameEntity[T, Entity]]):
 
-    def ofType[A <: Entity](using gameSeqBuilder: GameSeqBuilder[T, A]): Seq[GameEntity[T, A]] = gameSeqBuilder of seq
+    def ofType[A <: Entity](using gameSeqBuilder: GameSeqBuilder[T, A]): Seq[GameEntity[T, A]] = gameSeqBuilder of seq*/
+
+
+  //------------------------------------------------
+  case class GameSeq[T](seq: Seq[GameEntity[T, Entity]]):
+    def ofType[A <: Entity](using select: GameSelectorBuilder[T, A]): Seq[GameEntity[T, A]] =
+      seq.collect(select.of)
+
+  object GameSelector:
+    trait GameSelectorBuilder[T, E <: Entity]:
+      def of: PartialFunction[GameEntity[T, Entity], GameEntity[T, E]]
+
+    given GameSelectorBuilder[ModelMessage, Plant] with
+      override def of: PartialFunction[GameEntity[ModelMessage, Entity], GameEntity[ModelMessage, Plant]] =
+         { case e if e.entity.isInstanceOf[Plant] => GameEntity(e.ref, e.entity.asInstanceOf[Plant]) }
+
 
 
 
