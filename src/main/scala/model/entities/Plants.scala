@@ -25,7 +25,7 @@ abstract class Plant(override val position: Position,
   def cost: Int = costs(this)
 
   override def isInterestedIn: Entity => Boolean =
-    case enemy: Enemy => enemy.position.y == position.y && enemy.position.x >= position.x
+    case enemy: Enemy => isInMyLane(enemy) && isInRange(enemy) && isNotBehindMe(enemy)
     case _ => false
 
   override def collideWith(bullet: Bullet): Troop =
@@ -37,9 +37,15 @@ abstract class Plant(override val position: Position,
       case Idle | Attacking => if interests.isEmpty then this withState Idle else this withState Attacking
       case _ => this
 
-  override def pointOfShoot: Position = position
+  override def bullet: Bullet = bullets(this) withPosition pointOfShoot
 
-  override def bullet: Bullet = bullets(this)
+  protected def pointOfShoot: Position
+
+  private def isInMyLane(entity: Entity): Boolean = entity.position.y == position.y
+
+  private def isInRange(entity: Entity): Boolean = entity.position.x < position.x + range
+
+  private def isNotBehindMe(entity: Entity): Boolean = entity.position.x > position.x
 
 /**
  * The Peashooter is the base plant of the game.
@@ -71,5 +77,6 @@ case class Wallnut(override val position: Position = (0,0),
   override def withLife(HealthPoints: Int): Troop = copy(life = HealthPoints)
   override def withState(newState: TroopState): Troop = copy(state = newState)
   override def update(elapsedTime: FiniteDuration, interests: List[Entity]): Troop = this
+  override protected def pointOfShoot: Position = position
   override def isInterestedIn: Entity => Boolean =
     case _ => false

@@ -25,6 +25,7 @@ trait Wave:
  * A generator of waves. It's not possible to specify the wave number.
  */
 trait WaveGenerator:
+  def resetWaves(): Unit
   /**
    * @return The next [[Wave]]
    */
@@ -37,6 +38,8 @@ object Generator:
 
   private case class WaveGeneratorImpl() extends WaveGenerator:
     private var waveNumber: Int = 0
+    
+    override def resetWaves(): Unit = waveNumber = 0
 
     override def generateNextWave: Wave =
       waveNumber = waveNumber + 1
@@ -47,4 +50,4 @@ object Generator:
     private def createEnemyList(n: Int)(l: List[Enemy]): List[Enemy] =
       n match
         case 0 => l
-        case _ => createEnemyList(n - 1)(l = l :+ WarriorZombie())
+        case _ => createEnemyList(n - 1)(l = l :+ FastZombie())

@@ -61,7 +61,6 @@ case class Zombie(override val position: Position = (Random.between(0, NumOfLane
              override val state: TroopState = Moving) extends Enemy(position, life, state):
   override val velocity: Float = -0.01
   override def bullet: Bullet = PawBullet(position)
-  override def pointOfShoot: Position = position
   override def withPosition(pos: Position): Troop = copy(position = pos)
   override def withLife(healthPoints: Int): Troop = copy(life = healthPoints)
   override def withState(newState: TroopState): Troop = copy(state = newState)
@@ -78,7 +77,6 @@ case class FastZombie(override val position: Position = (Random.between(0, NumOf
                       override val state: TroopState = Moving) extends Enemy(position, life, state):
   override val velocity: Float = -0.02
   override def bullet: Bullet = PawBullet(position)
-  override def pointOfShoot: Position = position
   override def withPosition(pos: Position): Troop = copy(position = pos)
   override def withLife(healthPoints: Int): Troop = copy(life = healthPoints)
   override def withState(newState: TroopState): Troop = copy(state = newState)
@@ -96,7 +94,6 @@ case class WarriorZombie(override val position: Position = (Random.between(0, Nu
                          override val state: TroopState = Moving) extends Enemy(position, life, state):
   override val velocity: Float = -0.005
   override def bullet: Bullet = SwordAttack(position)
-  override def pointOfShoot: Position = position
   override def withPosition(pos: Position): Troop = copy(position = pos)
   override def withLife(healthPoints: Int): Troop = copy(life = healthPoints)
   override def withState(newState: TroopState): Troop = copy(state = newState)
