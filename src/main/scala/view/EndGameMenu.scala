@@ -24,10 +24,8 @@ object EndGameMenu:
 
   class EndGameMenu() extends ScreenAdapter :
     private lazy val stage = new Stage(Game.viewport); //Set up a stage for the ui
-    private val camera = Game.viewport.getCamera
 
     override def render(delta: Float): Unit =
-      Game.batch.setProjectionMatrix(camera.combined)
       Gdx.gl.glClearColor(0, 0, 0, 1)
       Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
 
@@ -39,16 +37,15 @@ object EndGameMenu:
       stage.act(delta)
 
     override def show(): Unit =
-      stage.clear()
-      val restart = SimpleButton("Restart", ViewportWidth.toFloat / 2.5f, ViewportHeight - HUDHeight / 0.25f) {
+      val restart = createButton("Restart", ViewportWidth.toFloat / 2.5f, ViewportHeight - HUDHeight / 0.25f) {
         Game.startNewGame()
-        true
+        dispose()
+        false
       }
       stage.addActor(restart)
       Gdx.input.setInputProcessor(stage)
-
-object SimpleButton:
-  def apply(text: String, x: Float, y: Float)(func: => Boolean): Button =
+  
+  private def createButton(text: String, x: Float, y: Float)(func: => Boolean): Button =
     val button = new TextButton(text, new Skin(Gdx.files.internal("assets/skin/default/uiskin.json")))
     button.setTransform(true)
     button.setScale(.05f)
