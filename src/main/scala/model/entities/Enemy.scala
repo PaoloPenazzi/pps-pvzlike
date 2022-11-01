@@ -21,15 +21,7 @@ abstract class Enemy(override val position: Position,
   override def isInterestedIn: Entity => Boolean =
     case plant: Plant => plant.position.y == position.y && plant.position.x < position.x && position.x - plant.position.x.toInt <= range
     case _ => false
-
-
-
-  /*
-  override def canAttack(entity: Entity): Boolean =
-    entity.position.y == position.y && entity.position.x < position.x && position.x - entity.position.x.toInt <= range
- */
-
-
+  
   override def collideWith(bullet: Bullet): Troop =
     val newLife = Math.max(life - bullet.damage, 0)
     //copy(position, newLife, if newLife == 0 then Dead else state, velocity)

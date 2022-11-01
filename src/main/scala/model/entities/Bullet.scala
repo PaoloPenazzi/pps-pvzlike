@@ -59,9 +59,8 @@ case class PeaBullet(override val position: Position) extends Bullet(position):
   override def withPosition(pos: Position): Bullet = copy(position = pos)
 
 
-
 /**
- * The [[Bullet]] shoot by the classic[[Zombie]]. It has no strange effects on the plants beside dealing damage.
+ * An abstract [[Entity]] shoot by a [[Zombie]].
  * @param position The initial position of the [[Bullet]].
  */
 abstract class ZombieAttack(override val position: Position) extends Bullet(position):
@@ -70,10 +69,18 @@ abstract class ZombieAttack(override val position: Position) extends Bullet(posi
       case _: Plant => super.checkCollisionWith(entity)
       case _ => false
 
+/**
+ * The [[ZombieAttack]] shoot by the classic[[Zombie]] and [[FastZombie]]. It has no strange effects on the plants beside dealing damage.
+ * @param position The initial position of the [[Bullet]].
+ */
 case class PawBullet(override val position: Position) extends ZombieAttack(position):
   override def update(elapsedTime: FiniteDuration, interests: List[Entity]): Bullet = this withPosition newPositionAfter(elapsedTime)
   override def withPosition(pos: Position): Bullet = copy(position = pos)
 
+/**
+ * The [[ZombieAttack]] shoot by  [[WarriorZombie]]. It has no strange effects on the plants beside dealing damage.
+ * @param position The initial position of the [[Bullet]].
+ */
 case class SwordAttack(override val position: Position) extends ZombieAttack(position):
   override def update(elapsedTime: FiniteDuration, interests: List[Entity]): Bullet = this withPosition newPositionAfter(elapsedTime)
   override def withPosition(pos: Position): Bullet = copy(position = pos)
