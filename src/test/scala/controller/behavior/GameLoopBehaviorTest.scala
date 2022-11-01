@@ -71,7 +71,7 @@ class GameLoopBehaviorTest extends AnyWordSpec with BeforeAndAfter with Matchers
       }
 
       "stop the loop" in {
-        gameLoopActor run StopLoop()
+        gameLoopActor run EndGame()
         gameLoopActor.isAlive must be(false)
       }
     }

@@ -12,9 +12,9 @@ import scala.collection.immutable.Seq
 import scala.collection.mutable
 import scala.concurrent.duration.FiniteDuration
 import scala.language.postfixOps
-
 import scala.language.implicitConversions
 import WorldSpace.given
+import view.Game
 object GameLoopActor:
 
   val waveGenerator: WaveGenerator = Generator()
@@ -39,7 +39,9 @@ object GameLoopActor:
               startTimer(timer, UpdateResources(), FiniteDuration(3, "seconds"))
               GameLoopActor(viewActor, entities, metaData)
 
-            case StopLoop() => Behaviors.stopped
+            case EndGame() => 
+              Game.endGame()
+              Behaviors.stopped
 
             case PauseLoop() => pauseBehavior
 
@@ -80,8 +82,7 @@ object GameLoopActor:
     override def pauseBehavior: Behavior[Command] =
       Behaviors.receive((ctx, msg) => {
         msg match
-          case StopLoop() => Behaviors.stopped
-
+          
           case ResumeLoop() =>
             ctx.self ! UpdateLoop()
             GameLoopActor(viewActor, entities, metaData)
@@ -125,13 +126,13 @@ object GameLoopActor:
 
     case class StartLoop() extends GameLoopCommand
 
-    case class StopLoop() extends GameLoopCommand
-
     case class PauseLoop() extends GameLoopCommand
 
     case class ResumeLoop() extends GameLoopCommand
 
     case class UpdateLoop() extends GameLoopCommand
+
+    case class EndGame() extends GameLoopCommand
 
     case class UpdateResources() extends GameLoopCommand
 
