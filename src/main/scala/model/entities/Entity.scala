@@ -131,6 +131,8 @@ object Troops:
     override def build: WarriorZombie = WarriorZombie()
   given TroopBuilder[Wallnut] with
     override def build: Wallnut = Wallnut()
+  given TroopBuilder[CherryBomb] with
+    override def build: CherryBomb = CherryBomb()  
 
   /**
    * A DSL method to create [[Troop]].
