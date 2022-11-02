@@ -27,22 +27,22 @@ class EnemyModelTest extends AnyFlatSpec with should.Matchers:
   private val dummyBullet: Bullet = PeaBullet(0,0)
 
 
-  "A Zombie" should "be in Moving state if it can't attack any plant" in {
+  "A BasicZombie" should "be in Moving state if it can't attack any plant" in {
     zombie.update(FiniteDuration(16, "milliseconds"), List()).state shouldBe Moving
   }
-  "A Zombie" should "enter attacking state if it can attack an enemy" in {
+  "A BasicZombie" should "enter attacking state if it can attack an enemy" in {
     zombie.update(FiniteDuration(16, "milliseconds"), List(plantInTheSameLane)).state shouldBe Attacking
   }
-  "A Zombie" should "filter the interesting entities" in {
+  "A BasicZombie" should "filter the interesting entities" in {
     List(dummyPlant, plantInTheSameLane, dummyZombie, dummyBullet, plantInRange) filter zombie.isInterestedIn shouldBe List(plantInRange)
   }
-  "A Zombie" should "lose HPs after getting hit" in {
+  "A BasicZombie" should "lose HPs after getting hit" in {
     (zombie collideWith dummyBullet).life should be < zombie.life
   }
-  "A Zombie" should "die if reaches 0 or less HP" in {
+  "A BasicZombie" should "die if reaches 0 or less HP" in {
     (zombie withLife 25 collideWith dummyBullet).state shouldBe Dead
   }
-  "A Zombie" should "not have interests" in {
+  "A BasicZombie" should "not have interests" in {
     List(dummyZombie, plantInTheSameLane, dummyBullet) filter zombie.isInterestedIn shouldBe List.empty
   }
 

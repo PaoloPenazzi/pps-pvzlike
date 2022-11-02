@@ -64,25 +64,26 @@ case class PeaBullet(override val position: Position) extends Bullet(position):
  *
  * @param position The initial position of the [[Bullet]].
  */
-abstract class ZombieAttack(override val position: Position) extends Bullet(position):
+abstract class ZombieBullet(override val position: Position) extends Bullet(position):
   override def checkCollisionWith(entity: Entity): Boolean =
     entity match
       case _: Plant => super.checkCollisionWith(entity)
       case _ => false
 
 /**
- * The [[ZombieAttack]] shoot by the classic[[BasicZombie]] and [[FastZombie]]. It has no strange effects on the plants beside dealing damage.
+ * The [[ZombieBullet]] shoot by the classic[[BasicZombie]] and [[FastZombie]]. It has no strange effects on the plants beside dealing damage.
  *
  * @param position The initial position of the [[Bullet]].
  */
-case class PawBullet(override val position: Position) extends ZombieAttack(position):
+case class PawBullet(override val position: Position) extends ZombieBullet(position):
   override def update(elapsedTime: FiniteDuration, interests: List[Entity]): Bullet = this withPosition newPositionAfter(elapsedTime)
   override def withPosition(pos: Position): Bullet = copy(position = pos)
 
 /**
- * The [[ZombieAttack]] shoot by  [[WarriorZombie]]. It has no strange effects on the plants beside dealing damage.
+ * The [[ZombieBullet]] shoot by  [[WarriorZombie]]. It has no strange effects on the plants beside dealing damage.
+ *
  * @param position The initial position of the [[Bullet]].
  */
-case class SwordAttack(override val position: Position) extends ZombieAttack(position):
+case class SwordBullet(override val position: Position) extends ZombieBullet(position):
   override def update(elapsedTime: FiniteDuration, interests: List[Entity]): Bullet = this withPosition newPositionAfter(elapsedTime)
   override def withPosition(pos: Position): Bullet = copy(position = pos)

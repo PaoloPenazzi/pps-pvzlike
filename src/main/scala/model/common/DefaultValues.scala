@@ -31,13 +31,13 @@ object DefaultValues:
 
   val damages: Bullet => Int =
     case _: PeaBullet => 25
-    case _: SwordAttack => 60
+    case _: SwordBullet => 60
     case _: PawBullet => 25
     case _ => 0
 
   val velocity: Entity => Float =
     case _: PeaBullet => 0.06
-    case _: SwordAttack => -0.1
+    case _: SwordBullet => -0.1
     case _: PawBullet => -0.1
     case _ => 0
 
