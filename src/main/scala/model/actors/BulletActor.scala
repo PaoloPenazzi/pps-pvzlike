@@ -3,7 +3,7 @@ package model.actors
 import akka.actor.typed.{ActorRef, Behavior}
 import akka.actor.typed.scaladsl.Behaviors
 import controller.GameLoopActor.GameLoopCommands.{EntityUpdated, GameLoopCommand, EntityDead}
-import model.entities.{Bullet, Enemy}
+import model.entities.{Bullet, Zombie}
 
 object BulletActor:
   def apply(bullet: Bullet): Behavior[ModelMessage] =

@@ -58,13 +58,6 @@ trait AttackingAbility extends Entity:
   def bullet: Bullet
 
   /**
-   *
-   * @param entity The [[Entity]] to be attacked.
-   * @return True if the [[Entity]] can be attacked, false otherwise.
-   */
-  def canAttack(entity: Entity): Boolean
-
-  /**
    * @return The rate of fire of the [[Entity]].
    */
   def fireRate: Int = fireRates(this)
@@ -75,7 +68,7 @@ trait AttackingAbility extends Entity:
   def range: Int = ranges(this)
 
 /**
- * A troop is an [[Entity]] that is either a [[Zombie]] or a [[Plant]].
+ * A troop is an [[Entity]] that is either a [[BasicZombie]] or a [[Plant]].
  */
 trait Troop extends Entity with AttackingAbility:
   override type UpdatedEntity = Troop
@@ -130,8 +123,12 @@ object Troops:
    */
   given TroopBuilder[PeaShooter] with
     override def build: PeaShooter = PeaShooter()
-  given TroopBuilder[Zombie] with
-    override def build: Zombie = Zombie()
+  given TroopBuilder[BasicZombie] with
+    override def build: BasicZombie = BasicZombie()
+  given TroopBuilder[FastZombie] with
+    override def build: FastZombie = FastZombie()
+  given TroopBuilder[WarriorZombie] with
+    override def build: WarriorZombie = WarriorZombie()
   given TroopBuilder[Wallnut] with
     override def build: Wallnut = Wallnut()
 

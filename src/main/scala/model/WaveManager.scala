@@ -3,12 +3,12 @@ package model
 import scala.util.Random
 import model.Generator.WaveImpl
 import model.entities.WorldSpace.*
-import model.entities.{Enemy, Zombie}
+import model.entities.{Zombie, BasicZombie, FastZombie, WarriorZombie}
 
 import scala.annotation.tailrec
 
 /**
- * A wave of [[Enemy]].
+ * A wave of [[Zombie]].
  */
 trait Wave:
   /**
@@ -17,9 +17,9 @@ trait Wave:
   def waveNumber: Int
 
   /**
-   * @return The list of [[Enemy]] spawned.
+   * @return The list of [[Zombie]] spawned.
    */
-  def enemies: List[Enemy]
+  def enemies: List[Zombie]
 
 /**
  * A generator of waves. It's not possible to specify the wave number.
@@ -34,7 +34,7 @@ trait WaveGenerator:
 object Generator:
   def apply(): WaveGenerator = WaveGeneratorImpl()
 
-  private case class WaveImpl(override val waveNumber: Int, override val enemies: List[Enemy]) extends Wave
+  private case class WaveImpl(override val waveNumber: Int, override val enemies: List[Zombie]) extends Wave
 
   private case class WaveGeneratorImpl() extends WaveGenerator:
     private var waveNumber: Int = 0
@@ -43,11 +43,11 @@ object Generator:
 
     override def generateNextWave: Wave =
       waveNumber = waveNumber + 1
-      val newEnemies = createEnemyList(2 * waveNumber - 1)(List.empty[Enemy])
+      val newEnemies = createEnemyList(2 * waveNumber - 1)(List.empty[Zombie])
       WaveImpl(waveNumber, newEnemies)
 
     @tailrec
-    private def createEnemyList(n: Int)(l: List[Enemy]): List[Enemy] =
+    private def createEnemyList(n: Int)(l: List[Zombie]): List[Zombie] =
       n match
         case 0 => l
-        case _ => createEnemyList(n - 1)(l = l :+ new Zombie((Random.between(0, NumOfLanes), LanesLength + Random.between(0, 20))))
+        case _ => createEnemyList(n - 1)(l = l :+ BasicZombie())

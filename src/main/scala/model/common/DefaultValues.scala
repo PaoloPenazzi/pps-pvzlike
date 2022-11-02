@@ -8,6 +8,9 @@ object DefaultValues:
   val defaultPlantState: TroopState = TroopState.Idle
   val peashooterDefaultLife: Int = 100
   val wallnutDefaultLife: Int = 150
+  val basicZombieDefaultLife: Int = 100
+  val fastZombieDefaultLife: Int = 80
+  val warriorZombieDefaultLife: Int = 200
   
   val bullets: Troop => Bullet =
     case p: PeaShooter => PeaBullet(p.pointOfShoot)
@@ -19,7 +22,9 @@ object DefaultValues:
 
   val fireRates: AttackingAbility => Int =
     case _: PeaShooter => 2
-    case _: Zombie => 3
+    case _: BasicZombie => 3
+    case _: FastZombie => 2
+    case _: WarriorZombie => 4
     case _ => 0
 
   val costs: Plant => Int =
@@ -29,16 +34,20 @@ object DefaultValues:
 
   val damages: Bullet => Int =
     case _: PeaBullet => 25
+    case _: SwordBullet => 60
     case _: PawBullet => 25
     case _ => 0
 
   val velocity: Entity => Float =
     case _: PeaBullet => 0.06
+    case _: SwordBullet => -0.1
     case _: PawBullet => -0.1
     case _ => 0
 
   val ranges: AttackingAbility => Int =
     case _: PeaShooter => 80
-    case _: Zombie => 10
+    case _: BasicZombie => 10
+    case _: FastZombie => 15
+    case _: WarriorZombie => 10
     case _ => 0
 

@@ -21,7 +21,7 @@ class GameLoopIntegrationTest extends AnyWordSpec with BeforeAndAfter with Match
   var plantActor: TestInbox[ModelMessage] = _
 
   var bullet: (ActorRef[ModelMessage], PeaBullet) = _
-  var zombie: (ActorRef[ModelMessage], Zombie) = _
+  var zombie: (ActorRef[ModelMessage], BasicZombie) = _
   var shooter: (ActorRef[ModelMessage], PeaShooter) = _
 
   var entities: Seq[(ActorRef[ModelMessage], Entity)] = _
@@ -34,7 +34,7 @@ class GameLoopIntegrationTest extends AnyWordSpec with BeforeAndAfter with Match
     plantActor = TestInbox[ModelMessage]("plant")
 
     bullet = (seedActor.ref, PeaBullet((1, LanesLength)))
-    zombie = (zombieActor.ref, Zombie((1, LanesLength)))
+    zombie = (zombieActor.ref, BasicZombie((1, LanesLength)))
     shooter = (plantActor.ref, PeaShooter((1, LanesLength / 2)))
 
     entities = List(bullet, zombie, shooter)
