@@ -21,11 +21,9 @@ trait Zombie(override val position: Position,
   override def isInterestedIn: Entity => Boolean =
     case plant: Plant => plant.position.y == position.y && plant.position.x < position.x && position.x - plant.position.x.toInt <= range
     case _ => false
-  
+
   override def collideWith(bullet: Bullet): Troop =
     val newLife = Math.max(life - bullet.damage, 0)
-    //copy(position, newLife, if newLife == 0 then Dead else state, velocity)
-    //val enemy = (this withPosition position).withLife(newLife)
     if newLife == 0
     then this withLife newLife withState Dead
     else this withLife newLife withState state
