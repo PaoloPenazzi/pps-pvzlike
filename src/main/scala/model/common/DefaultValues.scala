@@ -8,6 +8,9 @@ object DefaultValues:
   val defaultPlantState: TroopState = TroopState.Idle
   val peashooterDefaultLife: Int = 100
   val wallnutDefaultLife: Int = 150
+  val basicZombieDefaultLife: Int = 100
+  val fastZombieDefaultLife: Int = 80
+  val warriorZombieDefaultLife: Int = 200
   
   val bullets: Troop => Bullet =
     case p: PeaShooter => PeaBullet(p.pointOfShoot)

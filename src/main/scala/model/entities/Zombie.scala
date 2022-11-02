@@ -1,6 +1,6 @@
 package model.entities
 
-import model.common.DefaultValues
+import model.common.DefaultValues.{basicZombieDefaultLife, fastZombieDefaultLife, warriorZombieDefaultLife}
 import model.entities.TroopState.*
 import model.entities.WorldSpace.{LanesLength, NumOfLanes, Position}
 
@@ -47,7 +47,7 @@ trait Zombie(override val position: Position,
  * @param state the state of the zombie.
  */
 case class BasicZombie(override val position: Position = (Random.between(0, NumOfLanes), LanesLength + Random.between(0, 20)),
-                       override val life: Int = 100,
+                       override val life: Int = basicZombieDefaultLife,
                        override val state: TroopState = Moving) extends Zombie(position, life, state):
   override val velocity: Float = -0.01
   override def bullet: Bullet = PawBullet(position)
@@ -63,7 +63,7 @@ case class BasicZombie(override val position: Position = (Random.between(0, NumO
  * @param state the state of the zombie.
  */
 case class FastZombie(override val position: Position = (Random.between(0, NumOfLanes), LanesLength + Random.between(0, 20)),
-                      override val life: Int = 80,
+                      override val life: Int = fastZombieDefaultLife,
                       override val state: TroopState = Moving) extends Zombie(position, life, state):
   override val velocity: Float = -0.02
   override def bullet: Bullet = PawBullet(position)
@@ -80,7 +80,7 @@ case class FastZombie(override val position: Position = (Random.between(0, NumOf
  * @param state the state of the zombie.
  */
 case class WarriorZombie(override val position: Position = (Random.between(0, NumOfLanes), LanesLength + Random.between(0, 20)),
-                         override val life: Int = 200,
+                         override val life: Int = warriorZombieDefaultLife,
                          override val state: TroopState = Moving) extends Zombie(position, life, state):
   override val velocity: Float = -0.005
   override def bullet: Bullet = SwordBullet(position)
