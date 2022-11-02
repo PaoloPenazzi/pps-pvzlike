@@ -14,9 +14,9 @@ import scala.util.Random
  * @param life the life that the enemy currently has.
  * @param state the state of the enemy.
  */
-abstract class Enemy(override val position: Position,
-            override val life: Int,
-            override val state: TroopState) extends Troop with MovingAbility:
+trait Zombie(override val position: Position,
+             override val life: Int,
+             override val state: TroopState) extends Troop with MovingAbility:
 
   override def isInterestedIn: Entity => Boolean =
     case plant: Plant => plant.position.y == position.y && plant.position.x < position.x && position.x - plant.position.x.toInt <= range
@@ -48,9 +48,9 @@ abstract class Enemy(override val position: Position,
  * @param life the life that the zombie currently has.
  * @param state the state of the zombie.
  */
-case class Zombie(override val position: Position = (Random.between(0, NumOfLanes), LanesLength + Random.between(0, 20)),
-             override val life: Int = 100,
-             override val state: TroopState = Moving) extends Enemy(position, life, state):
+case class BasicZombie(override val position: Position = (Random.between(0, NumOfLanes), LanesLength + Random.between(0, 20)),
+                       override val life: Int = 100,
+                       override val state: TroopState = Moving) extends Zombie(position, life, state):
   override val velocity: Float = -0.01
   override def bullet: Bullet = PawBullet(position)
   override def withPosition(pos: Position): Troop = copy(position = pos)
@@ -66,7 +66,7 @@ case class Zombie(override val position: Position = (Random.between(0, NumOfLane
  */
 case class FastZombie(override val position: Position = (Random.between(0, NumOfLanes), LanesLength + Random.between(0, 20)),
                       override val life: Int = 80,
-                      override val state: TroopState = Moving) extends Enemy(position, life, state):
+                      override val state: TroopState = Moving) extends Zombie(position, life, state):
   override val velocity: Float = -0.02
   override def bullet: Bullet = PawBullet(position)
   override def withPosition(pos: Position): Troop = copy(position = pos)
@@ -83,7 +83,7 @@ case class FastZombie(override val position: Position = (Random.between(0, NumOf
  */
 case class WarriorZombie(override val position: Position = (Random.between(0, NumOfLanes), LanesLength + Random.between(0, 20)),
                          override val life: Int = 200,
-                         override val state: TroopState = Moving) extends Enemy(position, life, state):
+                         override val state: TroopState = Moving) extends Zombie(position, life, state):
   override val velocity: Float = -0.005
   override def bullet: Bullet = SwordAttack(position)
   override def withPosition(pos: Position): Troop = copy(position = pos)

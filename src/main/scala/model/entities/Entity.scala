@@ -68,7 +68,7 @@ trait AttackingAbility extends Entity:
   def range: Int = ranges(this)
 
 /**
- * A troop is an [[Entity]] that is either a [[Zombie]] or a [[Plant]].
+ * A troop is an [[Entity]] that is either a [[BasicZombie]] or a [[Plant]].
  */
 trait Troop extends Entity with AttackingAbility:
   override type UpdatedEntity = Troop
@@ -123,8 +123,8 @@ object Troops:
    */
   given TroopBuilder[PeaShooter] with
     override def build: PeaShooter = PeaShooter()
-  given TroopBuilder[Zombie] with
-    override def build: Zombie = Zombie()
+  given TroopBuilder[BasicZombie] with
+    override def build: BasicZombie = BasicZombie()
   given TroopBuilder[FastZombie] with
     override def build: FastZombie = FastZombie()
   given TroopBuilder[WarriorZombie] with

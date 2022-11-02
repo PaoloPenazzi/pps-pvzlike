@@ -3,7 +3,7 @@ package model.entities
 import model.common.DefaultValues.*
 import model.entities.TroopState.*
 import model.entities.WorldSpace.{Position, given}
-import model.entities.{AttackingAbility, Bullet, Enemy, Entity, PeaBullet, Plant, Zombie}
+import model.entities.{AttackingAbility, Bullet, Zombie, Entity, PeaBullet, Plant, BasicZombie}
 
 import scala.concurrent.duration.FiniteDuration
 import scala.language.implicitConversions
@@ -25,7 +25,7 @@ abstract class Plant(override val position: Position,
   def cost: Int = costs(this)
 
   override def isInterestedIn: Entity => Boolean =
-    case enemy: Enemy => isInMyLane(enemy) && isInRange(enemy) && isNotBehindMe(enemy)
+    case enemy: Zombie => isInMyLane(enemy) && isInRange(enemy) && isNotBehindMe(enemy)
     case _ => false
 
   override def collideWith(bullet: Bullet): Troop =

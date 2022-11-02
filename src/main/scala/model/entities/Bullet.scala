@@ -50,7 +50,7 @@ trait Bullet(position: Position) extends Entity with MovingAbility:
 case class PeaBullet(override val position: Position) extends Bullet(position):
   override def checkCollisionWith(entity: Entity): Boolean =
     entity match
-      case _: Enemy => super.checkCollisionWith(entity)
+      case _: Zombie => super.checkCollisionWith(entity)
       case _ => false
 
   override def update(elapsedTime: FiniteDuration, interests: List[Entity]): Bullet =
@@ -60,7 +60,8 @@ case class PeaBullet(override val position: Position) extends Bullet(position):
 
 
 /**
- * An abstract [[Entity]] shoot by a [[Zombie]].
+ * An abstract [[Entity]] shoot by a [[BasicZombie]].
+ *
  * @param position The initial position of the [[Bullet]].
  */
 abstract class ZombieAttack(override val position: Position) extends Bullet(position):
@@ -70,7 +71,8 @@ abstract class ZombieAttack(override val position: Position) extends Bullet(posi
       case _ => false
 
 /**
- * The [[ZombieAttack]] shoot by the classic[[Zombie]] and [[FastZombie]]. It has no strange effects on the plants beside dealing damage.
+ * The [[ZombieAttack]] shoot by the classic[[BasicZombie]] and [[FastZombie]]. It has no strange effects on the plants beside dealing damage.
+ *
  * @param position The initial position of the [[Bullet]].
  */
 case class PawBullet(override val position: Position) extends ZombieAttack(position):

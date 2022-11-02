@@ -1,7 +1,7 @@
 package model
 
 
-import model.entities.{Bullet, FastZombie, PeaBullet, PeaShooter, Troop, Troops, Zombie, WarriorZombie}
+import model.entities.{Bullet, FastZombie, PeaBullet, PeaShooter, Troop, Troops, BasicZombie, WarriorZombie}
 import org.scalatest.*
 import org.scalatest.flatspec.*
 import org.scalatest.matchers.*
@@ -14,7 +14,7 @@ class EnemyModelTest extends AnyFlatSpec with should.Matchers:
 
   private val testingLane = 1
   private val otherLane = 2
-  private val zombie: Troop = Troops.ofType[Zombie] withPosition (testingLane, 80)
+  private val zombie: Troop = Troops.ofType[BasicZombie] withPosition (testingLane, 80)
   private val fastZombie: Troop = Troops.ofType[FastZombie] withPosition (testingLane, 80)
   private val warriorZombie: Troop = Troops.ofType[WarriorZombie] withPosition (testingLane, 80)
 
@@ -23,7 +23,7 @@ class EnemyModelTest extends AnyFlatSpec with should.Matchers:
   private val plantInRange: Troop = Troops.ofType[PeaShooter] withPosition (testingLane, 75)
 
   private val dummyPlant: Troop = Troops.ofType[PeaShooter] withPosition (otherLane, 50)
-  private val dummyZombie: Troop = Troops.ofType[Zombie] withPosition (otherLane, 50)
+  private val dummyZombie: Troop = Troops.ofType[BasicZombie] withPosition (otherLane, 50)
   private val dummyBullet: Bullet = PeaBullet(0,0)
 
 
