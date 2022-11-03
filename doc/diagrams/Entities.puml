@@ -1,0 +1,33 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+interface Entity <<trait>>
+interface AttackingAbility <<trait>>
+interface MovingAbility <<trait>>
+interface Troop <<trait>>
+abstract class Plant
+abstract class Zombie
+abstract class Bullet
+class PeaBullet
+class PawBullet
+class Peashooter
+class Wallnut
+class BasicZombie
+
+Entity <|-down- MovingAbility
+Entity <|-down- AttackingAbility
+Entity <|-down- Bullet
+Entity <|-down- Troop
+AttackingAbility <|-down- Troop
+MovingAbility <|-down- Zombie
+MovingAbility <|-down- Bullet
+Troop <|-down- Plant
+Troop <|-down- Zombie
+Plant <|-down- Peashooter
+Plant <|-down- Wallnut
+Zombie <|-down- BasicZombie
+Bullet <|-down- PeaBullet
+Bullet <|-down- PawBullet
+
+
+@enduml

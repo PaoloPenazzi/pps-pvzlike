@@ -1,32 +1,59 @@
 package model.common
 
-import model.entities.{AttackingEntity, Bullet, Entity, Seed, Zombie, Plant, Turret}
+import model.entities.*
+import scala.language.implicitConversions
 
 object DefaultValues:
+  val endGameLimit: Int = -5
+  val defaultPlantState: TroopState = TroopState.Idle
+  val peashooterDefaultLife: Int = 100
+  val wallnutDefaultLife: Int = 150
+  val basicZombieDefaultLife: Int = 100
+  val fastZombieDefaultLife: Int = 80
+  val warriorZombieDefaultLife: Int = 200
+  
+  val bullets: Troop => Bullet =
+    case p: PeaShooter => PeaBullet(p.pointOfShoot)
+    case c: CherryBomb => CherryBullet(c.position)
+
   val width: Entity => Int =
-    case _: Bullet => 5
-    case _ => 20
+    case _: CherryBullet => 10
+    case _: Bullet => 2
+    case _: PeaShooter => 5
+    case _ => 2
 
-  val HP: AttackingEntity => Int =
-    case _: Plant => 300
-    case _: Zombie => 100
+  val fireRates: AttackingAbility => Int =
+    case _: CherryBomb => 1
+    case _: PeaShooter => 2
+    case _: BasicZombie => 3
+    case _: FastZombie => 2
+    case _: WarriorZombie => 4
     case _ => 0
 
-  val fireRates: AttackingEntity => Int =
-    case _: Plant => 2
-    case _: Zombie => 3
-    case _ => 0
-
-  val costs: Turret => Int =
-    case _: Plant => 100
+  val costs: Plant => Int =
+    case _: CherryBomb => 150
+    case _: PeaShooter => 100
+    case _: Wallnut => 50
     case _  => 0
 
   val damages: Bullet => Int =
-    case _: Seed => 25
-    case _       => 0
+    case _: CherryBullet => 1000
+    case _: PeaBullet => 25
+    case _: SwordBullet => 60
+    case _: PawBullet => 25
+    case _ => 0
 
-  val ranges: AttackingEntity => Int =
-    case _: Plant => 500
-    case _: Zombie => 10
+  val velocity: Entity => Float =
+    case _: PeaBullet => 0.06
+    case _: SwordBullet => -0.1
+    case _: PawBullet => -0.1
+    case _ => 0
+
+  val ranges: AttackingAbility => Int =
+    case _: CherryBomb => 1000
+    case _: PeaShooter => 80
+    case _: BasicZombie => 10
+    case _: FastZombie => 15
+    case _: WarriorZombie => 10
     case _ => 0
 

@@ -9,7 +9,7 @@ object Launcher :
   def main(): Unit =
     val config = Lwjgl3ApplicationConfiguration()
     config.setTitle("PVZ")
-    config.setResizable(true)
+    config.setResizable(false)
     config.setWindowedMode(960, 540)
     Lwjgl3Application(Game, config)
 
