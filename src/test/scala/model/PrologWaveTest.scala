@@ -12,5 +12,4 @@ class PrologWaveTest extends AnyFlatSpec with should.Matchers:
   val engine: PrologEngine = PrologEngine(PrologTheory.getTheory(stringTheory))
   val query: String = "wave(6, L)"
   val solution: LazyList[SolveInfo] = engine solve WaveTerm.queryToTerm(query)
-  Solutions.getSolutionFromProlog(solution.head)
 
