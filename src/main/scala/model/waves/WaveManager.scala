@@ -1,11 +1,13 @@
-package model
+package model.waves
 
-import scala.util.Random
-import model.Generator.WaveImpl
 import model.entities.WorldSpace.*
-import model.entities.{Zombie, BasicZombie, FastZombie, WarriorZombie}
+import model.entities.{BasicZombie, FastZombie, WarriorZombie, Zombie}
+import model.waves.Generator.WaveImpl
+import model.waves.{Wave, WaveGenerator}
+
 
 import scala.annotation.tailrec
+import scala.util.Random
 
 /**
  * A wave of [[Zombie]].
@@ -38,7 +40,7 @@ object Generator:
 
   private case class WaveGeneratorImpl() extends WaveGenerator:
     private var waveNumber: Int = 0
-    
+
     override def resetWaves(): Unit = waveNumber = 0
 
     override def generateNextWave: Wave =
