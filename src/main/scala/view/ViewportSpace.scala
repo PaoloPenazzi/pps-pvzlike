@@ -27,5 +27,5 @@ object ViewportSpace:
   def projectY(y: Int): Float = (y + bottomOffsetGrid * (NumOfLanes/gridHeight)) / NumOfLanes * gridHeight
   def unprojectY(y: Float): Int = (y - bottomOffsetGrid * (NumOfLanes/gridHeight)).toInt
   def unprojectX(x: Float): Float = (x - leftOffsetGrid) * (LanesLength/gridWidth)
-  def turretCoordinates(point: Vector2): Option[Position] =
-    cells.find(_.contains(point)).map(cell => Position(unprojectY(cell.y), unprojectX(cell.x + cell.width/2)))
+  def plantCoordinates(point: Vector2): Option[Position] =
+    cells.find(_.contains(point)).map(cell => Position(unprojectY(cell.y), unprojectX(cell.x + cell.width/4)))

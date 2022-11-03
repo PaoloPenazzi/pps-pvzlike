@@ -1,6 +1,6 @@
 package model.common
 
-import model.entities.Turret
+import model.entities.Plant
 
 import scala.annotation.targetName
 import scala.concurrent.duration.FiniteDuration

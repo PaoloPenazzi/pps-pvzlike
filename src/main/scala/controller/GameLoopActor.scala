@@ -6,15 +6,15 @@ import controller.GameLoopActor.GameLoopCommands.{StartLoop, UpdateLoop}
 import model.actors.*
 import model.common.Utilities.{MetaData, Sun, Velocity}
 import model.entities.*
-import model.{Generator, WaveGenerator}
 
 import scala.collection.immutable.Seq
 import scala.collection.mutable
 import scala.concurrent.duration.FiniteDuration
 import scala.language.postfixOps
-
 import scala.language.implicitConversions
-import WorldSpace.given
+import model.entities.WorldSpace.*
+import model.waves.{Generator, WaveGenerator}
+import view.Game
 object GameLoopActor:
 
   val waveGenerator: WaveGenerator = Generator()
@@ -34,11 +34,14 @@ object GameLoopActor:
         Behaviors.receive((ctx, msg) => {
           msg match
             case StartLoop() =>
+              waveGenerator.resetWaves()
               startTimer(timer, UpdateLoop())
               startTimer(timer, UpdateResources(), FiniteDuration(3, "seconds"))
               GameLoopActor(viewActor, entities, metaData)
 
-            case StopLoop() => Behaviors.stopped
+            case EndGame() => 
+              Game.endGame()
+              Behaviors.stopped
 
             case PauseLoop() => pauseBehavior
 
@@ -49,7 +52,8 @@ object GameLoopActor:
             case ChangeVelocity(velocity) => GameLoopActor(viewActor, entities, metaData >>> velocity)
 
             case UpdateLoop() =>
-              detectCollision foreach { e => e._1._1 ! Collision(e._2._2, ctx.self); e._2._1 ! Collision(e._1._2, ctx.self) }
+              detectCollision foreach { e => e._1._1 ! Collision(e._2._2, ctx.self); e._2._1 ! Collision(e._1._2, ctx.self);
+                println("Collision between: " + e._2._2 + " AND " + e._1._2)}
               updateAll(ctx, detectInterest)
               val newWave = if isWaveOver then createWave(ctx) else List.empty
               startTimer(timer, UpdateLoop())
@@ -63,11 +67,11 @@ object GameLoopActor:
             case BulletSpawned(ref, bullet) =>
               GameLoopActor(viewActor, entities :+ (ref, bullet), metaData)
 
-            case PlaceTurret(turret) =>
-              turret match
-                case turret if metaData.sun < turret.cost => GameLoopActor(viewActor, entities, metaData)
+            case PlacePlant(troop) =>
+              troop.asInstanceOf[Plant] match
+                case plant if metaData.sun < plant.cost => GameLoopActor(viewActor, entities, metaData)
                 case _ =>
-                  GameLoopActor(viewActor, entities :+ (ctx.spawnAnonymous(TroopActor(turret)), turret), metaData - turret.cost)
+                  GameLoopActor(viewActor, entities :+ (ctx.spawnAnonymous(TroopActor(troop)), troop), metaData - troop.asInstanceOf[Plant].cost)
 
             case EntityDead(ref) =>
               GameLoopActor(viewActor, entities filter { _._1 != ref }, metaData)
@@ -78,8 +82,7 @@ object GameLoopActor:
     override def pauseBehavior: Behavior[Command] =
       Behaviors.receive((ctx, msg) => {
         msg match
-          case StopLoop() => Behaviors.stopped
-
+          
           case ResumeLoop() =>
             ctx.self ! UpdateLoop()
             GameLoopActor(viewActor, entities, metaData)
@@ -111,7 +114,7 @@ object GameLoopActor:
           if e1._2 isInterestedIn e2._2
         yield e2._2)
 
-    private def isWaveOver: Boolean = entities map (_._2) collect { case enemy: Enemy => enemy } isEmpty
+    private def isWaveOver: Boolean = entities map (_._2) collect { case enemy: Zombie => enemy } isEmpty
 
     private def updateAll(ctx: ActorContext[Command], interests: Seq[(ActorRef[ModelMessage], Seq[Entity])]): Unit =
       interests.foreach(e => e._1 ! Update(metaData.velocity.speed, e._2.toList, ctx.self))
@@ -123,13 +126,13 @@ object GameLoopActor:
 
     case class StartLoop() extends GameLoopCommand
 
-    case class StopLoop() extends GameLoopCommand
-
     case class PauseLoop() extends GameLoopCommand
 
     case class ResumeLoop() extends GameLoopCommand
 
     case class UpdateLoop() extends GameLoopCommand
+
+    case class EndGame() extends GameLoopCommand
 
     case class UpdateResources() extends GameLoopCommand
 
@@ -140,8 +143,8 @@ object GameLoopActor:
     case class EntityUpdated[E <: Entity](ref: ActorRef[ModelMessage], entity: E) extends GameLoopCommand
 
     case class BulletSpawned(ref: ActorRef[ModelMessage], bullet: Bullet) extends GameLoopCommand
-    
-    case class PlaceTurret(turret: Turret) extends GameLoopCommand
+
+    case class PlacePlant(troop: Troop) extends GameLoopCommand
     
 
 

@@ -69,11 +69,6 @@ class GameLoopBehaviorTest extends AnyWordSpec with BeforeAndAfter with Matchers
         val postBehavior = gameLoopActor.currentBehavior
         prevBehavior should not be postBehavior
       }
-
-      "stop the loop" in {
-        gameLoopActor run StopLoop()
-        gameLoopActor.isAlive must be(false)
-      }
     }
   }
 
