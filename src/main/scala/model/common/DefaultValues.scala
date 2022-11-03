@@ -1,8 +1,7 @@
 package model.common
 
 import model.entities.*
-import model.entities.WorldSpace.{LanesLength, NumOfLanes, Position}
-
+import model.entities.WorldSpace.{LanesLength, NumOfLanes, Position, CellLength}
 import scala.language.implicitConversions
 import scala.util.Random
 
@@ -20,11 +19,10 @@ object DefaultValues:
     case p: PeaShooter => PeaBullet(p.pointOfShoot)
     case c: CherryBomb => CherryBullet(c.position)
 
-  val width: Entity => Int =
-    case _: CherryBullet => 10
-    case _: Bullet => 2
-    case _: PeaShooter => 5
-    case _ => 2
+  val width: Entity => Float =
+    case _: CherryBullet => CellLength*2
+    case _: Troop => CellLength/2
+    case _ => CellLength/5
 
   val fireRates: AttackingAbility => Int =
     case _: CherryBomb => 1

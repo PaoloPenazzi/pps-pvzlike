@@ -2,6 +2,8 @@ package view
 
 import model.common.DefaultValues
 import model.entities.*
+import model.entities.WorldSpace.LanesLength
+import view.ViewportSpace.gridWidth
 
 object Sprites {
   def spriteName(entity: Entity): String = entity match
@@ -20,12 +22,7 @@ object Sprites {
     case _: CherryBomb => "cherrybomb.png"
     case _: CherryBullet => "explosion.png"
 
-  def width(entity: Entity): Float = entity match
-    case _: PeaBullet => 0.4
-    case _: PawBullet => 0.4
-    case _: SwordBullet => 0.7
-    case _: CherryBullet => 1
-    case _ => 1
+  def width(entity: Entity): Float = entity.width * (gridWidth/LanesLength)
 
   def height(entity: Entity): Float = entity match
     case _: PeaBullet => 0.4
