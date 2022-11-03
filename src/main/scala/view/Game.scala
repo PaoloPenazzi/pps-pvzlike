@@ -17,21 +17,20 @@ object Game extends com.badlogic.gdx.Game:
   lazy val font: BitmapFont = BitmapFont(Gdx.files.internal("assets/gameWindow/font.fnt"), Gdx.files.internal("assets/gameWindow/font.png"), false)
 
   def startNewGame(): Unit =
-    Gdx.app.postRunnable(new Thread(() => {
-      val gameScreen = GameScreen()
-      setScreen(gameScreen)
-      actorSystem = Some(ActorSystem(RootActor(), "launcher"))
-      actorSystem.foreach(_ ! StartGame(gameScreen))
-    }))
+    Gdx.app.postRunnable(new Runnable():
+      override def run(): Unit =
+        val gameScreen = GameScreen()
+        setScreen(gameScreen)
+        actorSystem = Some(ActorSystem(RootActor(), "launcher"))
+        actorSystem.foreach(_ ! StartGame(gameScreen))
+    )
 
   def endGame(): Unit =
-    Gdx.app.postRunnable(new Thread(() => {
-      actorSystem.foreach(_.terminate())
-      setScreen(EndGameMenu())
-    }))
+    Gdx.app.postRunnable(new Runnable():
+      override def run(): Unit =
+        actorSystem.foreach(_.terminate())
+        setScreen(EndGameMenu())
+      )
 
   override def create(): Unit =
     setScreen(mainMenuScreen)
-    
-   
-

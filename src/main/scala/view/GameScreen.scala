@@ -26,7 +26,7 @@ object GameScreen:
   def apply() = new GameScreen()
 
 class GameScreen() extends ScreenAdapter with EntityRenderer :
-  private val world: World = World(Vector2(0, 0), false)
+  //private val world: World = World(Vector2(0, 0), false)
   private val camera = Game.viewport.getCamera
   private var entities: List[Entity] = List.empty
 
@@ -40,7 +40,7 @@ class GameScreen() extends ScreenAdapter with EntityRenderer :
   private var metaData: MetaData = MetaData()
 
   override def render(delta: Float): Unit =
-    world.step(1 / GameScreen.Framerate, 6, 2)
+    //world.step(1 / GameScreen.Framerate, 6, 2)
     Game.batch.setProjectionMatrix(camera.combined)
     Gdx.gl.glClearColor(0, 0, 0, 1)
     Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
