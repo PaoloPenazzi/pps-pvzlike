@@ -12,8 +12,8 @@ import com.badlogic.gdx.scenes.scene2d.actions.Actions
 import com.badlogic.gdx.{Gdx, ScreenAdapter}
 import view.View.EntityRenderer
 import view.ViewportSpace.*
-import view.Sprites.{height, width, spriteName}
-import model.entities.{Entity, Troop, Troops, Wallnut, PeaShooter}
+import view.Sprites.{height, spriteName, width}
+import model.entities.{CherryBomb, Entity, PeaShooter, Troop, Troops, Wallnut}
 import model.common.Utilities.MetaData
 import controller.ViewActor.sendPlacePlant
 
@@ -26,7 +26,7 @@ object GameScreen:
   def apply() = new GameScreen()
 
 class GameScreen() extends ScreenAdapter with EntityRenderer :
-  private val world: World = World(Vector2(0, 0), false)
+  //private val world: World = World(Vector2(0, 0), false)
   private val camera = Game.viewport.getCamera
   private var entities: List[Entity] = List.empty
 
@@ -40,7 +40,7 @@ class GameScreen() extends ScreenAdapter with EntityRenderer :
   private var metaData: MetaData = MetaData()
 
   override def render(delta: Float): Unit =
-    world.step(1 / GameScreen.Framerate, 6, 2)
+    //world.step(1 / GameScreen.Framerate, 6, 2)
     Game.batch.setProjectionMatrix(camera.combined)
     Gdx.gl.glClearColor(0, 0, 0, 1)
     Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
@@ -63,8 +63,10 @@ class GameScreen() extends ScreenAdapter with EntityRenderer :
     stage.clear()
     val peashooterCard: Texture = new Texture(Gdx.files.classpath("assets/gameWindow/peashooter-card.png"))
     val wallnutCard: Texture = new Texture(Gdx.files.classpath("assets/gameWindow/wallnut-card.png"))
+    val cherryBombCard: Texture = new Texture(Gdx.files.classpath("assets/gameWindow/cherrybomb-card.png"))
     createButtonFromImage(peashooterCard, 0, ViewportHeight - HUDHeight, 1.5f, 1.2f)
     createButtonFromImage(wallnutCard, 1.5f, ViewportHeight - HUDHeight, 1.5f, 1.2f)
+    createButtonFromImage(cherryBombCard, 3.0f, ViewportHeight - HUDHeight, 1.5f, 1.2f)
     Gdx.input.setInputProcessor(stage)
     stage.addListener(new ClickListener {
       override def touchDown(event: InputEvent, x: Float, y: Float, pointerId: Int, buttonId: Int): Boolean =
@@ -90,6 +92,7 @@ class GameScreen() extends ScreenAdapter with EntityRenderer :
           texture.toString match
             case s if s.matches("""\S*peashooter\S*""") => pendingTroop = Option(Troops.ofType[PeaShooter])
             case s if s.matches("""\S*wallnut\S*""") => pendingTroop = Option(Troops.ofType[Wallnut])
+            case s if s.matches("""\S*cherrybomb\S*""") => pendingTroop = Option(Troops.ofType[CherryBomb])
             case _ => pendingTroop = None
           true 
         else false  

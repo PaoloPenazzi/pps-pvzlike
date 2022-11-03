@@ -17,24 +17,21 @@ object Sprites {
     case _: BasicZombie => "zombie.png"
     case _: FastZombie => "fastzombie.png"
     case _: WarriorZombie => "warriorzombie.png"
+    case _: CherryBomb => "cherrybomb.png"
+    case _: CherryBullet => "explosion.png"
 
   def width(entity: Entity): Float = entity match
-    case _: PeaShooter => 1
-    case _: Wallnut => 1
     case _: PeaBullet => 0.4
     case _: PawBullet => 0.4
     case _: SwordBullet => 0.7
-    case _: BasicZombie => 1
-    case _: FastZombie => 1
-    case _: WarriorZombie => 1
+    case _: CherryBullet => 1
+    case _ => 1
 
   def height(entity: Entity): Float = entity match
-    case _: PeaShooter => 1
-    case _: Wallnut => 1
     case _: PeaBullet => 0.4
     case _: PawBullet => 0.4
     case _: SwordBullet => 0.7
-    case _: BasicZombie => 1.5
-    case _: FastZombie => 1.5
-    case _: WarriorZombie => 1.5
+    case _: CherryBullet => 1
+    case _: Plant => 1
+    case _: Zombie => 1.4
 }

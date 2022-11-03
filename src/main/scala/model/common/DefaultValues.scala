@@ -18,13 +18,16 @@ object DefaultValues:
   
   val bullets: Troop => Bullet =
     case p: PeaShooter => PeaBullet(p.pointOfShoot)
+    case c: CherryBomb => CherryBullet(c.position)
 
   val width: Entity => Int =
+    case _: CherryBullet => 10
     case _: Bullet => 2
     case _: PeaShooter => 5
     case _ => 2
 
   val fireRates: AttackingAbility => Int =
+    case _: CherryBomb => 1
     case _: PeaShooter => 2
     case _: BasicZombie => 3
     case _: FastZombie => 2
@@ -32,11 +35,13 @@ object DefaultValues:
     case _ => 0
 
   val costs: Plant => Int =
+    case _: CherryBomb => 150
     case _: PeaShooter => 100
     case _: Wallnut => 50
     case _  => 0
 
   val damages: Bullet => Int =
+    case _: CherryBullet => 1000
     case _: PeaBullet => 25
     case _: SwordBullet => 60
     case _: PawBullet => 25
@@ -49,6 +54,7 @@ object DefaultValues:
     case _ => 0
 
   val ranges: AttackingAbility => Int =
+    case _: CherryBomb => 1000
     case _: PeaShooter => 80
     case _: BasicZombie => 10
     case _: FastZombie => 15
