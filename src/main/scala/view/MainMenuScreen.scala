@@ -19,17 +19,13 @@ object MainMenuScreen:
     override def render(delta: Float): Unit =
       ScreenUtils.clear(0, 0, 0.2f, 1)
       Gdx.gl.glClearColor(0, 0, 0, 1)
-      Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
-
+      Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)ì
       camera.update()
-
       Game.batch.setProjectionMatrix(camera.combined)
-
       Game.batch.begin()
       Game.font.draw(Game.batch, "Welcome to Plant vs Zombie!!! ", 100, 150)
       Game.font.draw(Game.batch, "Tap anywhere to begin!", 100, 100)
       Game.batch.end()
-
       if Gdx.input.isTouched() then
         Game.startNewGame()
         dispose()
