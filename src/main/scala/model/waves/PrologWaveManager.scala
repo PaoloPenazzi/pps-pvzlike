@@ -36,14 +36,4 @@ object PrologWaveManager:
     def getSolutionFromProlog(solution: SolveInfo): List[Zombie] =
       getSolutionFromTerm(solution.getTerm("L"))
 
-    private def getSolutionFromTerm(term: Term): List[Zombie] =
-      term.castTo(classOf[Struct]).listStream().toArray.toList
-        .map(e: alice.tuprolog.Int => e match
-          case 1 => Troops.ofType[BasicZombie]
-          case 2 => Troops.ofType[WarriorZombie]
-          case 3 => Troops.ofType[FastZombie])
-
-      /*{ => t.toString match
-        case "1" => Troops.ofType[BasicZombie]
-        case "2" => Troops.ofType[WarriorZombie]
-        case "3" => Troops.ofType[FastZombie]}*/
+    private def getSolutionFromTerm(term: Term): List[Zombie] = ???
