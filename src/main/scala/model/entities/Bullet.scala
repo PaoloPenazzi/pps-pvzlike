@@ -58,6 +58,13 @@ case class PeaBullet(override val position: Position) extends Bullet(position):
 
   override def withPosition(pos: Position): Bullet = copy(position = pos)
 
+case class CherryBullet(override val position: Position) extends Bullet(position):
+  override def checkCollisionWith(entity: Entity): Boolean = isNearMyLane(entity) && collideWith(entity)
+  private def isNearMyLane(entity: Entity): Boolean = (entity.position.y - position.y).abs < 2
+  private def collideWith(entity: Entity): Boolean =
+    (entity.position.x - position.x).abs <= 20
+  override def update(elapsedTime: FiniteDuration, interests: List[Entity]): Bullet = this
+  override def withPosition(pos: Position): Bullet = copy(position = pos)
 
 /**
  * An abstract [[Entity]] shoot by a [[BasicZombie]].
