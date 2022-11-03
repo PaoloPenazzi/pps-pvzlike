@@ -33,7 +33,6 @@ object PrologWaveManager:
     def queryToTerm(query: String): Term = Term.createTerm(query)
 
   object Solutions:
-    def getSolutionFromProlog(solution: SolveInfo): List[Zombie] =
-      getSolutionFromTerm(solution.getTerm("L"))
+    def getSolutionFromProlog(solution: SolveInfo): List[Zombie] = ???
 
     private def getSolutionFromTerm(term: Term): List[Zombie] = ???
