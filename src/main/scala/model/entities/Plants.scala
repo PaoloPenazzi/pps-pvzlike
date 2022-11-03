@@ -39,13 +39,13 @@ abstract class Plant(override val position: Position,
 
   override def bullet: Bullet = bullets(this) withPosition pointOfShoot
 
-  protected def pointOfShoot: Position
+  protected def pointOfShoot: Position = position
 
   private def isInMyLane(entity: Entity): Boolean = entity.position.y == position.y
 
-  private def isInRange(entity: Entity): Boolean = entity.position.x < position.x + range
+  protected def isInRange(entity: Entity): Boolean = entity.position.x < position.x + range
 
-  private def isNotBehindMe(entity: Entity): Boolean = entity.position.x > position.x
+  protected def isNotBehindMe(entity: Entity): Boolean = entity.position.x > position.x
 
 /**
  * The Peashooter is the base plant of the game.
@@ -77,6 +77,14 @@ case class Wallnut(override val position: Position = (0,0),
   override def withLife(HealthPoints: Int): Troop = copy(life = HealthPoints)
   override def withState(newState: TroopState): Troop = copy(state = newState)
   override def update(elapsedTime: FiniteDuration, interests: List[Entity]): Troop = this
-  override protected def pointOfShoot: Position = position
   override def isInterestedIn: Entity => Boolean =
     case _ => false
+
+case class CherryBomb(override val position: Position = (0,0),
+                      override val life: Int = wallnutDefaultLife,
+                      override val state: TroopState = defaultPlantState) extends Plant(position, life, state):
+  override def withPosition(pos: Position): Troop = copy(position = pos)
+  override def withLife(HealthPoints: Int): Troop = copy(life = HealthPoints)
+  override def withState(newState: TroopState): Troop = copy(state = newState)
+  override def isInterestedIn: Entity => Boolean =
+    case _ => true
