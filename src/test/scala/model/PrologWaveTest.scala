@@ -1,7 +1,7 @@
 package model
 
 import model.waves.PrologWaveManager.*
-import model.waves.PrologWaveManager.PrologEngines.PrologEngine
+import model.waves.PrologWaveManager.PrologEngine.PrologEngine
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should
 

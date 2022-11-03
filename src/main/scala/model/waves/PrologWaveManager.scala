@@ -4,8 +4,8 @@ import alice.tuprolog.*
 import scala.io.Source
 
 object PrologWaveManager:
-
-  object PrologEngines:
+  
+  object PrologEngine:
 
     trait Engine {
       def solve: Term => LazyList[SolveInfo]
@@ -26,3 +26,7 @@ object PrologWaveManager:
     def getStringTheory(resourcePath: String): String = Source.fromResource(resourcePath).mkString
 
     def getTheory(stringTheory: String): Theory = Theory.parseWithStandardOperators(stringTheory)
+    
+  object WaveTerm:
+    
+    def intToTerm(value: Int): Term = Number.createNumber(value.toString)
