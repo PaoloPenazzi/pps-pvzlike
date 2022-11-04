@@ -22,6 +22,7 @@ object GameLoopActor:
   val waveGenerator: WaveGenerator = Generator()
 
   import GameLoopCommands.*
+  import GameLoopUtils.CollisionUtils.*
   import GameLoopUtils.*
 
   def apply(viewActor: ActorRef[ViewMessage],
@@ -55,7 +56,7 @@ object GameLoopActor:
             case ChangeVelocity(velocity) => GameLoopActor(viewActor, entities, metaData >>> velocity)
 
             case UpdateLoop() =>
-              detectCollision(entities) foreach { e => e._1.ref ! Collision(e._2.entity, ctx.self); e._2.ref ! Collision(e._1.entity, ctx.self) }
+              checkCollision(entities, ctx)
               updateAll(ctx, metaData.velocity, detectInterest(entities))
               val newWave = if isWaveOver(entities) then createWave(ctx) else List.empty
               startTimer(timer, UpdateLoop())
@@ -124,14 +125,6 @@ object GameLoopActor:
     def createWave(ctx: ActorContext[Command]): Seq[GameEntity[Entity]] =
       waveGenerator.generateNextWave.enemies.map(e => GameEntity(ctx.spawnAnonymous(TroopActor(e)), e))
 
-    def detectCollision(entities: GameSeq): Seq[(GameEntity[Bullet], GameEntity[Entity])] =
-      for
-        b <- entities.ofType[Bullet]
-        e <- entities.seq
-        if b != e
-        if b.entity checkCollisionWith e.entity
-      yield (b, e)
-
     def detectInterest(entities: GameSeq): Seq[(ActorRef[ModelMessage], Seq[Entity])] =
       for
         e <- entities.seq
@@ -150,3 +143,28 @@ object GameLoopActor:
     def render(ctx: ActorContext[Command], viewActor: ActorRef[ViewMessage], metaData: MetaData,
                renderedEntities: List[Entity]): Unit =
       viewActor ! Render(renderedEntities, ctx.self, metaData)
+
+    object CollisionUtils:
+
+      def checkCollision(entities: GameSeq, ctx: ActorContext[Command]): Unit =
+        detectCollision(entities).filter(_._2.nonEmpty)
+          .foreach { e =>
+            if e._1.entity hitMultipleTimes
+            then e._2 foreach { r => sendCollisionMessage(e._1, r, ctx); sendCollisionMessage(r, e._1, ctx) }
+            else {
+              sendCollisionMessage(e._1, e._2.head, ctx); sendCollisionMessage(e._2.head, e._1, ctx)
+            }
+          }
+
+      private def sendCollisionMessage[A <: Entity, E <: Entity](to: GameEntity[A], from: GameEntity[E], ctx: ActorContext[Command]): Unit =
+        to.ref ! Collision(from.entity, ctx.self)
+
+      private def detectCollision(entities: GameSeq): Seq[(GameEntity[Bullet], Seq[GameEntity[Entity]])] =
+        for
+          b <- entities.ofType[Bullet]
+        yield
+          (b, for
+            e <- entities.seq
+            if b != e
+            if b.entity checkCollisionWith e.entity
+          yield e)

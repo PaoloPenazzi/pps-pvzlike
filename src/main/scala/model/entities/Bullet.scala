@@ -22,6 +22,8 @@ trait Bullet(position: Position) extends Entity with MovingAbility:
    * @return True if the [[Bullet]] should disappear, false otherwise.
    */
   def shouldDisappearAfterHitting(entity: Entity): Boolean = true
+  
+  def hitMultipleTimes: Boolean = false
 
   /**
    * @param entity The entity with which the bullet has potentially collided
@@ -59,6 +61,7 @@ case class PeaBullet(override val position: Position) extends Bullet(position):
   override def withPosition(pos: Position): Bullet = copy(position = pos)
 
 case class CherryBullet(override val position: Position) extends Bullet(position):
+  override def hitMultipleTimes: Boolean = true
   override def checkCollisionWith(entity: Entity): Boolean = isNearMyLane(entity) && collideWith(entity)
   private def isNearMyLane(entity: Entity): Boolean = (entity.position.y - position.y).abs < 2
   private def collideWith(entity: Entity): Boolean =
