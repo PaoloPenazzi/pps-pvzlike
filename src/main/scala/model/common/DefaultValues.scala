@@ -13,7 +13,7 @@ object DefaultValues:
   val basicZombieDefaultLife: Int = 100
   val fastZombieDefaultLife: Int = 80
   val warriorZombieDefaultLife: Int = 200
-  val zombieSpawnPosition: Position = (Random.between(0, NumOfLanes), LanesLength + Random.between(0, 20))
+  def generateZombieSpawnPosition: Position = (Random.between(0, NumOfLanes), LanesLength + Random.between(0, 20))
   
   val bullets: Troop => Bullet =
     case p: PeaShooter => PeaBullet(p.pointOfShoot)
