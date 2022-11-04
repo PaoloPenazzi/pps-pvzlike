@@ -16,10 +16,10 @@ class PlantModelTest extends AnyFlatSpec with should.Matchers:
   val otherLane = 2
   val peashooter: Troop = Troops.ofType[PeaShooter] withPosition (testingLane, 10)
   val wallnut: Troop = Troops.ofType[Wallnut] withPosition (testingLane, 10)
-  val zombieInTheSameLane: Troop = Troops.ofType[Zombie] withPosition (testingLane, 50)
-  val zombieOutOfRange: Troop = Troops.ofType[Zombie] withPosition (testingLane, 100)
+  val zombieInTheSameLane: Troop = Troops.ofType[BasicZombie] withPosition (testingLane, 50)
+  val zombieOutOfRange: Troop = Troops.ofType[BasicZombie] withPosition (testingLane, 100)
   val dummyPlant: Troop = Troops.ofType[PeaShooter] withPosition (otherLane, 50)
-  val dummyZombie: Troop = Troops.ofType[Zombie] withPosition (otherLane, 50)
+  val dummyZombie: Troop = Troops.ofType[BasicZombie] withPosition (otherLane, 50)
   val dummyBullet: Bullet = PawBullet(0,0)
 
   "A Peashooter" should "be in Idle state if it can't attack any enemy" in {

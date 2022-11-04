@@ -1,18 +1,10 @@
 package view
 
-import akka.actor.typed.ActorSystem
-import com.badlogic.gdx.backends.lwjgl3.*
-import com.badlogic.gdx.graphics.g2d.{BitmapFont, GlyphLayout, SpriteBatch, TextureAtlas}
-import com.badlogic.gdx.graphics.{Color, GL20, OrthographicCamera, g2d}
-import com.badlogic.gdx.math.Vector2
-import com.badlogic.gdx.physics.box2d.World
-import com.badlogic.gdx.scenes.scene2d.ui.{Button, Label, Skin, TextButton}
+import com.badlogic.gdx.graphics.GL20
+import com.badlogic.gdx.scenes.scene2d.ui.{Button, Skin, TextButton}
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener
-import com.badlogic.gdx.scenes.scene2d.{EventListener, InputEvent, Stage}
-import com.badlogic.gdx.utils.ScreenUtils
-import com.badlogic.gdx.utils.viewport.{FitViewport, Viewport}
+import com.badlogic.gdx.scenes.scene2d.{InputEvent, Stage}
 import com.badlogic.gdx.{Gdx, ScreenAdapter}
-import controller.RootActor
 import controller.RootActor.RootCommands.StartGame
 import model.entities.Entity
 import model.entities.WorldSpace.Position

@@ -1,29 +1,23 @@
 package view
 
-import com.badlogic.gdx.graphics.g2d.{BitmapFont, GlyphLayout, SpriteBatch, TextureRegion}
-import com.badlogic.gdx.graphics.{Color, GL20, OrthographicCamera, Texture}
-import com.badlogic.gdx.math.{Vector2, Vector3}
-import com.badlogic.gdx.physics.box2d.{Box2DDebugRenderer, World}
-import com.badlogic.gdx.utils.viewport.Viewport
-import com.badlogic.gdx.{Gdx, Input, ScreenAdapter}
-import model.entities.WorldSpace.{LanesLength, given}
-import model.entities.*
-import View.EntityRenderer
-import Sprites.*
-import ViewportSpace.*
-import com.badlogic.gdx.scenes.scene2d.ui.{HorizontalGroup, ImageButton, Table}
-import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable
-import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Input.Buttons
-import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator
-import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter
-import com.badlogic.gdx.scenes.scene2d.actions.Actions
+import com.badlogic.gdx.graphics.g2d.TextureRegion
+import com.badlogic.gdx.graphics.{GL20, Texture}
+import com.badlogic.gdx.math.Vector2
+import com.badlogic.gdx.physics.box2d.World
 import com.badlogic.gdx.scenes.scene2d.{InputEvent, Stage}
-import com.badlogic.gdx.scenes.scene2d.utils.ClickListener
-import com.badlogic.gdx.utils.Align
-import controller.ViewActor.sendPlacePlant
-import model.common.Utilities
+import com.badlogic.gdx.scenes.scene2d.ui.ImageButton
+import com.badlogic.gdx.scenes.scene2d.utils.{ClickListener, TextureRegionDrawable}
+import com.badlogic.gdx.scenes.scene2d.actions.Actions
+import com.badlogic.gdx.{Gdx, ScreenAdapter}
+import view.View.EntityRenderer
+import view.ViewportSpace.*
+import view.Sprites.{height, spriteName, width}
+import model.entities.{CherryBomb, Entity, PeaShooter, Troop, Troops, Wallnut}
 import model.common.Utilities.MetaData
+import controller.ViewActor.sendPlacePlant
+
+
 
 
 object GameScreen:
@@ -32,7 +26,7 @@ object GameScreen:
   def apply() = new GameScreen()
 
 class GameScreen() extends ScreenAdapter with EntityRenderer :
-  private val world: World = World(Vector2(0, 0), false)
+  //private val world: World = World(Vector2(0, 0), false)
   private val camera = Game.viewport.getCamera
   private var entities: List[Entity] = List.empty
 
@@ -46,18 +40,10 @@ class GameScreen() extends ScreenAdapter with EntityRenderer :
   private var metaData: MetaData = MetaData()
 
   override def render(delta: Float): Unit =
-    world.step(1 / GameScreen.Framerate, 6, 2)
+    //world.step(1 / GameScreen.Framerate, 6, 2)
     Game.batch.setProjectionMatrix(camera.combined)
     Gdx.gl.glClearColor(0, 0, 0, 1)
     Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
-
-    //enerator.dispose(); // don't forget to dispose to avoid memory leaks!
-    //layout.setText(font, metaData.sun.toString, Color.WHITE, targetWidth, Align.center, true);
-    /*
-    layout.setText(font, metaData.sun.toString, Color.WHITE, 1, Align.center, true);
-    layout.height = HUDHeight
-    layout.width = 3
-    */
 
     Game.batch.begin()
     Game.batch.draw(background, -3, 0, 25, ViewportHeight - HUDHeight)
@@ -77,8 +63,10 @@ class GameScreen() extends ScreenAdapter with EntityRenderer :
     stage.clear()
     val peashooterCard: Texture = new Texture(Gdx.files.classpath("assets/gameWindow/peashooter-card.png"))
     val wallnutCard: Texture = new Texture(Gdx.files.classpath("assets/gameWindow/wallnut-card.png"))
+    val cherryBombCard: Texture = new Texture(Gdx.files.classpath("assets/gameWindow/cherrybomb-card.png"))
     createButtonFromImage(peashooterCard, 0, ViewportHeight - HUDHeight, 1.5f, 1.2f)
     createButtonFromImage(wallnutCard, 1.5f, ViewportHeight - HUDHeight, 1.5f, 1.2f)
+    createButtonFromImage(cherryBombCard, 3.0f, ViewportHeight - HUDHeight, 1.5f, 1.2f)
     Gdx.input.setInputProcessor(stage)
     stage.addListener(new ClickListener {
       override def touchDown(event: InputEvent, x: Float, y: Float, pointerId: Int, buttonId: Int): Boolean =
@@ -104,6 +92,7 @@ class GameScreen() extends ScreenAdapter with EntityRenderer :
           texture.toString match
             case s if s.matches("""\S*peashooter\S*""") => pendingTroop = Option(Troops.ofType[PeaShooter])
             case s if s.matches("""\S*wallnut\S*""") => pendingTroop = Option(Troops.ofType[Wallnut])
+            case s if s.matches("""\S*cherrybomb\S*""") => pendingTroop = Option(Troops.ofType[CherryBomb])
             case _ => pendingTroop = None
           true 
         else false  
@@ -134,7 +123,8 @@ class GameScreen() extends ScreenAdapter with EntityRenderer :
 
   def memoizedTexture: Entity => Texture =
 
-    def texture(entity: Entity): Texture = new Texture(Gdx.files.classpath("assets/" + spriteName(entity)))
+    def texture(entity: Entity): Texture =
+      new Texture(Gdx.files.classpath("assets/" + spriteName(entity)))
 
     entity =>
         cache.getOrElse(entity.getClass.getSimpleName, {

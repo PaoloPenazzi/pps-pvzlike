@@ -6,14 +6,14 @@ import controller.GameLoopActor.GameLoopCommands.{StartLoop, UpdateLoop}
 import model.actors.*
 import model.common.Utilities.{MetaData, Sun, Velocity}
 import model.entities.*
-import model.{Generator, WaveGenerator}
 
 import scala.collection.immutable.Seq
 import scala.collection.mutable
 import scala.concurrent.duration.FiniteDuration
 import scala.language.postfixOps
 import scala.language.implicitConversions
-import WorldSpace.given
+import model.entities.WorldSpace.*
+import model.waves.{Generator, WaveGenerator}
 import view.Game
 object GameLoopActor:
 
@@ -114,7 +114,7 @@ object GameLoopActor:
           if e1._2 isInterestedIn e2._2
         yield e2._2)
 
-    private def isWaveOver: Boolean = entities map (_._2) collect { case enemy: Enemy => enemy } isEmpty
+    private def isWaveOver: Boolean = entities map (_._2) collect { case enemy: Zombie => enemy } isEmpty
 
     private def updateAll(ctx: ActorContext[Command], interests: Seq[(ActorRef[ModelMessage], Seq[Entity])]): Unit =
       interests.foreach(e => e._1 ! Update(metaData.velocity.speed, e._2.toList, ctx.self))

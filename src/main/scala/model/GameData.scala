@@ -4,7 +4,7 @@ import akka.actor.typed.ActorRef
 // import model.GameData.GameSeq.GameSeqBuilder
 import model.GameData.GameSelector.GameSelectorBuilder
 import model.actors.ModelMessage
-import model.entities.{Bullet, Enemy, Entity, PeaShooter, Plant, Zombie}
+import model.entities.{Bullet, Entity, PeaShooter, Plant, Zombie}
 
 object GameData :
 
