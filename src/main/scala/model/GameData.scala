@@ -10,29 +10,6 @@ object GameData :
 
   case class GameEntity[T, E <: Entity](ref: ActorRef[T], entity: E)
 
-
-/*  object GameSeq:
-    trait GameSeqBuilder[T, E <: Entity]:
-      def of(seq: Seq[GameEntity[T, Entity]]) : Seq[GameEntity[T, E]]
-
-    given GameSeqBuilder[ModelMessage, Plant] with
-      override def of(seq: Seq[GameEntity[ModelMessage, Entity]]): Seq[GameEntity[ModelMessage, Plant]] =
-        seq.collect { case e if e.entity.isInstanceOf[Plant] => GameEntity(e.ref, e.entity.asInstanceOf[Plant]) }
-
-    given GameSeqBuilder[ModelMessage, Bullet] with
-      override def of(seq: Seq[GameEntity[ModelMessage, Entity]]): Seq[GameEntity[ModelMessage, Bullet]] =
-        seq.collect { case e if e.entity.isInstanceOf[Bullet] => GameEntity(e.ref, e.entity.asInstanceOf[Bullet]) }
-
-    given GameSeqBuilder[ModelMessage, Enemy] with
-      override def of(seq: Seq[GameEntity[ModelMessage, Entity]]): Seq[GameEntity[ModelMessage, Enemy]] =
-        seq.collect { case e if e.entity.isInstanceOf[Enemy] => GameEntity(e.ref, e.entity.asInstanceOf[Enemy]) }
-
-  case class GameSeq[T](seq: Seq[GameEntity[T, Entity]]):
-
-    def ofType[A <: Entity](using gameSeqBuilder: GameSeqBuilder[T, A]): Seq[GameEntity[T, A]] = gameSeqBuilder of seq*/
-
-
-  //------------------------------------------------
   case class GameSeq[T](seq: Seq[GameEntity[T, Entity]]):
     def ofType[A <: Entity](using select: GameSelectorBuilder[T, A]): Seq[GameEntity[T, A]] =
       seq.collect(select.of)
@@ -44,6 +21,16 @@ object GameData :
     given GameSelectorBuilder[ModelMessage, Plant] with
       override def of: PartialFunction[GameEntity[ModelMessage, Entity], GameEntity[ModelMessage, Plant]] =
          { case e if e.entity.isInstanceOf[Plant] => GameEntity(e.ref, e.entity.asInstanceOf[Plant]) }
+
+    given GameSelectorBuilder[ModelMessage, Zombie] with
+      override def of: PartialFunction[GameEntity[ModelMessage, Entity], GameEntity[ModelMessage, Zombie]] = {
+        case e if e.entity.isInstanceOf[Zombie] => GameEntity(e.ref, e.entity.asInstanceOf[Zombie])
+      }
+
+    given GameSelectorBuilder[ModelMessage, Bullet] with
+      override def of: PartialFunction[GameEntity[ModelMessage, Entity], GameEntity[ModelMessage, Bullet]] = {
+        case e if e.entity.isInstanceOf[Bullet] => GameEntity(e.ref, e.entity.asInstanceOf[Bullet])
+      }
 
 
 
