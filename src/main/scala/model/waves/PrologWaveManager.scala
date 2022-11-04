@@ -12,6 +12,8 @@ object PrologWaveManager:
 
     trait Engine {
       def solve: Term => LazyList[SolveInfo]
+
+      def generateWave(Power: Int): List[Zombie]
     }
 
     case class PrologEngine(theory: Theory) extends Engine {
@@ -20,14 +22,19 @@ object PrologWaveManager:
 
       override def solve: Term => LazyList[SolveInfo] = term =>
         LazyList.continually(engine solve term)
+
+      override def generateWave(power: Int): List[Zombie] =
+        val query: String = "wave(" + power + ", L)"
+        val solution: LazyList[SolveInfo] = solve(WaveTerm.queryToTerm(query))
+        PrologSolution.waveFromPrologSolution(solution.head)
     }
 
   object PrologTheory:
-    val pathTheory = "prolog/waves.pl"
+    private def getStringTheory(resourcePath: String): String = Source.fromResource(resourcePath).mkString
 
-    def getStringTheory(resourcePath: String): String = Source.fromResource(resourcePath).mkString
-
-    def getTheory(stringTheory: String): Theory = Theory.parseWithStandardOperators(stringTheory)
+    def getTheory(resourcePath: String): Theory = 
+      val stringTheory = getStringTheory(resourcePath)
+      Theory.parseWithStandardOperators(stringTheory)
 
   object WaveTerm:
 

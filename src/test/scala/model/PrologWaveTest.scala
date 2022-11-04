@@ -9,8 +9,7 @@ import org.scalatest.matchers.should
 
 class PrologWaveTest extends AnyFlatSpec with should.Matchers:
   val pathTheory = "prolog/waves.pl"
-  val stringTheory: String = PrologTheory.getStringTheory(pathTheory)
-  val engine: PrologEngine = PrologEngine(PrologTheory.getTheory(stringTheory))
+  val engine: PrologEngine = PrologEngine(PrologTheory.getTheory(pathTheory))
 
 
   "The engine" should "create a 1-length solution" in {
