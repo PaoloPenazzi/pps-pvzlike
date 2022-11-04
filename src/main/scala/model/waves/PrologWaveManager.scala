@@ -11,9 +11,18 @@ object PrologWaveManager:
   object PrologEngine:
 
     trait Engine {
+      /**
+       * Solve a [[Term]]
+       * @return A [[LazyList]] of solutions.
+       */
       def solve: Term => LazyList[SolveInfo]
 
-      def generateWave(Power: Int): List[Zombie]
+      /**
+       * Generate a wave.
+       * @param power the [[Wave]] power.
+       * @return A [[List]] of different types of [[Zombie]].
+       */
+      def generateWave(power: Int): List[Zombie]
     }
 
     case class PrologEngine(theory: Theory) extends Engine {
@@ -30,22 +39,34 @@ object PrologWaveManager:
     }
 
   object PrologTheory:
-    private def getStringTheory(resourcePath: String): String = Source.fromResource(resourcePath).mkString
-
-    def getTheory(resourcePath: String): Theory = 
+    /**
+     * @param resourcePath the path where the [[Theory]] file is located.
+     * @return the [[Theory]]
+     */
+    def getTheory(resourcePath: String): Theory =
       val stringTheory = getStringTheory(resourcePath)
       Theory.parseWithStandardOperators(stringTheory)
 
-  object WaveTerm:
+    private def getStringTheory(resourcePath: String): String = Source.fromResource(resourcePath).mkString
 
+  object WaveTerm:
+    /**
+     * Transform a [[String]] in a [[Term]].
+     * @param query the goal to be resolved.
+     * @return the corresponding [[Term]].
+     */
     def queryToTerm(query: String): Term = Term.createTerm(query)
 
   object PrologSolution:
-
+    /**
+     * Transform the Prolog output in a [[List]] of [[Zombie]].
+     * @param solution the Prolog output.
+     * @return a [[List]] of [[Zombie]].
+     */
     def waveFromPrologSolution(solution: SolveInfo): List[Zombie] =
       waveFromTerm(solution.getTerm("L"))
 
-    def waveFromTerm(term: Term): List[Zombie] =
+    private def waveFromTerm(term: Term): List[Zombie] =
       term.toString.replaceAll("\\[|\\]", "")
                    .split(",")
                    .foldRight(List.empty[Int])((e, acc) => acc :+ e.toInt)

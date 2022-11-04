@@ -29,13 +29,21 @@ trait Wave:
  * A generator of waves. It's not possible to specify the wave number.
  */
 trait WaveGenerator:
+  /**
+   * Reset the wave number.
+   */
   def resetWaves(): Unit
 
   /**
-   * @return The next [[Wave]]
+   * Generates the next wave using Scala. Only [[BasicZombie]] are spawned.
+   * @return The next [[Wave]].
    */
   def generateNextBasicWave: Wave
 
+  /**
+   * Generates the next wave using Prolog. All types of zombies are spawned.
+   * @return The next [[Wave]].
+   */
   def generateNextWave: Wave
 
 object Generator:
