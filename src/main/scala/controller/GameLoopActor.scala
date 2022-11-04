@@ -6,14 +6,14 @@ import controller.GameLoopActor.GameLoopCommands.{StartLoop, UpdateLoop}
 import model.actors.*
 import model.common.Utilities.{MetaData, Sun, Velocity}
 import model.entities.*
-import model.{Generator, WaveGenerator}
 
 import scala.collection.immutable.Seq
 import scala.collection.mutable
 import scala.concurrent.duration.FiniteDuration
 import scala.language.postfixOps
 import scala.language.implicitConversions
-import WorldSpace.given
+import model.entities.WorldSpace.*
+import model.waves.{Generator, WaveGenerator}
 import view.Game
 object GameLoopActor:
 

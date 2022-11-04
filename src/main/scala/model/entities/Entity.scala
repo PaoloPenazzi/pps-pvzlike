@@ -16,8 +16,8 @@ trait Entity:
    * The type that the [[update()]] method of an [[Entity]] should return.
    */
   type UpdatedEntity <: Entity
-  
-  def width: Int = DefaultValues.width(this)
+
+  def width: Float = DefaultValues.width(this)
 
   /**
    * @return The current position of the [[Entity]].
