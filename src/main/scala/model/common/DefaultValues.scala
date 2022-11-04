@@ -21,8 +21,8 @@ object DefaultValues:
 
   val width: Entity => Float =
     case _: CherryBullet => CellLength*2
-    case _: Troop => CellLength/2
-    case _ => CellLength/5
+    case _: Troop => CellLength/1.5.toFloat
+    case _ => CellLength/4
 
   val fireRates: AttackingAbility => Int =
     case _: CherryBomb => 1

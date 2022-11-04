@@ -36,7 +36,7 @@ object GameLoopActor:
             case StartLoop() =>
               waveGenerator.resetWaves()
               startTimer(timer, UpdateLoop())
-              startTimer(timer, UpdateResources(), FiniteDuration(3, "seconds"))
+              startTimer(timer, UpdateResources(), FiniteDuration(6, "seconds"))
               GameLoopActor(viewActor, entities, metaData)
 
             case EndGame() => 
