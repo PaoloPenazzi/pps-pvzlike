@@ -27,7 +27,7 @@ class GameLoopBehaviorTest extends AnyWordSpec with BeforeAndAfter with Matchers
 
   case class MockSystem(viewActor: TestInbox[ViewMessage] = TestInbox[ViewMessage](),
                         updateTime: FiniteDuration = Velocity.Normal.speed,
-                        resourcesTime: FiniteDuration = FiniteDuration(3, "seconds")):
+                        resourcesTime: FiniteDuration = FiniteDuration(6, "seconds")):
     val gameLoopActor: BehaviorTestKit[Command] = BehaviorTestKit(GameLoopActor(viewActor.ref))
 
 
