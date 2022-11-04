@@ -18,11 +18,11 @@ class GameDataTest extends AnyFlatSpec with BeforeAndAfter with Matchers :
   val zombieActor: TestInbox[ModelMessage] = TestInbox[ModelMessage]("zombie")
   val plantActor: TestInbox[ModelMessage] = TestInbox[ModelMessage]("plant")
 
-  val bullet: GameEntity[ModelMessage, Entity] = GameEntity(seedActor.ref, PeaBullet(1, LanesLength))
-  val zombie: GameEntity[ModelMessage, Entity] = GameEntity(zombieActor.ref, BasicZombie((1, LanesLength)))
-  val shooter: GameEntity[ModelMessage, Entity] = GameEntity(plantActor.ref, PeaShooter(Position(1, LanesLength / 2)))
+  val bullet: GameEntity[Entity] = GameEntity(seedActor.ref, PeaBullet(1, LanesLength))
+  val zombie: GameEntity[Entity] = GameEntity(zombieActor.ref, BasicZombie((1, LanesLength)))
+  val shooter: GameEntity[Entity] = GameEntity(plantActor.ref, PeaShooter(Position(1, LanesLength / 2)))
 
-  val seq: GameSeq[ModelMessage] = GameSeq(List(bullet, zombie, shooter))
+  val seq: GameSeq = GameSeq(List(bullet, zombie, shooter))
 
   import GameData.*
 

@@ -21,11 +21,11 @@ class GameLoopIntegrationTest extends AnyWordSpec with BeforeAndAfter with Match
   var zombieActor: TestInbox[ModelMessage] = _
   var plantActor: TestInbox[ModelMessage] = _
 
-  var bullet: GameEntity[ModelMessage, Entity] = _
-  var zombie: GameEntity[ModelMessage, Entity] = _
-  var shooter: GameEntity[ModelMessage, Entity] = _
+  var bullet: GameEntity[Entity] = _
+  var zombie: GameEntity[Entity] = _
+  var shooter: GameEntity[Entity] = _
 
-  var entities: GameSeq[ModelMessage] = _
+  var entities: GameSeq = _
   var gameLoopActor: BehaviorTestKit[Command] = _
 
   before {
