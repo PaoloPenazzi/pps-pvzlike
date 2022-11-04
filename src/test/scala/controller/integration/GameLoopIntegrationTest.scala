@@ -7,6 +7,7 @@ import model.common.Utilities.*
 import controller.{Command, GameLoopActor, Render, ViewMessage}
 import controller.GameLoopActor.*
 import controller.GameLoopActor.GameLoopCommands.{EntityUpdated, StartLoop, UpdateLoop}
+import model.GameData.{GameEntity, GameSeq}
 import model.actors.{Collision, ModelMessage, Update}
 import model.entities.WorldSpace.LanesLength
 import org.scalatest.BeforeAndAfter
@@ -20,11 +21,11 @@ class GameLoopIntegrationTest extends AnyWordSpec with BeforeAndAfter with Match
   var zombieActor: TestInbox[ModelMessage] = _
   var plantActor: TestInbox[ModelMessage] = _
 
-  var bullet: (ActorRef[ModelMessage], PeaBullet) = _
-  var zombie: (ActorRef[ModelMessage], BasicZombie) = _
-  var shooter: (ActorRef[ModelMessage], PeaShooter) = _
+  var bullet: GameEntity[ModelMessage, Entity] = _
+  var zombie: GameEntity[ModelMessage, Entity] = _
+  var shooter: GameEntity[ModelMessage, Entity] = _
 
-  var entities: Seq[(ActorRef[ModelMessage], Entity)] = _
+  var entities: GameSeq[ModelMessage] = _
   var gameLoopActor: BehaviorTestKit[Command] = _
 
   before {
@@ -33,12 +34,12 @@ class GameLoopIntegrationTest extends AnyWordSpec with BeforeAndAfter with Match
     zombieActor = TestInbox[ModelMessage]("zombie")
     plantActor = TestInbox[ModelMessage]("plant")
 
-    bullet = (seedActor.ref, PeaBullet((1, LanesLength)))
-    zombie = (zombieActor.ref, BasicZombie((1, LanesLength)))
-    shooter = (plantActor.ref, PeaShooter((1, LanesLength / 2)))
+    bullet = GameEntity(seedActor.ref, PeaBullet((1, LanesLength)))
+    zombie = GameEntity(zombieActor.ref, BasicZombie((1, LanesLength)))
+    shooter = GameEntity(plantActor.ref, PeaShooter((1, LanesLength / 2)))
 
-    entities = List(bullet, zombie, shooter)
-    gameLoopActor = BehaviorTestKit(GameLoopActor(viewActor.ref, List(bullet, zombie, shooter)))
+    entities = GameSeq(List(bullet, zombie, shooter))
+    gameLoopActor = BehaviorTestKit(GameLoopActor(viewActor.ref, entities))
   }
 
   "GameController" when {
@@ -66,7 +67,7 @@ class GameLoopIntegrationTest extends AnyWordSpec with BeforeAndAfter with Match
       "interact with the view" when {
         "an entity is updated" in {
           gameLoopActor run EntityUpdated(seedActor.ref, bullet._2)
-          viewActor expectMessage Render(entities.map(_._2).toList, gameLoopActor.ref, MetaData())
+          viewActor expectMessage Render(entities.seq.map(_.entity).toList, gameLoopActor.ref, MetaData())
         }
       }
       }
