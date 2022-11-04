@@ -25,11 +25,11 @@ object GameLoopActor:
   import GameLoopCommands.*
 
   def apply(viewActor: ActorRef[ViewMessage],
-            entities: GameSeq[ModelMessage] = GameSeq(Seq.empty),
+            entities: GameSeq = GameSeq(Seq.empty),
             metaData: MetaData = MetaData()): Behavior[Command] = GameLoop(viewActor, entities, metaData).standardBehavior
 
   private case class GameLoop(viewActor: ActorRef[ViewMessage],
-                           entities: GameSeq[ModelMessage],
+                           entities: GameSeq,
                            metaData: MetaData) extends Controller with PauseAbility:
 
     override def standardBehavior: Behavior[Command] =
@@ -58,26 +58,25 @@ object GameLoopActor:
               detectCollision foreach {e => e._1.ref ! Collision(e._2.entity, ctx.self); e._2.ref ! Collision(e._1.entity, ctx.self)}
               updateAll(ctx, detectInterest)
               val newWave = if isWaveOver then createWave(ctx) else List.empty
-              if newWave.nonEmpty then println(newWave)
               startTimer(timer, UpdateLoop())
-              GameLoopActor(viewActor, GameSeq[ModelMessage](newWave ++ entities.seq), metaData)
+              GameLoopActor(viewActor, GameSeq(newWave ++ entities.seq), metaData)
 
             case EntityUpdated(ref, entity) =>
-              val newEntities = entities.seq collect { case x if x.ref == ref => GameEntity(ref, entity); case x if x.ref != ref => x}
+              val newEntities = entities.seq collect { case x if x.ref == ref => GameEntity(ref, entity) case x => x}
               render(ctx, newEntities.map(_.entity).toList)
-              GameLoopActor(viewActor, GameSeq[ModelMessage](newEntities), metaData)
+              GameLoopActor(viewActor, GameSeq(newEntities), metaData)
 
             case BulletSpawned(ref, bullet) =>
-              GameLoopActor(viewActor, GameSeq[ModelMessage](entities.seq :+ GameEntity(ref, bullet)), metaData)
+              GameLoopActor(viewActor, GameSeq(entities.seq :+ GameEntity(ref, bullet)), metaData)
 
             case PlacePlant(troop) =>
               troop.asInstanceOf[Plant] match
                 case plant if metaData.sun < plant.cost => GameLoopActor(viewActor, entities, metaData)
                 case _ =>
-                  GameLoopActor(viewActor, GameSeq[ModelMessage](entities.seq :+ GameEntity(ctx.spawnAnonymous(TroopActor(troop)), troop)), metaData - troop.asInstanceOf[Plant].cost)
+                  GameLoopActor(viewActor, GameSeq(entities.seq :+ GameEntity(ctx.spawnAnonymous(TroopActor(troop)), troop)), metaData - troop.asInstanceOf[Plant].cost)
 
             case EntityDead(ref) =>
-              GameLoopActor(viewActor, GameSeq[ModelMessage](entities.seq filter { _.ref != ref }), metaData)
+              GameLoopActor(viewActor, GameSeq(entities.seq filter { _.ref != ref }), metaData)
 
             case _ => Behaviors.same
         }))
@@ -95,8 +94,7 @@ object GameLoopActor:
 
     private def startTimer(timer: TimerScheduler[Command], msg: Command, time: FiniteDuration = metaData.velocity.speed): Unit = timer.startSingleTimer(msg, time)
 
-    private def createWave(ctx: ActorContext[Command]): Seq[GameEntity[ModelMessage, Entity]] =
-      println("AAAAAAAAAAAAAAAAAAA"+waveGenerator.generateNextWave.enemies)
+    private def createWave(ctx: ActorContext[Command]): Seq[GameEntity[Entity]] =
       waveGenerator.generateNextWave.enemies.map(e => GameEntity(ctx.spawnAnonymous(TroopActor(e)), e))
 
     private def detectCollision =
