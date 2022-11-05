@@ -5,14 +5,14 @@ import akka.actor.typed.ActorRef
 import controller.{GameLoopActor, ViewMessage}
 import model.GameData.{GameEntity, GameSeq}
 import model.actors.ModelMessage
+import model.entities.*
 import model.entities.WorldSpace.{LanesLength, Position}
-import model.entities.{BasicZombie, Bullet, Entity, PeaBullet, PeaShooter, Plant, Troop, Zombie}
 import org.scalatest.BeforeAndAfter
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 
-class GameDataTest extends AnyFlatSpec with Matchers:
+class GameDataTest extends AnyFlatSpec with Matchers :
 
   val seedActor: TestInbox[ModelMessage] = TestInbox[ModelMessage]("seed")
   val zombieActor: TestInbox[ModelMessage] = TestInbox[ModelMessage]("zombie")

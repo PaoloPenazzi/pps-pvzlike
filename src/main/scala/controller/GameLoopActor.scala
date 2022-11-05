@@ -25,13 +25,17 @@ object GameLoopActor:
   import GameLoopUtils.*
   import GameLoopUtils.CollisionUtils.*
 
-  def apply(viewActor: ActorRef[ViewMessage],
-            entities: Seq[GameEntity[Entity]] = List.empty,
-            metaData: MetaData = MetaData()): Behavior[Command] = GameLoop(viewActor, entities, metaData).standardBehavior()
+  def apply(
+             viewActor: ActorRef[ViewMessage],
+             entities: Seq[GameEntity[Entity]] = List.empty,
+             metaData: MetaData = MetaData()
+           ): Behavior[Command] = GameLoop(viewActor, entities, metaData).standardBehavior()
 
-  private case class GameLoop(viewActor: ActorRef[ViewMessage],
-                              entities: Seq[GameEntity[Entity]],
-                              metaData: MetaData):
+  private case class GameLoop(
+                               viewActor: ActorRef[ViewMessage],
+                               entities: Seq[GameEntity[Entity]],
+                               metaData: MetaData
+                             ):
 
     def standardBehavior(): Behavior[Command] =
       Behaviors.withTimers(timer =>
@@ -94,29 +98,40 @@ object GameLoopActor:
 
   object GameLoopCommands:
     trait Command
+
     case class StartGame() extends Command
+
     case class PauseGame() extends Command
+
     case class ResumeGame() extends Command
+
     case class UpdateLoop() extends Command
+
     case class GameOver() extends Command
+
     case class UpdateResources() extends Command
+
     case class ChangeGameSpeed(velocity: Speed) extends Command
+
     case class EntityDead(ref: ActorRef[ModelMessage]) extends Command
+
     case class EntityUpdated[E <: Entity](ref: ActorRef[ModelMessage], entity: E) extends Command
+
     case class BulletSpawned(ref: ActorRef[ModelMessage], bullet: Bullet) extends Command
+
     case class PlacePlant(troop: Troop) extends Command
 
   object GameLoopUtils:
     val resourceTimer: FiniteDuration = FiniteDuration(3, "seconds")
 
-    def startTimer( 
+    def startTimer(
                     timer: TimerScheduler[Command],
                     msg: Command,
                     time: FiniteDuration = Speed.Normal.speed
                   ): Unit =
       timer.startSingleTimer(msg, time)
 
-    def createWave( 
+    def createWave(
                     ctx: ActorContext[Command],
                     entities: Seq[GameEntity[Entity]]
                   ): Seq[GameEntity[Entity]] =
@@ -136,14 +151,14 @@ object GameLoopActor:
           if e.entity isInterestedIn e2.entity
         yield e2.entity)
 
-    def updateAll( 
+    def updateAll(
                    ctx: ActorContext[Command],
                    velocity: Speed,
                    interests: Seq[(ActorRef[ModelMessage], Seq[Entity])]
                  ): Unit =
       interests foreach (e => e._1 ! Update(velocity.speed, e._2.toList, ctx.self))
 
-    def render( 
+    def render(
                 ctx: ActorContext[Command],
                 viewActor: ActorRef[ViewMessage],
                 metaData: MetaData,
@@ -152,8 +167,8 @@ object GameLoopActor:
       viewActor ! Render(renderedEntities, ctx.self, metaData)
 
     object CollisionUtils:
-      def checkCollision( entities: Seq[GameEntity[Entity]],
-                          ctx: ActorContext[Command]
+      def checkCollision(entities: Seq[GameEntity[Entity]],
+                         ctx: ActorContext[Command]
                         ): Unit =
         detectCollision(entities) filter (_._2.nonEmpty) foreach { e =>
           if e._1.entity hitMultipleTimes
