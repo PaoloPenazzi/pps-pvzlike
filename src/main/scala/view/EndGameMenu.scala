@@ -10,6 +10,9 @@ import model.entities.Entity
 import model.entities.WorldSpace.Position
 import view.Game
 import view.ViewportSpace.*
+import ScalaGDX.*
+import ScalaGDX.given
+import scala.language.implicitConversions
 
 object EndGameMenu:
   def apply() = new EndGameMenu()
@@ -32,18 +35,15 @@ object EndGameMenu:
       val restart = createButton("Restart", ViewportWidth.toFloat / 2.5f, ViewportHeight - HUDHeight / 0.25f) {
         Game.startNewGame()
         dispose()
-        false
       }
       stage.addActor(restart)
       Gdx.input.setInputProcessor(stage)
   
-  private def createButton(text: String, x: Float, y: Float)(func: => Boolean): Button =
+  private def createButton(text: String, x: Float, y: Float)(f: => Unit): Button =
     val button = new TextButton(text, new Skin(Gdx.files.internal("assets/skin/default/uiskin.json")))
     button.setTransform(true)
     button.setScale(.05f)
     button.setPosition(x, y)
-    button.addListener(new ClickListener {
-      override def touchDown(event: InputEvent, x: Float, y: Float, pointer: Int, button: Int): Boolean = func
-    })
+    button.onTouchDown(_ => f)
     button
 
