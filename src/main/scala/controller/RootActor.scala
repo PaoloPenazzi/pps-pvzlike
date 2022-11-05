@@ -4,7 +4,7 @@ import akka.actor.typed.Behavior
 import akka.actor.typed.scaladsl.Behaviors
 import com.badlogic.gdx.ScreenAdapter
 import controller.GameLoopActor.*
-import controller.GameLoopActor.GameLoopCommands.StartLoop
+import controller.GameLoopActor.GameLoopCommands.StartGame
 import view.{Game, GameScreen}
 
 object RootActor:
@@ -12,7 +12,7 @@ object RootActor:
   object RootCommands:
     sealed trait RootCommand extends Command
 
-    case class StartGame(gameScreen: GameScreen) extends RootCommand
+    case class Start(gameScreen: GameScreen) extends RootCommand
 
   def apply(): Behavior[Command] =
     Behaviors.setup { _ => RootActor().standardBehavior }
@@ -22,9 +22,9 @@ object RootActor:
   private case class RootActor() extends Controller:
     override def standardBehavior: Behavior[Command] = Behaviors.receive((ctx, msg) => {
       msg match
-        case StartGame(gameScreen) =>
+        case Start(gameScreen) =>
           val view = ctx.spawnAnonymous(ViewActor(gameScreen))
           val gameLoop = ctx.spawnAnonymous(GameLoopActor(view))
-          gameLoop ! StartLoop()
+          gameLoop ! StartGame()
           Behaviors.same
     })
