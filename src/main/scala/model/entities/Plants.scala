@@ -22,7 +22,7 @@ trait Plant extends Troop :
    */
   def cost: Int = costs(this)
 
-  override def bullet: PlantBullet = bullets(this) withPosition pointOfShoot
+  override def bullet: Bullet = bullets(this) withPosition pointOfShoot
 
   override def isInterestedIn: Entity => Boolean =
     case enemy: Zombie => isInMyLane(enemy) && isInRange(enemy) && isNotBehindMe(enemy)
@@ -77,7 +77,7 @@ case class Wallnut(override val position: Position = (0,0),
 
 /**
  * The CherryBomb is a [[Plant]] that when placed, explode after a short time.
- * 
+ *
  * @param position the position in which the plant is placed.
  * @param life the life that the plant currently has.
  * @param state the state of the plant.
