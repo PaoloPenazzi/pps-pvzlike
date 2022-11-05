@@ -8,6 +8,7 @@ import scala.util.Random
 object DefaultValues:
   val endGameLimit: Int = -5
   val defaultPlantState: TroopState = TroopState.Idle
+  val cherrybombDefaultLife: Int = 10
   val peashooterDefaultLife: Int = 100
   val wallnutDefaultLife: Int = 150
   val basicZombieDefaultLife: Int = 100
@@ -15,7 +16,7 @@ object DefaultValues:
   val warriorZombieDefaultLife: Int = 200
   def generateZombieSpawnPosition: Position = (Random.between(0, NumOfLanes), LanesLength + Random.between(0, 20))
   
-  val bullets: Troop => Bullet =
+  val bullets: Troop => PlantBullet =
     case p: PeaShooter => PeaBullet(p.pointOfShoot)
     case c: CherryBomb => CherryBullet(c.position)
 

@@ -10,7 +10,7 @@ import scala.language.implicitConversions
 /**
  * An [[Entity]] shoot by a [[Troop]].
  */
-trait Bullet() extends Entity with MovingAbility:
+trait Bullet extends Entity with MovingAbility:
 
   /**
    * @return The damage the bullet does.
@@ -31,40 +31,44 @@ trait Bullet() extends Entity with MovingAbility:
 
   private def isInMyLane(entity: Entity): Boolean = entity.position.y == position.y
 
-  private def collideWith(entity: Entity): Boolean =
+  protected def collideWith(entity: Entity): Boolean =
     entity.position.x <= position.x && position.x <= entity.position.x + entity.width
 
   override type UpdatedEntity = Bullet
 
   override def velocity: Float = DefaultValues.velocity(this)
 
+  override def update(elapsedTime: FiniteDuration, interests: List[Entity]): Bullet =
+    this withPosition newPositionAfter(elapsedTime)
+
   protected def newPositionAfter(elapsedTime: FiniteDuration): Position =
     (position.y, position.x + (elapsedTime.length * velocity))
 
   def withPosition(position: Position): Bullet
 
-/**
- * The [[Bullet]] shoot by the [[Peashooter]]. It has no strange effects on the zombies beside dealing damage.
- * @param position The initial position of the [[Bullet]].
- */
-case class PeaBullet(override val position: Position) extends Bullet:
+trait PlantBullet extends Bullet:
   override def checkCollisionWith(entity: Entity): Boolean =
     entity match
       case _: Zombie => super.checkCollisionWith(entity)
       case _ => false
 
-  override def update(elapsedTime: FiniteDuration, interests: List[Entity]): Bullet =
-    this withPosition newPositionAfter(elapsedTime)
-
+/**
+ * The [[Bullet]] shoot by the [[Peashooter]]. It has no strange effects on the zombies beside dealing damage.
+ * @param position The initial position of the [[Bullet]].
+ */
+case class PeaBullet(override val position: Position) extends PlantBullet:
   override def withPosition(pos: Position): Bullet = copy(position = pos)
 
-case class CherryBullet(override val position: Position) extends Bullet:
+/**
+ * The [[Bullet]] shoot by the [[CherryBomb]]. It deals damage to all [[Troop]] around his position.
+ * @param position The initial position of the [[Bullet]].
+ */
+case class CherryBullet(override val position: Position) extends PlantBullet:
   override def checkCollisionWith(entity: Entity): Boolean = isNearMyLane(entity) && collideWith(entity)
-  private def isNearMyLane(entity: Entity): Boolean = (entity.position.y - position.y).abs < 2
-  private def collideWith(entity: Entity): Boolean =
-    (entity.position.x - position.x).abs <= 15
   override def update(elapsedTime: FiniteDuration, interests: List[Entity]): Bullet = this
   override def withPosition(pos: Position): Bullet = copy(position = pos)
+  override def collideWith(entity: Entity): Boolean = (entity.position.x - position.x).abs <= 15
+  private def isNearMyLane(entity: Entity): Boolean = (entity.position.y - position.y).abs < 2
 
 /**
  * An abstract [[Entity]] shoot by a [[BasicZombie]].
@@ -72,7 +76,6 @@ case class CherryBullet(override val position: Position) extends Bullet:
  * @param position The initial position of the [[Bullet]].
  */
 trait ZombieBullet extends Bullet:
-  override def update(elapsedTime: FiniteDuration, interests: List[Entity]): Bullet = this withPosition newPositionAfter(elapsedTime)
   override def checkCollisionWith(entity: Entity): Boolean =
     entity match
       case _: Plant => super.checkCollisionWith(entity)
