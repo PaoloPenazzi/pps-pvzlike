@@ -57,7 +57,7 @@ trait PlantBullet extends Bullet:
  * @param position The initial position of the [[Bullet]].
  */
 case class PeaBullet(override val position: Position) extends PlantBullet:
-  override def withPosition(pos: Position): Bullet = copy(position = pos)
+  override def withPosition(pos: Position): PlantBullet = copy(position = pos)
 
 /**
  * The [[Bullet]] shoot by the [[CherryBomb]]. It deals damage to all [[Troop]] around his position.
@@ -66,7 +66,7 @@ case class PeaBullet(override val position: Position) extends PlantBullet:
 case class CherryBullet(override val position: Position) extends PlantBullet:
   override def checkCollisionWith(entity: Entity): Boolean = isNearMyLane(entity) && collideWith(entity)
   override def update(elapsedTime: FiniteDuration, interests: List[Entity]): Bullet = this
-  override def withPosition(pos: Position): Bullet = copy(position = pos)
+  override def withPosition(pos: Position): PlantBullet = copy(position = pos)
   override def collideWith(entity: Entity): Boolean = (entity.position.x - position.x).abs <= 15
   private def isNearMyLane(entity: Entity): Boolean = (entity.position.y - position.y).abs < 2
 
