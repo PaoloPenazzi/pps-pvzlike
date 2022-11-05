@@ -109,9 +109,17 @@ object GameLoopActor:
   object GameLoopUtils:
     val resourceTimer: FiniteDuration = FiniteDuration(3, "seconds")
 
-    def startTimer(timer: TimerScheduler[Command], msg: Command, time: FiniteDuration = Speed.Normal.speed): Unit = timer.startSingleTimer(msg, time)
+    def startTimer( 
+                    timer: TimerScheduler[Command],
+                    msg: Command,
+                    time: FiniteDuration = Speed.Normal.speed
+                  ): Unit =
+      timer.startSingleTimer(msg, time)
 
-    def createWave(ctx: ActorContext[Command], entities: Seq[GameEntity[Entity]]): Seq[GameEntity[Entity]] =
+    def createWave( 
+                    ctx: ActorContext[Command],
+                    entities: Seq[GameEntity[Entity]]
+                  ): Seq[GameEntity[Entity]] =
       if isWaveOver(entities)
       then waveGenerator.generateNextWave.enemies.map(e => GameEntity(ctx.spawnAnonymous(TroopActor(e)), e))
       else List.empty
@@ -128,15 +136,25 @@ object GameLoopActor:
           if e.entity isInterestedIn e2.entity
         yield e2.entity)
 
-    def updateAll(ctx: ActorContext[Command], velocity: Speed, interests: Seq[(ActorRef[ModelMessage], Seq[Entity])]): Unit =
+    def updateAll( 
+                   ctx: ActorContext[Command],
+                   velocity: Speed,
+                   interests: Seq[(ActorRef[ModelMessage], Seq[Entity])]
+                 ): Unit =
       interests foreach (e => e._1 ! Update(velocity.speed, e._2.toList, ctx.self))
 
-    def render(ctx: ActorContext[Command], viewActor: ActorRef[ViewMessage], metaData: MetaData,
-               renderedEntities: List[Entity]): Unit =
+    def render( 
+                ctx: ActorContext[Command],
+                viewActor: ActorRef[ViewMessage],
+                metaData: MetaData,
+                renderedEntities: List[Entity]
+              ): Unit =
       viewActor ! Render(renderedEntities, ctx.self, metaData)
 
     object CollisionUtils:
-      def checkCollision(entities: Seq[GameEntity[Entity]], ctx: ActorContext[Command]): Unit =
+      def checkCollision( entities: Seq[GameEntity[Entity]],
+                          ctx: ActorContext[Command]
+                        ): Unit =
         detectCollision(entities) filter (_._2.nonEmpty) foreach { e =>
           if e._1.entity hitMultipleTimes
           then e._2 foreach { r => sendCollisionMessage(e._1, r, ctx); sendCollisionMessage(r, e._1, ctx) }
@@ -146,7 +164,11 @@ object GameLoopActor:
           }
         }
 
-      def sendCollisionMessage[A <: Entity, E <: Entity](to: GameEntity[A], from: GameEntity[E], ctx: ActorContext[Command]): Unit =
+      def sendCollisionMessage[A <: Entity, E <: Entity](
+                                                          to: GameEntity[A],
+                                                          from: GameEntity[E],
+                                                          ctx: ActorContext[Command]
+                                                        ): Unit =
         to.ref ! Collision(from.entity, ctx.self)
 
       def detectCollision(entities: Seq[GameEntity[Entity]]): Seq[(GameEntity[Bullet], Seq[GameEntity[Troop]])] =

@@ -6,13 +6,13 @@ import controller.{GameLoopActor, ViewMessage}
 import model.GameData.{GameEntity, GameSeq}
 import model.actors.ModelMessage
 import model.entities.WorldSpace.{LanesLength, Position}
-import model.entities.{Bullet, Zombie, Entity, PeaBullet, PeaShooter, Plant, BasicZombie}
+import model.entities.{BasicZombie, Bullet, Entity, PeaBullet, PeaShooter, Plant, Troop, Zombie}
 import org.scalatest.BeforeAndAfter
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 
-class GameDataTest extends AnyFlatSpec with BeforeAndAfter with Matchers :
+class GameDataTest extends AnyFlatSpec with Matchers:
 
   val seedActor: TestInbox[ModelMessage] = TestInbox[ModelMessage]("seed")
   val zombieActor: TestInbox[ModelMessage] = TestInbox[ModelMessage]("zombie")
@@ -28,6 +28,10 @@ class GameDataTest extends AnyFlatSpec with BeforeAndAfter with Matchers :
 
   "a seq" should "make seq of bullet" in {
     assertResult(seq.ofType[Bullet])(List(bullet))
+  }
+
+  "a seq" should "make seq of troop" in {
+    assertResult(seq.ofType[Troop])(List(zombie, shooter))
   }
 
 
