@@ -8,7 +8,6 @@ import com.badlogic.gdx.graphics.{GL20, OrthographicCamera}
 import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.scenes.scene2d.Stage
 import controller.RootActor
-import controller.RootActor.RootCommands.StartGame
 
 object MainMenuScreen:
   def apply() = new MainMenuScreen()

@@ -5,7 +5,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.{Button, Skin, TextButton}
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener
 import com.badlogic.gdx.scenes.scene2d.{InputEvent, Stage}
 import com.badlogic.gdx.{Gdx, ScreenAdapter}
-import controller.RootActor.RootCommands.StartGame
 import model.entities.Entity
 import model.entities.WorldSpace.Position
 import view.Game
@@ -13,6 +12,16 @@ import view.ViewportSpace.*
 
 object EndGameMenu:
   def apply() = new EndGameMenu()
+
+  private def createButton(text: String, x: Float, y: Float)(func: => Boolean): Button =
+    val button = new TextButton(text, new Skin(Gdx.files.internal("assets/skin/default/uiskin.json")))
+    button.setTransform(true)
+    button.setScale(.05f)
+    button.setPosition(x, y)
+    button.addListener(new ClickListener {
+      override def touchDown(event: InputEvent, x: Float, y: Float, pointer: Int, button: Int): Boolean = func
+    })
+    button
 
   class EndGameMenu() extends ScreenAdapter :
     private lazy val stage = new Stage(Game.viewport); //Set up a stage for the ui
@@ -36,14 +45,4 @@ object EndGameMenu:
       }
       stage.addActor(restart)
       Gdx.input.setInputProcessor(stage)
-  
-  private def createButton(text: String, x: Float, y: Float)(func: => Boolean): Button =
-    val button = new TextButton(text, new Skin(Gdx.files.internal("assets/skin/default/uiskin.json")))
-    button.setTransform(true)
-    button.setScale(.05f)
-    button.setPosition(x, y)
-    button.addListener(new ClickListener {
-      override def touchDown(event: InputEvent, x: Float, y: Float, pointer: Int, button: Int): Boolean = func
-    })
-    button
 

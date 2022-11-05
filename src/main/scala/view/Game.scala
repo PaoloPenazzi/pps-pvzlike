@@ -5,7 +5,7 @@ import com.badlogic.gdx.graphics.g2d.{BitmapFont, SpriteBatch}
 import com.badlogic.gdx.utils.viewport.{FitViewport, Viewport}
 import com.badlogic.gdx.{Game, Gdx, ScreenAdapter}
 import controller.RootActor
-import controller.RootActor.RootCommands.StartGame
+import controller.RootActor.RootCommands.Start
 import ViewportSpace.*
 import controller.Command
 
@@ -22,7 +22,7 @@ object Game extends com.badlogic.gdx.Game:
         val gameScreen = GameScreen()
         setScreen(gameScreen)
         actorSystem = Some(ActorSystem(RootActor(), "launcher"))
-        actorSystem.foreach(_ ! StartGame(gameScreen))
+        actorSystem.foreach(_ ! Start(gameScreen))
     )
 
   def endGame(): Unit =
