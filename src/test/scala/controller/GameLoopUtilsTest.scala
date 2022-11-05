@@ -4,6 +4,7 @@ import akka.actor.testkit.typed.scaladsl.{BehaviorTestKit, TestInbox}
 import akka.actor.typed.scaladsl.{ActorContext, Behaviors}
 import akka.actor.typed.{ActorRef, Behavior}
 import akka.event.ActorWithLogClass
+import controller.GameLoopActor.GameLoopCommands.Command
 import model.GameData.{GameEntity, GameSeq}
 import model.actors.{Collision, ModelMessage}
 import model.entities.*

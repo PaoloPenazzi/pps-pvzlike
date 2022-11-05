@@ -1,19 +1,20 @@
 package controller
 
-import akka.actor.typed.{ActorRef, Behavior}
 import akka.actor.typed.scaladsl.Behaviors
-import controller.Command
-import controller.GameLoopActor.GameLoopCommands.{GameLoopCommand, PlacePlant}
+import akka.actor.typed.{ActorRef, Behavior}
+import controller.GameLoopActor.GameLoopCommands.{Command, PlacePlant}
 import model.actors.ModelMessage
 import model.common.Utilities.MetaData
 import model.entities.{Entity, Plant, Troop}
 import view.View.EntityRenderer
 
 trait ViewMessage
+
 case class Render(entities: List[Entity], replyTo: ActorRef[Command], metaData: MetaData) extends ViewMessage
 
 object ViewActor:
   var gameLoopActor: Option[ActorRef[Command]] = None
+
   def sendPlacePlant(troop: Troop): Unit =
     gameLoopActor.foreach(_ ! PlacePlant(troop))
 

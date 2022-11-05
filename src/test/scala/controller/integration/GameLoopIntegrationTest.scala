@@ -4,9 +4,9 @@ import akka.actor.testkit.typed.scaladsl.{BehaviorTestKit, TestInbox}
 import akka.actor.typed.ActorRef
 import model.entities.*
 import model.common.Utilities.*
-import controller.{Command, GameLoopActor, Render, ViewMessage}
+import controller.{GameLoopActor, Render, ViewMessage}
 import controller.GameLoopActor.*
-import controller.GameLoopActor.GameLoopCommands.{EntityUpdated, StartGame, UpdateLoop}
+import controller.GameLoopActor.GameLoopCommands.{Command, EntityUpdated, StartGame, UpdateLoop}
 import model.GameData.{GameEntity, GameSeq}
 import model.actors.{Collision, ModelMessage, Update}
 import model.entities.WorldSpace.LanesLength

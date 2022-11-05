@@ -6,7 +6,7 @@ import controller.GameLoopActor.GameLoopCommands.{StartGame, UpdateLoop}
 import model.GameData
 import model.GameData.{GameEntity, GameSeq}
 import model.actors.*
-import model.common.Utilities.{MetaData, Sun, Speed}
+import model.common.Utilities.{MetaData, Speed, Sun}
 import model.entities.*
 import model.entities.WorldSpace.*
 import model.waves.{Generator, WaveGenerator}
@@ -25,16 +25,15 @@ object GameLoopActor:
   import GameLoopUtils.*
   import GameLoopUtils.CollisionUtils.*
 
-
   def apply(viewActor: ActorRef[ViewMessage],
             entities: Seq[GameEntity[Entity]] = List.empty,
-            metaData: MetaData = MetaData()): Behavior[Command] = GameLoop(viewActor, entities, metaData).standardBehavior
+            metaData: MetaData = MetaData()): Behavior[Command] = GameLoop(viewActor, entities, metaData).standardBehavior()
 
   private case class GameLoop(viewActor: ActorRef[ViewMessage],
                               entities: Seq[GameEntity[Entity]],
-                              metaData: MetaData) extends Controller with PauseAbility :
+                              metaData: MetaData):
 
-    override def standardBehavior: Behavior[Command] =
+    def standardBehavior(): Behavior[Command] =
       Behaviors.withTimers(timer =>
         Behaviors.receive((ctx, msg) => {
           msg match
@@ -48,7 +47,7 @@ object GameLoopActor:
               Game.endGame()
               Behaviors.stopped
 
-            case PauseGame() => pauseBehavior
+            case PauseGame() => pauseBehavior()
 
             case UpdateResources() =>
               startTimer(timer, UpdateResources(), resourceTimer)
@@ -83,7 +82,7 @@ object GameLoopActor:
             case _ => Behaviors.same
         }))
 
-    override def pauseBehavior: Behavior[Command] =
+    def pauseBehavior(): Behavior[Command] =
       Behaviors.receive((ctx, msg) => {
         msg match
           case ResumeGame() =>
@@ -94,18 +93,18 @@ object GameLoopActor:
       })
 
   object GameLoopCommands:
-    sealed trait GameLoopCommand extends Command
-    case class StartGame() extends GameLoopCommand
-    case class PauseGame() extends GameLoopCommand
-    case class ResumeGame() extends GameLoopCommand
-    case class UpdateLoop() extends GameLoopCommand
-    case class GameOver() extends GameLoopCommand
-    case class UpdateResources() extends GameLoopCommand
-    case class ChangeGameSpeed(velocity: Speed) extends GameLoopCommand
-    case class EntityDead(ref: ActorRef[ModelMessage]) extends GameLoopCommand
-    case class EntityUpdated[E <: Entity](ref: ActorRef[ModelMessage], entity: E) extends GameLoopCommand
-    case class BulletSpawned(ref: ActorRef[ModelMessage], bullet: Bullet) extends GameLoopCommand
-    case class PlacePlant(troop: Troop) extends GameLoopCommand
+    trait Command
+    case class StartGame() extends Command
+    case class PauseGame() extends Command
+    case class ResumeGame() extends Command
+    case class UpdateLoop() extends Command
+    case class GameOver() extends Command
+    case class UpdateResources() extends Command
+    case class ChangeGameSpeed(velocity: Speed) extends Command
+    case class EntityDead(ref: ActorRef[ModelMessage]) extends Command
+    case class EntityUpdated[E <: Entity](ref: ActorRef[ModelMessage], entity: E) extends Command
+    case class BulletSpawned(ref: ActorRef[ModelMessage], bullet: Bullet) extends Command
+    case class PlacePlant(troop: Troop) extends Command
 
   object GameLoopUtils:
     val resourceTimer: FiniteDuration = FiniteDuration(3, "seconds")
@@ -117,6 +116,8 @@ object GameLoopActor:
       then waveGenerator.generateNextWave.enemies.map(e => GameEntity(ctx.spawnAnonymous(TroopActor(e)), e))
       else List.empty
 
+    def isWaveOver: Seq[GameEntity[Entity]] => Boolean = _ map (_.entity) collect { case enemy: Zombie => enemy } isEmpty
+
     def detectInterest(entities: Seq[GameEntity[Entity]]): Seq[(ActorRef[ModelMessage], Seq[Entity])] =
       for
         e <- entities
@@ -127,10 +128,8 @@ object GameLoopActor:
           if e.entity isInterestedIn e2.entity
         yield e2.entity)
 
-    def isWaveOver: Seq[GameEntity[Entity]] => Boolean = _ map (_.entity) collect { case enemy: Zombie => enemy } isEmpty
-
     def updateAll(ctx: ActorContext[Command], velocity: Speed, interests: Seq[(ActorRef[ModelMessage], Seq[Entity])]): Unit =
-      interests foreach(e => e._1 ! Update(velocity.speed, e._2.toList, ctx.self))
+      interests foreach (e => e._1 ! Update(velocity.speed, e._2.toList, ctx.self))
 
     def render(ctx: ActorContext[Command], viewActor: ActorRef[ViewMessage], metaData: MetaData,
                renderedEntities: List[Entity]): Unit =

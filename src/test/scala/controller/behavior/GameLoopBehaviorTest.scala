@@ -6,7 +6,7 @@ import akka.actor.typed.scaladsl.Behaviors
 import akka.actor.typed.{ActorRef, Behavior}
 import controller.GameLoopActor.*
 import controller.GameLoopActor.GameLoopCommands.*
-import controller.{Command, GameLoopActor, ViewMessage}
+import controller.{GameLoopActor, ViewMessage}
 import model.actors.ModelMessage
 import model.common.Utilities.Speed
 import model.entities.*

@@ -2,7 +2,7 @@ package model.actors
 
 import akka.actor.typed.{ActorRef, Behavior}
 import akka.actor.typed.scaladsl.Behaviors
-import controller.GameLoopActor.GameLoopCommands.{EntityUpdated, GameLoopCommand, EntityDead}
+import controller.GameLoopActor.GameLoopCommands.{EntityUpdated, Command, EntityDead}
 import model.entities.{Bullet, Zombie}
 
 object BulletActor:

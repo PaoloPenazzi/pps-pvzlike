@@ -5,8 +5,7 @@ import akka.actor.testkit.typed.Effect
 import akka.actor.testkit.typed.scaladsl.{ActorTestKit, BehaviorTestKit, ScalaTestWithActorTestKit, TestInbox}
 import akka.actor.typed.scaladsl.Behaviors
 import akka.testkit.{ImplicitSender, TestActors, TestKit}
-import controller.Command
-import controller.GameLoopActor.GameLoopCommands.{EntityDead, BulletSpawned, EntityUpdated, GameLoopCommand}
+import controller.GameLoopActor.GameLoopCommands.{EntityDead, BulletSpawned, EntityUpdated, Command}
 import model.actors.{BulletActor, Shoot, Update}
 import model.common.DefaultValues.*
 import model.entities.*
