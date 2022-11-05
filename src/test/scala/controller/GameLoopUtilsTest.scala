@@ -34,12 +34,12 @@ class GameLoopUtilsTest extends AnyWordSpec with Matchers :
   "The game loop" when {
     "started" should {
       "detect collision" in {
-        val entities = GameSeq(List(bullet, zombie, secondZombie))
+        val entities = List(bullet, zombie, secondZombie)
         detectCollision(entities) shouldBe List((bullet, List(zombie, secondZombie)))
       }
 
       "detect multiple collision" in {
-        val entities = GameSeq(List(secondBullet, zombie, secondZombie, thirdZombie))
+        val entities = List(secondBullet, zombie, secondZombie, thirdZombie)
         detectCollision(entities) shouldBe List((secondBullet, List(zombie, secondZombie, thirdZombie)))
       }
 
@@ -53,20 +53,20 @@ class GameLoopUtilsTest extends AnyWordSpec with Matchers :
       }
 
       "detect the interests" in {
-        val entities = GameSeq(List(shooter, zombie, secondZombie))
+        val entities = List(shooter, zombie, secondZombie)
         detectInterest(entities) shouldBe List((shooter.ref, List(zombie.entity, secondZombie.entity)),
           (zombie.ref, List()), (secondZombie.ref, List()))
       }
 
       "check if the wave is over" in {
-        val entities = GameSeq(List(shooter, zombie))
+        val entities = List(shooter, zombie)
         isWaveOver(entities) shouldBe false
       }
 
       "create a new wave of zombies" in {
         Behaviors.setup {
           (ctx: ActorContext[Command]) =>
-            createWave(ctx).getClass shouldBe Seq.getClass
+            createWave(ctx, List.empty).getClass shouldBe Seq.getClass
             Behaviors.empty
         }
       }

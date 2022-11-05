@@ -6,7 +6,7 @@ import model.entities.*
 import model.common.Utilities.*
 import controller.{Command, GameLoopActor, Render, ViewMessage}
 import controller.GameLoopActor.*
-import controller.GameLoopActor.GameLoopCommands.{EntityUpdated, StartLoop, UpdateLoop}
+import controller.GameLoopActor.GameLoopCommands.{EntityUpdated, StartGame, UpdateLoop}
 import model.GameData.{GameEntity, GameSeq}
 import model.actors.{Collision, ModelMessage, Update}
 import model.entities.WorldSpace.LanesLength
@@ -25,7 +25,7 @@ class GameLoopIntegrationTest extends AnyWordSpec with BeforeAndAfter with Match
   var zombie: GameEntity[Entity] = _
   var shooter: GameEntity[Entity] = _
 
-  var entities: GameSeq = _
+  var entities: Seq[GameEntity[Entity]] = _
   var gameLoopActor: BehaviorTestKit[Command] = _
 
   before {
@@ -38,7 +38,7 @@ class GameLoopIntegrationTest extends AnyWordSpec with BeforeAndAfter with Match
     zombie = GameEntity(zombieActor.ref, BasicZombie((1, LanesLength)))
     shooter = GameEntity(plantActor.ref, PeaShooter((1, LanesLength / 2)))
 
-    entities = GameSeq(List(bullet, zombie, shooter))
+    entities = List(bullet, zombie, shooter)
     gameLoopActor = BehaviorTestKit(GameLoopActor(viewActor.ref, entities))
   }
 
@@ -57,17 +57,17 @@ class GameLoopIntegrationTest extends AnyWordSpec with BeforeAndAfter with Match
         "find a collisions" in {
           gameLoopActor run UpdateLoop()
           seedActor.receiveMessage()
-          seedActor expectMessage Update(Velocity.Normal.speed, List(), gameLoopActor.ref)
+          seedActor expectMessage Update(Speed.Normal.speed, List(), gameLoopActor.ref)
           zombieActor.receiveMessage()
-          zombieActor expectMessage Update(Velocity.Normal.speed, List(), gameLoopActor.ref)
-          plantActor expectMessage Update(Velocity.Normal.speed, List(zombie._2), gameLoopActor.ref)
+          zombieActor expectMessage Update(Speed.Normal.speed, List(), gameLoopActor.ref)
+          plantActor expectMessage Update(Speed.Normal.speed, List(zombie._2), gameLoopActor.ref)
         }
       }
 
       "interact with the view" when {
         "an entity is updated" in {
           gameLoopActor run EntityUpdated(seedActor.ref, bullet._2)
-          viewActor expectMessage Render(entities.seq.map(_.entity).toList, gameLoopActor.ref, MetaData())
+          viewActor expectMessage Render(entities.map(_.entity).toList, gameLoopActor.ref, MetaData())
         }
       }
       }

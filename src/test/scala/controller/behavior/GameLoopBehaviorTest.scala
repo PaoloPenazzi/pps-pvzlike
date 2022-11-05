@@ -8,7 +8,7 @@ import controller.GameLoopActor.*
 import controller.GameLoopActor.GameLoopCommands.*
 import controller.{Command, GameLoopActor, ViewMessage}
 import model.actors.ModelMessage
-import model.common.Utilities.Velocity
+import model.common.Utilities.Speed
 import model.entities.*
 import model.entities.WorldSpace.{LanesLength, given}
 import org.scalatest.flatspec.AnyFlatSpec
@@ -27,7 +27,7 @@ class GameLoopBehaviorTest extends AnyWordSpec with BeforeAndAfter with Matchers
 
   var viewActor: TestInbox[ViewMessage] = _
   var gameLoopActor: BehaviorTestKit[Command] = _
-  var updateTime: FiniteDuration = Velocity.Normal.speed
+  var updateTime: FiniteDuration = Speed.Normal.speed
   val resourcesTime: FiniteDuration = FiniteDuration(3, "seconds")
 
   before {
@@ -43,7 +43,7 @@ class GameLoopBehaviorTest extends AnyWordSpec with BeforeAndAfter with Matchers
       }
 
       "create a wave" in {
-        gameLoopActor run StartLoop()
+        gameLoopActor run StartGame()
         val startTimerEffect = gameLoopActor.retrieveEffect()
         val startWaveEffect = gameLoopActor.retrieveEffect()
         startTimerEffect should not be Effect.NoEffects
@@ -52,20 +52,20 @@ class GameLoopBehaviorTest extends AnyWordSpec with BeforeAndAfter with Matchers
       }
 
       "start the loop timer" in {
-        gameLoopActor run StartLoop()
+        gameLoopActor run StartGame()
         gameLoopActor expectEffect Effect.TimerScheduled(UpdateLoop(), UpdateLoop(), updateTime, Effect.TimerScheduled.SingleMode, false)(null)
       }
 
       "start the resources timer" in {
-        gameLoopActor run StartLoop()
+        gameLoopActor run StartGame()
         gameLoopActor.retrieveEffect()
         gameLoopActor expectEffect Effect.TimerScheduled(UpdateResources(), UpdateResources(), resourcesTime, Effect.TimerScheduled.SingleMode, false)(null)
       }
 
       "resume the loop" in {
-        gameLoopActor run PauseLoop()
+        gameLoopActor run PauseGame()
         val prevBehavior = gameLoopActor.currentBehavior
-        gameLoopActor run ResumeLoop()
+        gameLoopActor run ResumeGame()
         val postBehavior = gameLoopActor.currentBehavior
         prevBehavior should not be postBehavior
       }
