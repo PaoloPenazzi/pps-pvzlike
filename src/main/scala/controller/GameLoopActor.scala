@@ -22,8 +22,8 @@ object GameLoopActor:
   val waveGenerator: WaveGenerator = Generator()
 
   import GameLoopCommands.*
-  import GameLoopUtils.CollisionUtils.*
   import GameLoopUtils.*
+  import GameLoopUtils.CollisionUtils.*
 
   def apply(viewActor: ActorRef[ViewMessage],
             entities: GameSeq = GameSeq(Seq.empty),
@@ -74,7 +74,9 @@ object GameLoopActor:
               troop.asInstanceOf[Plant] match
                 case plant if metaData.sun < plant.cost => GameLoopActor(viewActor, entities, metaData)
                 case _ =>
-                  GameLoopActor(viewActor, GameSeq(entities.seq :+ GameEntity(ctx.spawnAnonymous(TroopActor(troop)), troop)), metaData - troop.asInstanceOf[Plant].cost)
+                  val newGameSeq = GameSeq(entities.seq :+ GameEntity(ctx.spawnAnonymous(TroopActor(troop)), troop))
+                  val newMetaData = metaData - troop.asInstanceOf[Plant].cost
+                  GameLoopActor(viewActor, newGameSeq, newMetaData)
 
             case EntityDead(ref) => GameLoopActor(viewActor, GameSeq(entities.seq filter { _.ref != ref }), metaData)
 
@@ -84,7 +86,6 @@ object GameLoopActor:
     override def pauseBehavior: Behavior[Command] =
       Behaviors.receive((ctx, msg) => {
         msg match
-
           case ResumeLoop() =>
             ctx.self ! UpdateLoop()
             GameLoopActor(viewActor, entities, metaData)
@@ -94,27 +95,16 @@ object GameLoopActor:
 
   object GameLoopCommands:
     sealed trait GameLoopCommand extends Command
-
     case class StartLoop() extends GameLoopCommand
-
     case class PauseLoop() extends GameLoopCommand
-
     case class ResumeLoop() extends GameLoopCommand
-
     case class UpdateLoop() extends GameLoopCommand
-
     case class EndGame() extends GameLoopCommand
-
     case class UpdateResources() extends GameLoopCommand
-
     case class ChangeVelocity(velocity: Velocity) extends GameLoopCommand
-
     case class EntityDead(ref: ActorRef[ModelMessage]) extends GameLoopCommand
-
     case class EntityUpdated[E <: Entity](ref: ActorRef[ModelMessage], entity: E) extends GameLoopCommand
-
     case class BulletSpawned(ref: ActorRef[ModelMessage], bullet: Bullet) extends GameLoopCommand
-
     case class PlacePlant(troop: Troop) extends GameLoopCommand
 
   object GameLoopUtils:
@@ -138,28 +128,27 @@ object GameLoopActor:
     def isWaveOver: GameSeq => Boolean = _.seq map (_.entity) collect { case enemy: Zombie => enemy } isEmpty
 
     def updateAll(ctx: ActorContext[Command], velocity: Velocity, interests: Seq[(ActorRef[ModelMessage], Seq[Entity])]): Unit =
-      interests.foreach(e => e._1 ! Update(velocity.speed, e._2.toList, ctx.self))
+      interests foreach(e => e._1 ! Update(velocity.speed, e._2.toList, ctx.self))
 
     def render(ctx: ActorContext[Command], viewActor: ActorRef[ViewMessage], metaData: MetaData,
                renderedEntities: List[Entity]): Unit =
       viewActor ! Render(renderedEntities, ctx.self, metaData)
 
     object CollisionUtils:
-
       def checkCollision(entities: GameSeq, ctx: ActorContext[Command]): Unit =
-        detectCollision(entities).filter(_._2.nonEmpty)
-          .foreach { e =>
-            if e._1.entity hitMultipleTimes
-            then e._2 foreach { r => sendCollisionMessage(e._1, r, ctx); sendCollisionMessage(r, e._1, ctx) }
-            else {
-              sendCollisionMessage(e._1, e._2.head, ctx); sendCollisionMessage(e._2.head, e._1, ctx)
-            }
+        detectCollision(entities) filter (_._2.nonEmpty) foreach { e =>
+          if e._1.entity hitMultipleTimes
+          then e._2 foreach { r => sendCollisionMessage(e._1, r, ctx); sendCollisionMessage(r, e._1, ctx) }
+          else {
+            sendCollisionMessage(e._1, e._2.head, ctx);
+            sendCollisionMessage(e._2.head, e._1, ctx)
           }
+        }
 
-      private def sendCollisionMessage[A <: Entity, E <: Entity](to: GameEntity[A], from: GameEntity[E], ctx: ActorContext[Command]): Unit =
+      def sendCollisionMessage[A <: Entity, E <: Entity](to: GameEntity[A], from: GameEntity[E], ctx: ActorContext[Command]): Unit =
         to.ref ! Collision(from.entity, ctx.self)
 
-      private def detectCollision(entities: GameSeq): Seq[(GameEntity[Bullet], Seq[GameEntity[Entity]])] =
+      def detectCollision(entities: GameSeq): Seq[(GameEntity[Bullet], Seq[GameEntity[Entity]])] =
         for
           b <- entities.ofType[Bullet]
         yield
