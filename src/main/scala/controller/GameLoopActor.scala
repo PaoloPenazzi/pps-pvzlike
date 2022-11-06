@@ -51,7 +51,7 @@ object GameLoopActor:
               Behaviors.same
 
             case GameOver() =>
-              Game.endGame()
+              Game.endGame(stats)
               Behaviors.stopped
 
             case PauseGame() => pauseBehavior()
