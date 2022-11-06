@@ -26,28 +26,26 @@ object ScalaGDX:
      * @param f the behavior to trigger when the pointer is pressed,
      * that consumes the pointer coordinates at the time of pressing.
      */
-    def onTouchDown(f: Vector2 => Unit): Unit = addListener(new ClickListener {
+    def onTouchDown(f: Vector2 => Unit): Unit = addListener(new ClickListener:
       override def touchDown(event: InputEvent, x: Float, y: Float, pointerId: Int, buttonId: Int): Boolean =
         super.touchDown(event, x, y, pointerId, buttonId)
         f(Vector2(x,y))
         true
-    })
+    )
 
     /**
      * Adds a behavior for when a pointer (previously pressed within the boundaries of this) gets released.
      *
      * @param f the behavior to trigger when the pointer is released.
      */
-    def onTouchUp(f: () => Unit): Unit = addListener(new ClickListener {
+    def onTouchUp(f: () => Unit): Unit = addListener(new ClickListener:
       override def touchUp(event: InputEvent, x: Float, y: Float, pointerId: Int, buttonId: Int): Unit =
         super.touchUp(event, x, y, pointerId, buttonId)
         f()
-    })
+    )
 
-  given Conversion[Actor, Clickable] = actor => new Clickable {
+  given Conversion[Actor, Clickable] = actor => new Clickable:
     export actor.addListener
-  }
 
-  given Conversion[Stage, Clickable] = stage => new Clickable {
+  given Conversion[Stage, Clickable] = stage => new Clickable:
     export stage.addListener
-  }
