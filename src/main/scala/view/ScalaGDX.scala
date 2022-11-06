@@ -8,8 +8,9 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener
  * A layer on top of libGDX, designed to facilitate its use by providing a more fluent API
  * and reducing the need for boilerplate code.
  *
- * Given conversions are available to pimp libGDX classes. This enables the usage of [[view.ScalaGDX.Clickable]] API on [[Actor]] and [[Stage]].
- */
+ * Given conversions are available to pimp libGDX classes. This enables the usage of:
+ *  - [[view.ScalaGDX.Clickable]] API on [[Actor]] and [[Stage]].
+ */ 
 object ScalaGDX:
   /**
    * Add simpler APIs to define reactive behavior that should arise from certain click events.
@@ -18,7 +19,7 @@ object ScalaGDX:
     /**
      * See [[com.badlogic.gdx.scenes.scene2d.Actor.addListener]]
      */
-    protected[this] def addListener(cl: EventListener): Boolean
+    protected def addListener(cl: EventListener): Boolean
 
     /**
      * Registers a behavior for when a pointer is pressed within the boundaries of this.
