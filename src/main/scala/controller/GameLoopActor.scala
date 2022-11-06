@@ -5,6 +5,7 @@ import akka.actor.typed.scaladsl.*
 import controller.GameLoopActor.GameLoopCommands.{StartGame, UpdateLoop}
 import model.GameData
 import model.GameData.{GameEntity, GameSeq}
+import model.Statistics.GameStatistics
 import model.actors.*
 import model.common.Utilities.{MetaData, Speed, Sun}
 import model.entities.*
@@ -28,13 +29,15 @@ object GameLoopActor:
   def apply(
              viewActor: ActorRef[ViewMessage],
              entities: Seq[GameEntity[Entity]] = List.empty,
-             metaData: MetaData = MetaData()
-           ): Behavior[Command] = GameLoop(viewActor, entities, metaData).standardBehavior()
+             metaData: MetaData = MetaData(),
+             stats: GameStatistics = GameStatistics()
+           ): Behavior[Command] = GameLoop(viewActor, entities, metaData, stats).standardBehavior()
 
   private case class GameLoop(
                                viewActor: ActorRef[ViewMessage],
                                entities: Seq[GameEntity[Entity]],
-                               metaData: MetaData
+                               metaData: MetaData,
+                               stats: GameStatistics
                              ):
 
     def standardBehavior(): Behavior[Command] =
@@ -55,33 +58,38 @@ object GameLoopActor:
 
             case UpdateResources() =>
               startTimer(timer, UpdateResources(), resourceTimer)
-              GameLoopActor(viewActor, entities, metaData + Sun.Normal.value)
+              GameLoopActor(viewActor, entities, metaData + Sun.Normal.value, stats)
 
-            case ChangeGameSpeed(velocity) => GameLoopActor(viewActor, entities, metaData >>> velocity)
+            case ChangeGameSpeed(velocity) => GameLoopActor(viewActor, entities, metaData >>> velocity, stats)
 
             case UpdateLoop() =>
               checkCollision(entities, ctx)
+              val newWave = if isWaveOver(entities) then createWave(ctx)
+                            else List.empty
+              val newStats = if isWaveOver(entities) then updateWave(updateRound(stats), newWave.map(_.entity.asInstanceOf[Zombie]))
+                             else stats
               updateAll(ctx, metaData.velocity, detectInterest(entities))
               startTimer(timer, UpdateLoop())
-              GameLoopActor(viewActor, createWave(ctx, entities) ++ entities, metaData)
+              GameLoopActor(viewActor, newWave ++ entities, metaData, newStats)
 
             case EntityUpdated(ref, entity) =>
               val newEntities = entities collect { case x if x.ref == ref => GameEntity(ref, entity) case x => x }
               render(ctx, viewActor, metaData, newEntities.map(_.entity).toList)
-              GameLoopActor(viewActor, newEntities, metaData)
+              GameLoopActor(viewActor, newEntities, metaData, stats)
 
             case BulletSpawned(ref, bullet) =>
-              GameLoopActor(viewActor, entities :+ GameEntity(ref, bullet), metaData)
+              GameLoopActor(viewActor, entities :+ GameEntity(ref, bullet), metaData, stats)
 
             case PlacePlant(troop) =>
               troop.asInstanceOf[Plant] match
-                case plant if metaData.sun < plant.cost => GameLoopActor(viewActor, entities, metaData)
+                case plant if metaData.sun < plant.cost => GameLoopActor(viewActor, entities, metaData, stats)
                 case _ =>
                   val newGameSeq = entities :+ GameEntity(ctx.spawnAnonymous(TroopActor(troop)), troop)
                   val newMetaData = metaData - troop.asInstanceOf[Plant].cost
-                  GameLoopActor(viewActor, newGameSeq, newMetaData)
+                  val newStats = updatePlant(stats, troop)
+                  GameLoopActor(viewActor, newGameSeq, newMetaData, newStats)
 
-            case EntityDead(ref) => GameLoopActor(viewActor, entities filter { _.ref != ref }, metaData)
+            case EntityDead(ref) => GameLoopActor(viewActor, entities filter { _.ref != ref }, metaData, stats)
 
             case _ => Behaviors.same
         }))
@@ -91,7 +99,7 @@ object GameLoopActor:
         msg match
           case ResumeGame() =>
             ctx.self ! UpdateLoop()
-            GameLoopActor(viewActor, entities, metaData)
+            GameLoopActor(viewActor, entities, metaData, stats)
 
           case _ => Behaviors.same
       })
@@ -131,13 +139,26 @@ object GameLoopActor:
                   ): Unit =
       timer.startSingleTimer(msg, time)
 
-    def createWave(
-                    ctx: ActorContext[Command],
-                    entities: Seq[GameEntity[Entity]]
-                  ): Seq[GameEntity[Entity]] =
-      if isWaveOver(entities)
-      then waveGenerator.generateNextWave.enemies.map(e => GameEntity(ctx.spawnAnonymous(TroopActor(e)), e))
-      else List.empty
+    def createWave(ctx: ActorContext[Command]): Seq[GameEntity[Entity]] =
+      waveGenerator.generateNextWave.enemies.map(e => GameEntity(ctx.spawnAnonymous(TroopActor(e)), e))
+
+    def updatePlant(
+                   stats: GameStatistics,
+                   plant: Troop
+                   ): GameStatistics =
+      stats playable plant
+
+    def updateRound(
+                     stats: GameStatistics,
+                     r: Int = 1
+                   ): GameStatistics =
+      stats increaseRound r
+
+    def updateWave(
+                    stats: GameStatistics,
+                    zombies: Seq[Zombie]
+                  ): GameStatistics =
+      stats playWave zombies
 
     def isWaveOver: Seq[GameEntity[Entity]] => Boolean = _ map (_.entity) collect { case enemy: Zombie => enemy } isEmpty
 

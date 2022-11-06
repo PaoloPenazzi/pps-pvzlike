@@ -15,9 +15,12 @@ object Statistics:
         case zombie: Zombie => acc :+ zombie
         case _ => acc
       })
+    def playWave(seq: Seq[Zombie]): GameStatistics =
+      GameStatistics(stats.entities :++ seq, stats.rounds)
+
 
   trait GameStatsOps:
-    def playable(entity: Entity): GameStats
+    def playable(entities: Entity): GameStats
     def increaseRound(r: Int): GameStats
 
   case class GameStatistics(

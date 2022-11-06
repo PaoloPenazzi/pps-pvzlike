@@ -6,6 +6,7 @@ import akka.actor.typed.{ActorRef, Behavior}
 import akka.event.ActorWithLogClass
 import controller.GameLoopActor.GameLoopCommands.Command
 import model.GameData.{GameEntity, GameSeq}
+import model.Statistics.GameStatistics
 import model.actors.{Collision, ModelMessage}
 import model.entities.*
 import model.entities.WorldSpace.LanesLength
@@ -67,9 +68,21 @@ class GameLoopUtilsTest extends AnyWordSpec with Matchers :
       "create a new wave of zombies" in {
         Behaviors.setup {
           (ctx: ActorContext[Command]) =>
-            createWave(ctx, List.empty).getClass shouldBe Seq.getClass
+            createWave(ctx).getClass shouldBe Seq.getClass
             Behaviors.empty
         }
+      }
+
+      "update rounds" in {
+        updateRound(GameStatistics()) shouldBe GameStatistics(List.empty, 1)
+      }
+
+      "update waves" in {
+        updateWave(GameStatistics(), List(BasicZombie())) shouldBe GameStatistics(List(BasicZombie()))
+      }
+
+      "update troop played" in {
+        updatePlant(GameStatistics(), PeaShooter()) shouldBe GameStatistics(List(PeaShooter()))
       }
     }
   }
