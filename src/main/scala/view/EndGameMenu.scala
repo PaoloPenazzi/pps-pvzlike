@@ -12,22 +12,25 @@ import view.Game
 import view.ViewportSpace.*
 import ScalaGDX.*
 import ScalaGDX.given
+import com.badlogic.gdx.graphics.g2d.{BitmapFont, SpriteBatch}
+
 import scala.language.implicitConversions
 
 object EndGameMenu:
   def apply() = new EndGameMenu()
 
   class EndGameMenu() extends ScreenAdapter :
-    private lazy val stage = new Stage(Game.viewport); //Set up a stage for the ui
-
+    private lazy val stage = new Stage(Game.viewport)
+    lazy val font: BitmapFont = BitmapFont(Gdx.files.internal("assets/gameWindow/font.fnt"), Gdx.files.internal("assets/gameWindow/font.png"), false)
+    lazy val batch: SpriteBatch = SpriteBatch()
     override def render(delta: Float): Unit =
       Gdx.gl.glClearColor(0, 0, 0, 1)
       Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
 
-      Game.batch.begin()
-      Game.font.getData.setScale(0.05f)
-      Game.font.draw(Game.batch, "PVZ", ViewportWidth.toFloat / 2.3f, ViewportHeight - HUDHeight / 2)
-      Game.batch.end()
+      batch.begin()
+      font.getData.setScale(0.05f)
+      font.draw(batch, "PVZ", ViewportWidth.toFloat / 2.3f, ViewportHeight - HUDHeight / 2)
+      batch.end()
       stage.draw(); //Draw the ui
       stage.act(delta)
 

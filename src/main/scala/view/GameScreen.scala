@@ -1,7 +1,7 @@
 package view
 
 import com.badlogic.gdx.Input.Buttons
-import com.badlogic.gdx.graphics.g2d.TextureRegion
+import com.badlogic.gdx.graphics.g2d.{BitmapFont, SpriteBatch, TextureRegion}
 import com.badlogic.gdx.graphics.{GL20, Texture}
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.physics.box2d.World
@@ -18,41 +18,39 @@ import model.common.Utilities.MetaData
 import controller.ViewActor.sendPlacePlant
 import ScalaGDX.*
 import ScalaGDX.given
+
 import scala.language.implicitConversions
 
 
 object GameScreen:
-  val Framerate: Float = 60
-
   def apply() = new GameScreen()
 
 class GameScreen() extends ScreenAdapter with EntityRenderer :
-  //private val world: World = World(Vector2(0, 0), false)
   private val camera = Game.viewport.getCamera
   private var entities: List[Entity] = List.empty
 
-  private lazy val stage = new Stage(Game.viewport); //Set up a stage for the ui
+  private lazy val stage = new Stage(Game.viewport)
   var pendingPlant: Option[Troop] = None
 
   lazy val background: Texture = Texture(Gdx.files.classpath("assets/background/day.png"))
+  lazy val font: BitmapFont = BitmapFont(Gdx.files.internal("assets/gameWindow/font.fnt"), Gdx.files.internal("assets/gameWindow/font.png"), false)
+  lazy val batch: SpriteBatch = SpriteBatch()
   lazy val gamingWindowNumberOfSun: Texture = Texture(Gdx.files.classpath("assets/gameWindow/numberOfSun.png"))
 
 
   private var metaData: MetaData = MetaData()
 
   override def render(delta: Float): Unit =
-    //world.step(1 / GameScreen.Framerate, 6, 2)
-    Game.batch.setProjectionMatrix(camera.combined)
+    batch.setProjectionMatrix(camera.combined)
     Gdx.gl.glClearColor(0, 0, 0, 1)
     Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
 
-    Game.batch.begin()
-    Game.batch.draw(background, -3, 0, 25, ViewportHeight - HUDHeight)
-    Game.font.getData.setScale(.05f)
-    Game.font.draw(Game.batch, metaData.sun.toString, 12, 7.5f)
-    //batch.draw(gamingWindowNumberOfSun, 10, ViewportHeight - HUDHeight, 6, HUDHeight)
-    entities.foreach(e => Game.batch.draw(texture(e), projectX(e.position.x), projectY(e.position.y), width(e), height(e)))
-    Game.batch.end()
+    batch.begin()
+    batch.draw(background, -3, 0, 25, ViewportHeight - HUDHeight)
+    font.getData.setScale(.05f)
+    font.draw(batch, metaData.sun.toString, 12, 7.5f)
+    entities.foreach(e => batch.draw(texture(e), projectX(e.position.x), projectY(e.position.y), width(e), height(e)))
+    batch.end()
     stage.draw(); //Draw the ui
     stage.act(delta)
 

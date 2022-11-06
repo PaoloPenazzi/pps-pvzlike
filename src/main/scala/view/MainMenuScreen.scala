@@ -11,6 +11,7 @@ import com.badlogic.gdx.scenes.scene2d.{InputEvent, Stage}
 import view.ViewportSpace.{HUDHeight, ViewportHeight, ViewportWidth}
 import ScalaGDX.*
 import ScalaGDX.given
+import com.badlogic.gdx.graphics.g2d.SpriteBatch
 
 import scala.language.implicitConversions
 
@@ -21,14 +22,14 @@ object MainMenuScreen:
     private val camera = Game.viewport.getCamera
     private lazy val stage = new Stage(Game.viewport)
     private lazy val background: Texture = Texture(Gdx.files.classpath("assets/background/mainmenu.png"))
-
+    lazy val batch: SpriteBatch = SpriteBatch()
     override def render(delta: Float): Unit =
-      Game.batch.setProjectionMatrix(camera.combined)
+      batch.setProjectionMatrix(camera.combined)
       Gdx.gl.glClearColor(0, 0, 0, 1)
       Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
-      Game.batch.begin()
-      Game.batch.draw(background, 0, 0, ViewportWidth, ViewportHeight)
-      Game.batch.end()
+      batch.begin()
+      batch.draw(background, 0, 0, ViewportWidth, ViewportHeight)
+      batch.end()
       stage.draw()
       stage.act(delta)
 
