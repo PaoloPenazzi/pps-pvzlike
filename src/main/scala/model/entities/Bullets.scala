@@ -43,8 +43,6 @@ trait Bullet extends Entity with MovingAbility :
   protected def newPositionAfter(elapsedTime: FiniteDuration): Position =
     (position.y, position.x + (elapsedTime.length * velocity))
 
-  def withPosition(position: Position): Bullet
-
 /**
  * This trait models the common behaviour of the bullets shoot by the plants.
  */

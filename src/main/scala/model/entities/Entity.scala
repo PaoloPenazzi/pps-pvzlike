@@ -28,6 +28,13 @@ trait Entity:
   def position: Position
 
   /**
+   * @param pos The new position of the [[Entity]].
+   * @return The same [[Entity]] with the position updated.
+   */
+  def withPosition(pos: Position): UpdatedEntity
+
+
+  /**
    * @param elapsedTime The time elapsed from the last update.
    * @param interest    The list of [[Entity]] with whom it interacts.
    * @return The updated [[Entity]].
@@ -103,12 +110,6 @@ trait Troop extends Entity with AttackingAbility :
    * @return The same [[Troop]] with the life updated.
    */
   def withLife(healthPoints: Int): Troop
-
-  /**
-   * @param pos The new position of the [[Troop]].
-   * @return The same [[Troop]] with the position updated.
-   */
-  def withPosition(pos: Position): Troop
 
 object Troops:
   /**
