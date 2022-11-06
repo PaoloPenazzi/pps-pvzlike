@@ -1,7 +1,6 @@
 package view
 
 import akka.actor.typed.ActorSystem
-import com.badlogic.gdx.graphics.g2d.{BitmapFont, SpriteBatch}
 import com.badlogic.gdx.utils.viewport.{FitViewport, Viewport}
 import com.badlogic.gdx.{Game, Gdx, ScreenAdapter}
 import controller.RootActor
@@ -11,11 +10,8 @@ import ViewportSpace.*
 import model.Statistics.GameStatistics
 
 object Game extends com.badlogic.gdx.Game:
-  val viewport: Viewport = FitViewport(ViewportWidth.toFloat, ViewportHeight.toFloat)
-  var mainMenuScreen: ScreenAdapter = MainMenuScreen()
+  val viewport: Viewport = FitViewport(ViewportWidth, ViewportHeight)
   var actorSystem: Option[ActorSystem[RootCommand]] = None
-  lazy val batch: SpriteBatch = SpriteBatch()
-  lazy val font: BitmapFont = BitmapFont(Gdx.files.internal("assets/gameWindow/font.fnt"), Gdx.files.internal("assets/gameWindow/font.png"), false)
 
   def startNewGame(): Unit =
     Gdx.app.postRunnable(new Runnable():
@@ -34,4 +30,4 @@ object Game extends com.badlogic.gdx.Game:
       )
 
   override def create(): Unit =
-    setScreen(mainMenuScreen)
+    setScreen(MainMenuScreen())

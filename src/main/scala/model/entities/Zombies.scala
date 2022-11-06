@@ -1,6 +1,6 @@
 package model.entities
 
-import model.common.DefaultValues.{basicZombieDefaultLife, fastZombieDefaultLife, warriorZombieDefaultLife, zombieSpawnPosition}
+import model.common.DefaultValues.{basicZombieDefaultLife, fastZombieDefaultLife, warriorZombieDefaultLife, generateZombieSpawnPosition}
 import model.entities.TroopState.*
 import model.entities.WorldSpace.{LanesLength, NumOfLanes, Position}
 
@@ -46,7 +46,7 @@ trait Zombie(override val position: Position,
  * @param life the life that the zombie currently has.
  * @param state the state of the zombie.
  */
-case class BasicZombie(override val position: Position = zombieSpawnPosition,
+case class BasicZombie(override val position: Position = generateZombieSpawnPosition,
                        override val life: Int = basicZombieDefaultLife,
                        override val state: TroopState = Moving) extends Zombie(position, life, state):
   override val velocity: Float = -0.01
@@ -62,7 +62,7 @@ case class BasicZombie(override val position: Position = zombieSpawnPosition,
  * @param life the life that the zombie currently has.
  * @param state the state of the zombie.
  */
-case class FastZombie(override val position: Position = zombieSpawnPosition,
+case class FastZombie(override val position: Position = generateZombieSpawnPosition,
                       override val life: Int = fastZombieDefaultLife,
                       override val state: TroopState = Moving) extends Zombie(position, life, state):
   override val velocity: Float = -0.02
@@ -79,7 +79,7 @@ case class FastZombie(override val position: Position = zombieSpawnPosition,
  * @param life the life that the zombie currently has.
  * @param state the state of the zombie.
  */
-case class WarriorZombie(override val position: Position = zombieSpawnPosition,
+case class WarriorZombie(override val position: Position = generateZombieSpawnPosition,
                          override val life: Int = warriorZombieDefaultLife,
                          override val state: TroopState = Moving) extends Zombie(position, life, state):
   override val velocity: Float = -0.005

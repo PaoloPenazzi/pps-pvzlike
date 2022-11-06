@@ -1,10 +1,12 @@
 package model.waves
 
+import alice.tuprolog.SolveInfo
 import model.entities.WorldSpace.*
 import model.entities.{BasicZombie, FastZombie, WarriorZombie, Zombie}
 import model.waves.Generator.WaveImpl
+import model.waves.PrologWaveManager.PrologEngine.PrologEngine
+import model.waves.PrologWaveManager.{PrologSolution, PrologTheory, WaveTerm}
 import model.waves.{Wave, WaveGenerator}
-
 
 import scala.annotation.tailrec
 import scala.util.Random
@@ -27,9 +29,20 @@ trait Wave:
  * A generator of waves. It's not possible to specify the wave number.
  */
 trait WaveGenerator:
-  def resetWaves(): Unit
   /**
-   * @return The next [[Wave]]
+   * Reset the wave number.
+   */
+  def resetWaves(): Unit
+
+  /**
+   * Generates the next wave using Scala. Only [[BasicZombie]] are spawned.
+   * @return The next [[Wave]].
+   */
+  def generateNextBasicWave: Wave
+
+  /**
+   * Generates the next wave using Prolog. All types of zombies are spawned.
+   * @return The next [[Wave]].
    */
   def generateNextWave: Wave
 
@@ -40,10 +53,17 @@ object Generator:
 
   private case class WaveGeneratorImpl() extends WaveGenerator:
     private var waveNumber: Int = 0
+    val pathTheory = "prolog/waves.pl"
+    private val prolog: PrologEngine = PrologEngine(PrologTheory.getTheory(pathTheory))
 
     override def resetWaves(): Unit = waveNumber = 0
 
     override def generateNextWave: Wave =
+      waveNumber = waveNumber + 1
+      val enemies = prolog generateWave (waveNumber * 2 - 1)
+      WaveImpl(waveNumber, enemies)
+
+    override def generateNextBasicWave: Wave =
       waveNumber = waveNumber + 1
       val newEnemies = createEnemyList(2 * waveNumber - 1)(List.empty[Zombie])
       WaveImpl(waveNumber, newEnemies)

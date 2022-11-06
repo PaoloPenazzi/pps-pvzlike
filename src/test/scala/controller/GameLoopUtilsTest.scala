@@ -78,7 +78,7 @@ class GameLoopUtilsTest extends AnyWordSpec with Matchers :
       }
 
       "update waves" in {
-        updateWave(GameStatistics(), List(BasicZombie())) shouldBe GameStatistics(List(BasicZombie()))
+        updateWave(GameStatistics(), List(zombie.entity.asInstanceOf[Zombie])) shouldBe GameStatistics(List(zombie.entity))
       }
 
       "update troop played" in {

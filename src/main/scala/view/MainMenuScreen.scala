@@ -4,30 +4,44 @@ import akka.actor.typed.ActorSystem
 import com.badlogic.gdx.ScreenAdapter
 import com.badlogic.gdx.utils.ScreenUtils
 import com.badlogic.gdx.Gdx
-import com.badlogic.gdx.graphics.{GL20, OrthographicCamera}
-import com.badlogic.gdx.graphics.g2d.BitmapFont
-import com.badlogic.gdx.scenes.scene2d.Stage
-import controller.RootActor
+import com.badlogic.gdx.Input.Buttons
+import com.badlogic.gdx.graphics.{Color, GL20, OrthographicCamera, Texture}
+import com.badlogic.gdx.scenes.scene2d.actions.Actions
+import com.badlogic.gdx.scenes.scene2d.{InputEvent, Stage}
+import view.ViewportSpace.{HUDHeight, ViewportHeight, ViewportWidth}
+import ScalaGDX.*
+import ScalaGDX.given
+import com.badlogic.gdx.graphics.g2d.SpriteBatch
+
+import scala.language.implicitConversions
 
 object MainMenuScreen:
   def apply() = new MainMenuScreen()
 
   class MainMenuScreen() extends ScreenAdapter:
-    private lazy val camera: OrthographicCamera = OrthographicCamera()
-
+    private val camera = Game.viewport.getCamera
+    private lazy val stage = new Stage(Game.viewport)
+    private lazy val background: Texture = Texture(Gdx.files.classpath("assets/background/mainmenu.png"))
+    lazy val batch: SpriteBatch = SpriteBatch()
     override def render(delta: Float): Unit =
-      ScreenUtils.clear(0, 0, 0.2f, 1)
+      batch.setProjectionMatrix(camera.combined)
       Gdx.gl.glClearColor(0, 0, 0, 1)
       Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
-      camera.update()
-      Game.batch.setProjectionMatrix(camera.combined)
-      Game.batch.begin()
-      Game.font.draw(Game.batch, "Welcome to Plant vs Zombie!!! ", 100, 150)
-      Game.font.draw(Game.batch, "Tap anywhere to begin!", 100, 100)
-      Game.batch.end()
-      if Gdx.input.isTouched() then
-        Game.startNewGame()
-        dispose()
+      batch.begin()
+      batch.draw(background, 0, 0, ViewportWidth, ViewportHeight)
+      batch.end()
+      stage.draw()
+      stage.act(delta)
 
     override def show(): Unit =
-      camera.setToOrtho(false, 800, 480)
+      stage.clear()
+      Gdx.input.setInputProcessor(stage)
+      stage.onTouchDown(_ =>
+        dispose()
+        Game.startNewGame()
+      )
+
+    override def resize(width: Int, height: Int): Unit =
+      Game.viewport.update(width, height)
+      camera.position.set(camera.viewportWidth / 2, camera.viewportHeight / 2, 0)
+      camera.update()
