@@ -1,6 +1,6 @@
 package model.entities
 
-import model.common.DefaultValues.{basicZombieDefaultLife, fastZombieDefaultLife, warriorZombieDefaultLife, generateZombieSpawnPosition}
+import model.common.DefaultValues.{basicZombieDefaultLife, bullets, fastZombieDefaultLife, generateZombieSpawnPosition, warriorZombieDefaultLife}
 import model.entities.TroopState.*
 import model.entities.WorldSpace.{LanesLength, NumOfLanes, Position}
 
