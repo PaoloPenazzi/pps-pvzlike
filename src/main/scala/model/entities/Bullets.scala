@@ -1,6 +1,6 @@
 package model.entities
 
-import BulletDefaultValues
+import BulletDefaultValues.*
 import model.entities.WorldSpace.{Position, given}
 
 import scala.concurrent.duration.FiniteDuration
