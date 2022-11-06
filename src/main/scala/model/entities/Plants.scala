@@ -57,7 +57,7 @@ case class PeaShooter(override val position: Position = (0, 0),
 
   override def withPosition(pos: Position): Troop = copy(position = pos)
 
-  override def withLife(HealthPoints: Int): Troop = copy(life = HealthPoints)
+  override def withLife(healthPoints: Int): Troop = copy(life = healthPoints)
 
   override def withState(newState: TroopState): Troop = copy(state = newState)
 
@@ -75,7 +75,7 @@ case class Wallnut(override val position: Position = (0, 0),
 
   override def withPosition(pos: Position): Troop = copy(position = pos)
 
-  override def withLife(HealthPoints: Int): Troop = copy(life = HealthPoints)
+  override def withLife(healthPoints: Int): Troop = copy(life = healthPoints)
 
   override def withState(newState: TroopState): Troop = copy(state = newState)
 
@@ -95,7 +95,7 @@ case class CherryBomb(override val position: Position = (0, 0),
 
   override def withPosition(pos: Position): Troop = copy(position = pos)
 
-  override def withLife(HealthPoints: Int): Troop = copy(life = HealthPoints)
+  override def withLife(healthPoints: Int): Troop = copy(life = healthPoints)
 
   override def withState(newState: TroopState): Troop = copy(state = newState)
 

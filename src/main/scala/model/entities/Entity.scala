@@ -17,6 +17,9 @@ trait Entity:
    */
   type UpdatedEntity <: Entity
 
+  /**
+   * @return the width of the [[Entity]].
+   */
   def width: Float = EntityDefaultValues.width(this)
 
   /**
@@ -96,10 +99,10 @@ trait Troop extends Entity with AttackingAbility :
   def withState(newState: TroopState): Troop
 
   /**
-   * @param HealthPoints The new life of the [[Troop]].
+   * @param healthPoints The new life of the [[Troop]].
    * @return The same [[Troop]] with the life updated.
    */
-  def withLife(HealthPoints: Int): Troop
+  def withLife(healthPoints: Int): Troop
 
   /**
    * @param pos The new position of the [[Troop]].
