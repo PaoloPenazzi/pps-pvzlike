@@ -35,6 +35,8 @@ trait Zombie(override val position: Position,
       case Attacking => this withState nextState
       case _ => this
 
+  override def bullet: ZombieBullet
+
   private def updatePosition(elapsedTime: FiniteDuration): Position =
     (position.y, position.x + (elapsedTime.length * velocity))
 
@@ -50,7 +52,7 @@ case class BasicZombie(override val position: Position = generateZombieSpawnPosi
                        override val life: Int = basicZombieDefaultLife,
                        override val state: TroopState = Moving) extends Zombie(position, life, state):
   override val velocity: Float = -0.01
-  override def bullet: Bullet = PawBullet(position)
+  override def bullet: ZombieBullet = PawBullet(position)
   override def withPosition(pos: Position): Troop = copy(position = pos)
   override def withLife(healthPoints: Int): Troop = copy(life = healthPoints)
   override def withState(newState: TroopState): Troop = copy(state = newState)
@@ -66,7 +68,7 @@ case class FastZombie(override val position: Position = generateZombieSpawnPosit
                       override val life: Int = fastZombieDefaultLife,
                       override val state: TroopState = Moving) extends Zombie(position, life, state):
   override val velocity: Float = -0.02
-  override def bullet: Bullet = PawBullet(position)
+  override def bullet: ZombieBullet = PawBullet(position)
   override def withPosition(pos: Position): Troop = copy(position = pos)
   override def withLife(healthPoints: Int): Troop = copy(life = healthPoints)
   override def withState(newState: TroopState): Troop = copy(state = newState)
@@ -83,7 +85,7 @@ case class WarriorZombie(override val position: Position = generateZombieSpawnPo
                          override val life: Int = warriorZombieDefaultLife,
                          override val state: TroopState = Moving) extends Zombie(position, life, state):
   override val velocity: Float = -0.005
-  override def bullet: Bullet = SwordBullet(position)
+  override def bullet: ZombieBullet = SwordBullet(position)
   override def withPosition(pos: Position): Troop = copy(position = pos)
   override def withLife(healthPoints: Int): Troop = copy(life = healthPoints)
   override def withState(newState: TroopState): Troop = copy(state = newState)
