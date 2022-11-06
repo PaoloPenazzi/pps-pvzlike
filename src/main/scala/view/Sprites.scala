@@ -1,6 +1,5 @@
 package view
 
-import model.common.DefaultValues
 import model.entities.*
 import model.entities.WorldSpace.LanesLength
 import view.ViewportSpace.gridWidth
@@ -10,8 +9,8 @@ object Sprites {
     case _: PeaShooter => "peashooter.png"
     case wallnut: Wallnut => 
       wallnut.life match
-        case n if n >= DefaultValues.wallnutDefaultLife / 3 * 2 => "wallnut.png"
-        case n if n >= DefaultValues.wallnutDefaultLife / 3 => "wallnut_hit.png"
+        case n if n >= PlantDefaultValues.wallnutDefaultLife / 3 * 2 => "wallnut.png"
+        case n if n >= PlantDefaultValues.wallnutDefaultLife / 3 => "wallnut_hit.png"
         case _ => "wallnut_crack.png"
     case _: PeaBullet => "peabullet.png"
     case _: PawBullet => "paw.png"
