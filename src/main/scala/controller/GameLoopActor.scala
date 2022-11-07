@@ -62,7 +62,6 @@ object GameLoopActor:
             case ChangeGameSpeed(velocity) => GameLoopActor(viewActor, entities, metaData >>> velocity, stats)
 
             case UpdateLoop() =>
-              println(stats)
               checkCollision(entities, ctx)
               val newWave = if isWaveOver(entities) then createWave(ctx)
                             else List.empty
