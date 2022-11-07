@@ -22,7 +22,7 @@ trait Plant extends Troop :
 
   override def bullet: Bullet = PlantDefaultValues.bullets(this) withPosition pointOfShoot
 
-  override def pointOfShoot: Position = position
+  def pointOfShoot: Position = position
 
   override def isInterestedIn: Entity => Boolean =
     case enemy: Zombie => isInMyLane(enemy) && isInRange(enemy) && isNotBehindMe(enemy)
@@ -36,8 +36,6 @@ trait Plant extends Troop :
     state match
       case Idle | Attacking => if interests.isEmpty then this withState Idle else this withState Attacking
       case _ => this
-
-  protected def pointOfShoot: Position = position
 
   protected def isInRange(entity: Entity): Boolean = entity.position.x < position.x + range
 
@@ -147,4 +145,3 @@ object PlantDefaultValues:
     case _: Wallnut => 50
     case _: CherryBomb => 150
     case _ => 1000
->>>>>>> main

@@ -62,10 +62,6 @@ trait MovingAbility extends Entity :
  * Add the ability to attack to an [[Entity]].
  */
 trait AttackingAbility extends Entity :
-  /**
-   * @return The position in which the bullet should be spawned.
-   */
-  def pointOfShoot: Position
 
   /**
    * @return The [[Bullet]] that the [[Entity]] shoots.
@@ -128,25 +124,9 @@ object Troops:
      */
     def build: T
 
-  trait ShooterBuilder[B <: Bullet]:
-    def build: Troop
-  given ShooterBuilder[PeaBullet]  with
-    override def build: Troop = Shooter[PeaBullet](PeaBullet(0,0))
-  given ShooterBuilder[SnowBullet] with
-    override def build: Troop = Shooter[SnowBullet](SnowBullet(0,0))
   /**
    * Given instances to create [[Troop]] depending on the type.
    */
-<<<<<<< HEAD
-  /*given TroopBuilder[PeaShooter] with
-    override def build: PeaShooter = PeaShooter()*/
-  /*given TroopBuilder[Shooter[PeaBullet]] with
-    override def build: Shooter[PeaBullet] = Shooter()
-  given TroopBuilder[Shooter[SnowBullet]] with
-    override def build: Shooter[SnowBullet] = Shooter()*/
-  given TroopBuilder[Zombie] with
-    override def build: Zombie = Zombie()
-=======
   given TroopBuilder[PeaShooter] with
     override def build: PeaShooter = PeaShooter()
 
@@ -159,7 +139,6 @@ object Troops:
   given TroopBuilder[WarriorZombie] with
     override def build: WarriorZombie = WarriorZombie()
 
->>>>>>> main
   given TroopBuilder[Wallnut] with
     override def build: Wallnut = Wallnut()
 
@@ -173,8 +152,6 @@ object Troops:
    * @tparam T The [[Troop]] type.
    * @return The [[Troop]] of the specified type with position (0,0).
    */
-  def thatShoot[B <: Bullet](using shooterBuilder: ShooterBuilder[B]): Troop =
-    shooterBuilder.build
   def ofType[T <: Troop](using troopBuilder: TroopBuilder[T]): T =
     troopBuilder.build
 
