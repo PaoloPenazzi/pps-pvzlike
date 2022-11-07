@@ -2,6 +2,7 @@ package model.entities
 
 import BulletDefaultValues.*
 import model.entities.WorldSpace.{Position, given}
+import model.entities.ZombieDefaultValues.slowVelocities
 
 import scala.concurrent.duration.FiniteDuration
 import scala.language.implicitConversions
@@ -67,7 +68,8 @@ case class PeaBullet(override val position: Position = defaultBulletPosition) ex
 
 case class SnowBullet(override val position: Position = defaultBulletPosition) extends PlantBullet :
   override def applyDamage(troop: Troop): Troop =
-    super.applyDamage(troop)
+    troop match
+      case z: Zombie => super.applyDamage(z.withVelocity(slowVelocities(z)))
   override def withPosition(pos: Position): SnowBullet = copy(position = pos)
 
 /**
