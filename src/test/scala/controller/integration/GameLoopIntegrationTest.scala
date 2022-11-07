@@ -15,58 +15,46 @@ import org.scalatest.wordspec.AnyWordSpec
 
 class GameLoopIntegrationTest extends AnyWordSpec with BeforeAndAfter with Matchers :
 
-  var viewActor: TestInbox[ViewMessage] = _
-  var seedActor: TestInbox[ModelMessage] = _
-  var zombieActor: TestInbox[ModelMessage] = _
-  var plantActor: TestInbox[ModelMessage] = _
+  case class MockSystem(viewActor: TestInbox[ViewMessage] = TestInbox[ViewMessage]("view"),
+                        seedActor: TestInbox[ModelMessage] = TestInbox[ModelMessage]("seed"),
+                        zombieActor: TestInbox[ModelMessage] = TestInbox[ModelMessage]("zombie"),
+                        plantActor: TestInbox[ModelMessage] = TestInbox[ModelMessage]("plant")):
+    val bullet: (ActorRef[ModelMessage], PeaBullet) = (seedActor.ref, PeaBullet((1, LanesLength)))
+    val zombie: (ActorRef[ModelMessage], BasicZombie) = (zombieActor.ref, BasicZombie((1, LanesLength)))
+    val shooter: (ActorRef[ModelMessage], PeaShooter) = (plantActor.ref, PeaShooter((1, LanesLength / 2)))
+    val entities: Seq[(ActorRef[ModelMessage], Entity)] = List(bullet, zombie, shooter)
+    val gameLoopActor: BehaviorTestKit[Command] = BehaviorTestKit(GameLoopActor(viewActor.ref, List(bullet, zombie, shooter)))
 
-  var bullet: (ActorRef[ModelMessage], PeaBullet) = _
-  var zombie: (ActorRef[ModelMessage], Zombie) = _
-  var shooter: (ActorRef[ModelMessage], PeaShooter) = _
-
-  var entities: Seq[(ActorRef[ModelMessage], Entity)] = _
-  var gameLoopActor: BehaviorTestKit[Command] = _
-
-  before {
-    viewActor = TestInbox[ViewMessage]("view")
-    seedActor = TestInbox[ModelMessage]("seed")
-    zombieActor = TestInbox[ModelMessage]("zombie")
-    plantActor = TestInbox[ModelMessage]("plant")
-
-    bullet = (seedActor.ref, PeaBullet((1, LanesLength)))
-    zombie = (zombieActor.ref, Zombie((1, LanesLength)))
-    shooter = (plantActor.ref, PeaShooter((1, LanesLength / 2)))
-
-    entities = List(bullet, zombie, shooter)
-    gameLoopActor = BehaviorTestKit(GameLoopActor(viewActor.ref, List(bullet, zombie, shooter)))
-  }
 
   "GameController" when {
     "communicate correctly" should {
 
       "interact with actors" when {
         "updating" in {
-          gameLoopActor run UpdateLoop()
-          seedActor expectMessage Collision(zombie._2, gameLoopActor.ref)
-          zombieActor expectMessage Collision(bullet._2, gameLoopActor.ref)
+          val mockSystem = MockSystem()
+          mockSystem.gameLoopActor run UpdateLoop()
+          mockSystem.seedActor expectMessage Collision(mockSystem.zombie._2, mockSystem.gameLoopActor.ref)
+          mockSystem.zombieActor expectMessage Collision(mockSystem.bullet._2, mockSystem.gameLoopActor.ref)
         }
       }
 
       "interact with bullet actors" when{
         "find a collisions" in {
-          gameLoopActor run UpdateLoop()
-          seedActor.receiveMessage()
-          seedActor expectMessage Update(Velocity.Normal.speed, List(), gameLoopActor.ref)
-          zombieActor.receiveMessage()
-          zombieActor expectMessage Update(Velocity.Normal.speed, List(), gameLoopActor.ref)
-          plantActor expectMessage Update(Velocity.Normal.speed, List(zombie._2), gameLoopActor.ref)
+          val mockSystem = MockSystem()
+          mockSystem.gameLoopActor run UpdateLoop()
+          mockSystem.seedActor.receiveMessage()
+          mockSystem.seedActor expectMessage Update(Velocity.Normal.speed, List(), mockSystem.gameLoopActor.ref)
+          mockSystem.zombieActor.receiveMessage()
+          mockSystem.zombieActor expectMessage Update(Velocity.Normal.speed, List(), mockSystem.gameLoopActor.ref)
+          mockSystem.plantActor expectMessage Update(Velocity.Normal.speed, List(mockSystem.zombie._2), mockSystem.gameLoopActor.ref)
         }
       }
 
       "interact with the view" when {
         "an entity is updated" in {
-          gameLoopActor run EntityUpdated(seedActor.ref, bullet._2)
-          viewActor expectMessage Render(entities.map(_._2).toList, gameLoopActor.ref, MetaData())
+          val mockSystem = MockSystem()
+          mockSystem.gameLoopActor run EntityUpdated(mockSystem.seedActor.ref, mockSystem.bullet._2)
+          mockSystem.viewActor expectMessage Render(mockSystem.entities.map(_._2).toList, mockSystem.gameLoopActor.ref, MetaData())
         }
       }
       }

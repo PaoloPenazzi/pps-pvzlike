@@ -3,7 +3,7 @@ package model.entities
 import model.common.DefaultValues
 import model.common.DefaultValues.*
 import model.entities.TroopState.{Attacking, Dead, Idle}
-import model.entities.WorldSpace.{Position, given}
+import model.entities.WorldSpace.{CellLength, Position, given}
 
 import scala.language.implicitConversions
 import scala.concurrent.duration.FiniteDuration
@@ -16,8 +16,11 @@ trait Entity:
    * The type that the [[update()]] method of an [[Entity]] should return.
    */
   type UpdatedEntity <: Entity
-  
-  def width: Int = DefaultValues.width(this)
+
+  /**
+   * @return the width of the [[Entity]].
+   */
+  def width: Float = EntityDefaultValues.width(this)
 
   /**
    * @return The current position of the [[Entity]].
@@ -25,14 +28,22 @@ trait Entity:
   def position: Position
 
   /**
+   * @param pos The new position of the [[Entity]].
+   * @return The same [[Entity]] with the position updated.
+   */
+  def withPosition(pos: Position): UpdatedEntity
+
+
+  /**
    * @param elapsedTime The time elapsed from the last update.
-   * @param interest The list of [[Entity]] with whom it interacts.
+   * @param interest    The list of [[Entity]] with whom it interacts.
    * @return The updated [[Entity]].
    */
   def update(elapsedTime: FiniteDuration, interest: List[Entity]): UpdatedEntity
 
   /**
    * The predicate used to filter which [[Entity]] is interested to
+   *
    * @return True if it is interested to the [[Entity]], false otherwise.
    */
   def isInterestedIn: Entity => Boolean = _ => false
@@ -40,18 +51,17 @@ trait Entity:
 /**
  * Add the ability to move to an [[Entity]].
  */
-trait MovingAbility extends Entity:
+trait MovingAbility extends Entity :
   /**
    * @return The velocity of the [[Entity]].
    */
   def velocity: Float
 
-  
 
 /**
  * Add the ability to attack to an [[Entity]].
  */
-trait AttackingAbility extends Entity:
+trait AttackingAbility extends Entity :
   /**
    * @return The position in which the bullet should be spawned.
    */
@@ -65,17 +75,17 @@ trait AttackingAbility extends Entity:
   /**
    * @return The rate of fire of the [[Entity]].
    */
-  def fireRate: Int = fireRates(this)
+  def fireRate: Int = EntityDefaultValues.fireRates(this)
 
   /**
    * @return the sighting range of the [[Entity]].
    */
-  def range: Int = ranges(this)
+  def range: Int = EntityDefaultValues.ranges(this)
 
 /**
- * A troop is an [[Entity]] that is either a [[Zombie]] or a [[Plant]].
+ * A troop is an [[Entity]] that is either a [[BasicZombie]] or a [[Plant]].
  */
-trait Troop extends Entity with AttackingAbility:
+trait Troop extends Entity with AttackingAbility :
   override type UpdatedEntity = Troop
 
   /**
@@ -101,20 +111,15 @@ trait Troop extends Entity with AttackingAbility:
   def withState(newState: TroopState): Troop
 
   /**
-   * @param HealthPoints The new life of the [[Troop]].
+   * @param healthPoints The new life of the [[Troop]].
    * @return The same [[Troop]] with the life updated.
    */
-  def withLife(HealthPoints: Int): Troop
-
-  /**
-   * @param pos The new position of the [[Troop]].
-   * @return The same [[Troop]] with the position updated.
-   */
-  def withPosition(pos: Position): Troop
+  def withLife(healthPoints: Int): Troop
 
 object Troops:
   /**
    * A builder used to create [[Troop]].
+   *
    * @tparam T The type of the [[Troop]].
    */
   trait TroopBuilder[T <: Troop]:
@@ -130,8 +135,9 @@ object Troops:
   given ShooterBuilder[SnowBullet] with
     override def build: Troop = Shooter[SnowBullet](SnowBullet(0,0))
   /**
-   * A given instance to create [[Troop]] depending on the type.
+   * Given instances to create [[Troop]] depending on the type.
    */
+<<<<<<< HEAD
   /*given TroopBuilder[PeaShooter] with
     override def build: PeaShooter = PeaShooter()*/
   /*given TroopBuilder[Shooter[PeaBullet]] with
@@ -140,8 +146,25 @@ object Troops:
     override def build: Shooter[SnowBullet] = Shooter()*/
   given TroopBuilder[Zombie] with
     override def build: Zombie = Zombie()
+=======
+  given TroopBuilder[PeaShooter] with
+    override def build: PeaShooter = PeaShooter()
+
+  given TroopBuilder[BasicZombie] with
+    override def build: BasicZombie = BasicZombie()
+
+  given TroopBuilder[FastZombie] with
+    override def build: FastZombie = FastZombie()
+
+  given TroopBuilder[WarriorZombie] with
+    override def build: WarriorZombie = WarriorZombie()
+
+>>>>>>> main
   given TroopBuilder[Wallnut] with
     override def build: Wallnut = Wallnut()
+
+  given TroopBuilder[CherryBomb] with
+    override def build: CherryBomb = CherryBomb()
 
   /**
    * A DSL method to create [[Troop]].
@@ -179,6 +202,37 @@ enum TroopState:
    */
   case Dead
 
+/**
+ * This object contains the default values for each type of [[Entity]].
+ */
+object EntityDefaultValues:
+  /**
+   * Given an [[Entity]] with [[AttackingAbility]], it returns the fireRate of the entity.
+   */
+  val fireRates: AttackingAbility => Int =
+    case _: PeaShooter => 2
+    case _: CherryBomb => 1
+    case _: BasicZombie => 3
+    case _: FastZombie => 2
+    case _: WarriorZombie => 4
+    case _ => 0
 
+  /**
+   * Given an [[Entity]] with [[AttackingAbility]], it returns the range of the entity.
+   */
+  val ranges: AttackingAbility => Int =
+    case _: PeaShooter => 80
+    case _: CherryBomb => 1000
+    case _: BasicZombie => 10
+    case _: FastZombie => 15
+    case _: WarriorZombie => 10
+    case _ => 0
 
-
+  /**
+   * Given an [[Entity]] it returns its width.
+   */
+  val width: Entity => Float =
+    case _: CherryBullet => CellLength * 2
+    case _: Troop => CellLength / 1.5.toFloat
+    case _: Bullet => CellLength / 4
+    case _ => 0

@@ -1,0 +1,97 @@
+\section{Processo di sviluppo}
+\label{sec:development}
+Il processo di sviluppo adottato dal team è ispirato a Scrum: sarà basato su \textbf{sprint} e \textbf{obiettivi}
+per realizzare il progetto in maniera \textbf{agile}.
+All'interno del team sono stati scelti un \textit{committente} e un \textit{product owner}.
+Il team effettua sprint della durata di circa due settimane, durante i quali si definiscono gli obiettivi e si suddividono i compiti.
+Di seguito, si discutono gli elementi fondamentali del processo di sviluppo adottato.
+
+\subsection{Meeting}
+I meeting sono un fattore fondamentale per il processo di sviluppo e avvengono con cadenza quasi giornaliera
+e con durate differenti in base all'importanza dello stesso. Vista la distanza tra i membri del
+team (due in Svezia e due in Italia) la maggior parte degli incontri è avvenuto a distanza,
+utilizzando *Microsoft Teams* come piattaforma principale.
+
+\subsection{Modalità di divisione in itinere dei task}
+
+\subsubsection{Definition of Done}
+Una funzionalità di gioco viene definita completata quando, a seguito di una revisione da parte
+di un altro componente del team, viene pubblicata sul \textit{branch} principale. Questa revisione può essere avvenuta
+tramite \textit{pair-programming} oppure il meccanismo di \textit{pull-request}.
+
+\subsubsection{Coordinazione}
+La comunicazione è fondamentale per un processo di sviluppo agile, anche se i membri del team si conoscono a fondo.
+Per coordinarsi al meglio, il team ha deciso di utilizzare \textbf{Trello},
+con il quale vengono tracciati i task dei singoli membri con il rispettivo andamento,
+individuando un flusso di lavoro all'interno di ogni sprint organizzativo.
+Inoltre, il \textit{product owner} del team ha redatto un \textit{product backlog} nel
+quale si è tenuto traccia dei task portati a termine da ciascun membro del gruppo, indicando
+per ciascuno il costo in termini di tempo e difficoltà di progettazione e/o implementazione.
+
+\subsubsection{Meeting iniziale}
+Prima della proposta del progetto, è avvenuto un incontro all'interno del quale sono stati decisi i seguenti fattori essenziali:
+\begin{itemize}
+    \item \textbf{Ruoli}: colui che ha proposto il progetto è stato eletto committente, mentre è stato scelto product owner il membro con più esperienza in Scrum.
+    \item \textbf{Specifiche}: sono stati decisi gli obiettivi funzionali, facendo attenzione alla loro fattibilità.
+    \item \textbf{Primo Sprint}: è stata decisa l'organizzazione del primo sprint, definendo l'obiettivo finale e suddividendo dei *task* tra i componenti del gruppo.
+\end{itemize}
+La durata del primo meeting è stata di circa 2 ore.
+
+\subsubsection{Sprint Planning}
+All'inizio di ogni sprint viene effettuato un incontro all'interno del quale si discutono i
+risultati dello sprint precedente e si definiscono gli obiettivi di quello successivo.
+I principali punti sui cui ci si focalizza sono i seguenti:
+\begin{itemize}
+    \item Definizione degli obiettivi.
+    \item Definizione ed assegnazione dei task.
+    \item Valutazione dell'andamento complessivo del progetto, rimarcando eventuali ritardi.
+    \item Valutazione dello sprint precedente.
+\end{itemize}
+
+La durata ideale degli sprint planning è fissata a 2 ore.
+
+\subsubsection{Divisione dei compiti}
+L'effettiva divisione dei compiti, da eseguire nello sprint successivo all'interno del team, viene fatta
+contestualmente alla chiusura dello sprint precedente. La suddivisione dei compiti terrà conto del carico di lavoro, degli
+impegni del singolo componente e dell'eventuale lavoro incompiuto dallo sprint precedente.
+
+\subsection{Modalità di revisione in itinere dei task}
+
+\subsubsection{Ridistribuzione del carico lavorativo}
+All'interno dello sprint è previsto la ridistribuzione del lavoro. Infatti, se ci si accorge che il carico di lavoro
+di un task risulta essere diverso da quello previsto riteniamo possibile ridefinire i partecipanti al suddetto task.
+Questo bilanciamento dovrà avvenire al seguito di un \textit{Stand-up Meeting} e di una valutazione da parte dell'intero
+gruppo.
+
+\subsubsection{Stand-up Meeting}
+Con cadenza quasi giornaliera, il team effettua degli incontri in cui ognuno dei membri
+espone il lavoro portato a termine, dichiarando eventuali difficoltà.
+La durata ideale degli stand-up meeting è fissata a 10/15 minuti.
+
+\subsection{Tool Ausiliari}
+A supporto del processo agile, il team si impone di utilizzare strumenti con lo scopo di migliorare
+l’efficienza e di consentire al gruppo di concentrarsi maggiormente sul processo di sviluppo.
+
+\subsubsection{Automazione}
+Sono stati adoperati i seguenti processi:
+\begin{itemize}
+    \item \textbf{Test Driven Development} - scrivere in anticipo dei test per il proprio codice,
+    permette di intercettare eventuali errori che insorgono durante l'integrazione del lavoro reciproco.
+    \item \textbf{Continuous Integration} - per verificare la compatibilità e la correttezza del software prodotto
+    viene sfruttata la funzionalità \textbf{GitHub Actions}, definendo all'inizio del processo di sviluppo un
+    preciso workflow che assicura la corretta manutenzione del progetto.
+    \item \textbf{Continuous Delivery} - per evitare di produrre manualmente gli \textit{artifacts}
+    alla fine di ogni Sprint, è stato individuato un workflow adatto che permettesse di creare delle
+    release automatiche ogni qual volta il branch \textit{release} di git venisse aggiornato.
+    \item \textbf{Automatic Dependecies Updates} - per mantenere aggiornate le dipendenze del codice sorgente, attraverso
+    delle pull request, verrà impiegato il bot \textbf{Renovate}.
+    \item \textbf{Code Quality Automation} - attraverso il tool \textbf{Sonarcloud} sarà possibile automatizzare la ricerca
+    di segnali di cattiva qualità del codice quali \textit{code repetition}, \textit{bugs} e \textit{vulnerabilità}.
+\end{itemize}
+
+\subsubsection{Versioning}
+Per gestire in maniera ottimale il codice prodotto, si è deciso di impiegare \textbf{Git} già sperimentato da tutti i
+componenti del gruppo. Allo stato attuale, il gruppo non ha intenzione di adottare la specifica del Semantic Versioning.
+Si ritiene però opportuno l'adozione dei \textit{Conventional Commits} per due motivi: i singoli commit saranno più chiari
+e in futuro si potrebbe decidere di impiegare il Semantic Versioning.
+

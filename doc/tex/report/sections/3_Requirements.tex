@@ -1,0 +1,83 @@
+\section{Requisiti}
+
+\subsection{Business}
+Il sistema dovrà emulare il gioco Plants Vs Zombies.
+Sono stati individuati i seguenti requisiti di business:
+\begin{itemize}
+    \item Il gioco dovrà avere un menù di inizio e fine partita.
+    \item Sarà possibile giocare una partita intera ad un clone di Plant Vs Zombies.
+    \item Visualizzazione della mappa di gioco e possibilità di interazione con essa.
+\end{itemize}
+
+\subsection{Funzionali}
+Il gioco si compone di un insieme di entità e regole, per quanto riguarda gli elementi della partita:
+\begin{itemize}
+    \item Le entità in gioco possono essere di tre tipi:
+    \begin{enumerate}
+        \item Zombie
+        \item Piante
+        \item Bullet
+    \end{enumerate}
+    \item Il campo da gioco deve essere composto da più corsie.
+    \item Il gioco sarà composto da tre schermate: menù iniziale, schermata di gioco e menù finale.
+    \item I nemici avanzeranno lungo le corsie da destra verso sinistra.
+    \item Ogni Troop deve avere un campo visivo.
+    \item Gli Zombie saranno organizzati ad Wave.
+    \item Le Wave contengono una serie di Zombie, il cui numero e complessità aumenta con l'avanzare del gioco.
+    \item Quando uno Zombie si avvicina sufficientemente ad una Pianta, lo Zombie la attaccherà.
+    \item Quando un Zombie entra nel campo visivo di una Pianta, la Pianta lo attaccherà.
+    \item Se una Troop viene colpita, perderà vita.
+    \item Se una Troop rimane senza vita, morirà e verra rimossa dal campo di gioco.
+    \item Se uno Zombie raggiunge la fine della corsia, la partita termina.
+    \item Ogni Pianta avrà un costo di piazzamento.
+    \item Per piazzare una Pianta è necessario avere un numero di risorse maggiore o uguale al costo della Pianta. 
+    \item I tipi di Piante previsti sono:
+    \begin{enumerate}
+        \item Peashooter: spara Bullet che colpiscono il primo Zombie che incontrano.
+        \item Wallnut: è molto resistente, ma non può attaccare.
+        \item Cherrybomb: quando piazzata, genera un esplosione che danneggia tutte le Troop nelle vicinanze.
+    \end{enumerate}
+    \item I tipi di zombie previsti sono:
+    \begin{enumerate}
+        \item BasicZombie: quando in contra una pianta, la attacca.
+        \item WarriorZombie: ha molta vita e attacchi potenti, ma è più lento.
+        \item FastZombie: è molto veloce.
+    \end{enumerate}
+    \item I tipi di Bullet previsti sono:
+    \begin{enumerate}
+        \item Peabullet: il Bullet sparato dal Peashooter.
+        \item CherryBullet: il Bullet sparato dalla Cherrybomb.
+        \item PawBullet: il Bullet sparato dal BasicZombie e dal FastZombie.
+        \item SwordBullet: il Bullet sparato dal WarriorZombie.
+    \end{enumerate}
+\end{itemize}
+
+\subsubsection{Utente}
+L'utente deve poter:
+\begin{itemize}
+    \item Avviare una partita.
+    \item Piazzare le Piante nelle celle libere del campo da gioco.
+    \item Vedere le statistiche a fine partita e riavvare il gioco.
+\end{itemize}
+
+\subsubsection{Non Funzionali}
+I requisiti non funzionali individuati per il progetto sono:
+\begin{itemize}
+    \item Realizzazione di software estendibile e rivisitabile.
+    \item Realizzazione di un'esperienza di gioco godibile (usabilità, bilanciamento, qualità grafica).
+    \item Il gioco deve rimanere fluido per un numero ragionevole di ondate.
+\end{itemize}
+
+\subsection{Opzionali}
+\begin{enumerate}
+    \item Aumentare i tipi di Piante.
+    \item Aumentare i tipi di Zombie.
+    \item Aumentare i tipi di Bullet.
+    \item Implementazione di un meccanismo di gestione della difficoltà.
+    \item Inserire delle animazioni.
+    \item Inserire la possibilità di generare campi di gioco particolari.
+\end{enumerate}
+
+\subsection{Implementativi}
+Il gioco verrà sviluppato in Scala e dipenderà da alcuni framework aggiuntivi quali libGDX, Akka e TuProlog.
+Il software prodotto deve essere testato con ScalaTest per garantire la manutenzione, la qualità e la corretta integrazione del codice dei vari componenti del team.

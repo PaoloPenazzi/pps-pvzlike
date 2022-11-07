@@ -3,7 +3,8 @@ package model
 import akka.actor.typed.ActorRef
 import model.GameData.GameSeq.GameSeqBuilder
 import model.actors.ModelMessage
-import model.entities.{Bullet, Enemy, Entity, Plant}
+import model.entities.{Bullet, Zombie, Entity, PeaShooter, Plant}
+
 
 object GameData :
   

@@ -6,5 +6,5 @@ import akka.actor.typed.scaladsl.{ActorContext, Behaviors}
 trait Controller:
   def standardBehavior: Behavior[Command]
 
-trait PauseAbility extends Controller:
+trait PauseAbility:
   def pauseBehavior: Behavior[Command]

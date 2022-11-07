@@ -25,54 +25,49 @@ import scala.language.postfixOps
 
 class GameLoopBehaviorTest extends AnyWordSpec with BeforeAndAfter with Matchers :
 
-  var viewActor: TestInbox[ViewMessage] = _
-  var gameLoopActor: BehaviorTestKit[Command] = _
-  var updateTime: FiniteDuration = Velocity.Normal.speed
-  val resourcesTime: FiniteDuration = FiniteDuration(3, "seconds")
-
-  before {
-    viewActor = TestInbox[ViewMessage]()
-    gameLoopActor = BehaviorTestKit(GameLoopActor(viewActor.ref))
-  }
+  case class MockSystem(viewActor: TestInbox[ViewMessage] = TestInbox[ViewMessage](),
+                        updateTime: FiniteDuration = Velocity.Normal.speed,
+                        resourcesTime: FiniteDuration = FiniteDuration(6, "seconds")):
+    val gameLoopActor: BehaviorTestKit[Command] = BehaviorTestKit(GameLoopActor(viewActor.ref))
 
 
   "The GameLoop Actor" when {
     "created" should {
       "be alive" in {
-        gameLoopActor.isAlive must be(true)
+        val mockSystem = MockSystem()
+        mockSystem.gameLoopActor.isAlive must be(true)
       }
 
       "create a wave" in {
-        gameLoopActor run StartLoop()
-        val startTimerEffect = gameLoopActor.retrieveEffect()
-        val startWaveEffect = gameLoopActor.retrieveEffect()
+        val mockSystem = MockSystem()
+        mockSystem.gameLoopActor run StartLoop()
+        val startTimerEffect = mockSystem.gameLoopActor.retrieveEffect()
+        val startWaveEffect = mockSystem.gameLoopActor.retrieveEffect()
         startTimerEffect should not be Effect.NoEffects
         startWaveEffect should not be Effect.NoEffects
         startTimerEffect should not be startWaveEffect
       }
 
       "start the loop timer" in {
-        gameLoopActor run StartLoop()
-        gameLoopActor expectEffect Effect.TimerScheduled(UpdateLoop(), UpdateLoop(), updateTime, Effect.TimerScheduled.SingleMode, false)(null)
+        val mockSystem = MockSystem()
+        mockSystem.gameLoopActor run StartLoop()
+        mockSystem.gameLoopActor expectEffect Effect.TimerScheduled(UpdateLoop(), UpdateLoop(), mockSystem.updateTime, Effect.TimerScheduled.SingleMode, false)(null)
       }
 
       "start the resources timer" in {
-        gameLoopActor run StartLoop()
-        gameLoopActor.retrieveEffect()
-        gameLoopActor expectEffect Effect.TimerScheduled(UpdateResources(), UpdateResources(), resourcesTime, Effect.TimerScheduled.SingleMode, false)(null)
+        val mockSystem = MockSystem()
+        mockSystem.gameLoopActor run StartLoop()
+        mockSystem.gameLoopActor.retrieveEffect()
+        mockSystem.gameLoopActor expectEffect Effect.TimerScheduled(UpdateResources(), UpdateResources(), mockSystem.resourcesTime, Effect.TimerScheduled.SingleMode, false)(null)
       }
 
       "resume the loop" in {
-        gameLoopActor run PauseLoop()
-        val prevBehavior = gameLoopActor.currentBehavior
-        gameLoopActor run ResumeLoop()
-        val postBehavior = gameLoopActor.currentBehavior
+        val mockSystem = MockSystem()
+        mockSystem.gameLoopActor run PauseLoop()
+        val prevBehavior = mockSystem.gameLoopActor.currentBehavior
+        mockSystem.gameLoopActor run ResumeLoop()
+        val postBehavior = mockSystem.gameLoopActor.currentBehavior
         prevBehavior should not be postBehavior
-      }
-
-      "stop the loop" in {
-        gameLoopActor run StopLoop()
-        gameLoopActor.isAlive must be(false)
       }
     }
   }

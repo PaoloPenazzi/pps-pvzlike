@@ -4,14 +4,14 @@ import com.badlogic.gdx.math.{GridPoint2, Rectangle, Vector2}
 import model.entities.WorldSpace.*
 
 object ViewportSpace:
-  def ViewportWidth = 16
-  def ViewportHeight = 9
-  def HUDHeight = 2f
+  def ViewportWidth: Float = 16
+  def ViewportHeight: Float = 9
+  def HUDHeight: Float = 2
   def HUD: Rectangle = Rectangle(0, ViewportHeight - HUDHeight, ViewportWidth, HUDHeight)
-  def leftOffsetGrid = 1.4f
-  def rightOffsetGrid = 1.4f
-  def topOffsetGrid = 1
-  def bottomOffsetGrid = 0.4f
+  def leftOffsetGrid: Float = 1.4
+  def rightOffsetGrid: Float = 1.4
+  def topOffsetGrid: Float = 1
+  def bottomOffsetGrid: Float = 0.4
   def gridWidth: Float = ViewportWidth - leftOffsetGrid - rightOffsetGrid
   def gridHeight: Float = ViewportHeight - HUDHeight - bottomOffsetGrid - topOffsetGrid
   def grid: Rectangle = Rectangle(leftOffsetGrid, bottomOffsetGrid, gridWidth, gridHeight)
