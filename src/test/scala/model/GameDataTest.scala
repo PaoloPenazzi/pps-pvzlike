@@ -7,10 +7,12 @@ import model.GameData.{GameEntity, GameSeq}
 import model.actors.ModelMessage
 import model.entities.*
 import model.entities.WorldSpace.{LanesLength, Position}
+import model.entities.{BasicZombie, Bullet, Entity, PeaBullet, Plant, Troops, Zombie, Bullets}
 import org.scalatest.BeforeAndAfter
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
+import scala.language.implicitConversions
 
 class GameDataTest extends AnyFlatSpec with Matchers :
 
@@ -18,9 +20,9 @@ class GameDataTest extends AnyFlatSpec with Matchers :
   val zombieActor: TestInbox[ModelMessage] = TestInbox[ModelMessage]("zombie")
   val plantActor: TestInbox[ModelMessage] = TestInbox[ModelMessage]("plant")
 
-  val bullet: GameEntity[Entity] = GameEntity(seedActor.ref, PeaBullet(1, LanesLength))
-  val zombie: GameEntity[Entity] = GameEntity(zombieActor.ref, BasicZombie((1, LanesLength)))
-  val shooter: GameEntity[Entity] = GameEntity(plantActor.ref, PeaShooter(Position(1, LanesLength / 2)))
+  val bullet: GameEntity[Entity] = GameEntity(seedActor.ref, Bullets.ofType[PeaBullet] withPosition(1, LanesLength))
+  val zombie: GameEntity[Entity] = GameEntity(zombieActor.ref, Troops.ofType[BasicZombie] withPosition(1, LanesLength))
+  val shooter: GameEntity[Entity] = GameEntity(plantActor.ref, Troops.shooterOf[PeaBullet] withPosition(1, LanesLength / 2))
 
   val seq: GameSeq = GameSeq(List(bullet, zombie, shooter))
 

@@ -14,13 +14,13 @@ import scala.concurrent.duration.FiniteDuration
 class PlantModelTest extends AnyFlatSpec with should.Matchers:
   val testingLane = 1
   val otherLane = 2
-  val peashooter: Troop = Troops.ofType[PeaShooter] withPosition (testingLane, 10)
+  val peashooter: Troop = Troops.shooterOf[PeaBullet] withPosition (testingLane, 10)
   val wallnut: Troop = Troops.ofType[Wallnut] withPosition (testingLane, 10)
   val zombieInTheSameLane: Troop = Troops.ofType[BasicZombie] withPosition (testingLane, 50)
   val zombieOutOfRange: Troop = Troops.ofType[BasicZombie] withPosition (testingLane, 100)
-  val dummyPlant: Troop = Troops.ofType[PeaShooter] withPosition (otherLane, 50)
+  val dummyPlant: Troop = Troops.shooterOf[PeaBullet] withPosition (otherLane, 50)
   val dummyZombie: Troop = Troops.ofType[BasicZombie] withPosition (otherLane, 50)
-  val dummyBullet: Bullet = PawBullet(0,0)
+  val dummyBullet: Bullet = Bullets.ofType[PawBullet] withPosition (testingLane,0)
 
   "A Peashooter" should "be in Idle state if it can't attack any enemy" in {
     peashooter.update(FiniteDuration(16, "milliseconds"), List()).state shouldBe Idle

@@ -6,6 +6,7 @@ import org.scalatest.flatspec.*
 import org.scalatest.matchers.*
 import WorldSpace.{Position, given}
 
+import scala.language.implicitConversions
 import scala.concurrent.duration.FiniteDuration
 
 class BulletModelTest extends AnyFlatSpec with should.Matchers:

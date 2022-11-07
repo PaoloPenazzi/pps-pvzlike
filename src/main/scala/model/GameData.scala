@@ -3,7 +3,7 @@ package model
 import akka.actor.typed.ActorRef
 import model.GameData.GameSelector.GameSelectorBuilder
 import model.actors.ModelMessage
-import model.entities.{Bullet, Entity, PeaShooter, Plant, Troop, Zombie}
+import model.entities.{Bullet, Entity, Plant, Troop, Zombie}
 
 import scala.annotation.targetName
 
