@@ -3,6 +3,9 @@ package controller
 import akka.actor.typed.*
 import akka.actor.typed.scaladsl.*
 import controller.GameLoopActor.GameLoopCommands.{StartGame, UpdateLoop}
+import controller.GameLoopActor.GameLoopCommands.*
+import controller.GameLoopActor.GameLoopUtils.*
+import controller.GameLoopActor.GameLoopUtils.CollisionUtils.*
 import model.GameData
 import model.GameData.{GameEntity, GameSeq}
 import model.Statistics.GameStatistics
@@ -18,14 +21,13 @@ import scala.collection.mutable
 import scala.concurrent.duration.FiniteDuration
 import scala.language.{implicitConversions, postfixOps}
 
+/**
+ * It's the actor responsible of system's update and deals with the incoming input from the view.
+ * Send [[ModelMessage]] messages to the Model and [[ViewMessage]] messages to the View.
+ * */
 object GameLoopActor:
 
   val waveGenerator: WaveGenerator = Generator()
-
-  import GameLoopCommands.*
-  import GameLoopUtils.*
-  import GameLoopUtils.CollisionUtils.*
-
   def apply(
              viewActor: ActorRef[ViewMessage],
              entities: Seq[GameEntity[Entity]] = List.empty,
@@ -33,13 +35,27 @@ object GameLoopActor:
              stats: GameStatistics = GameStatistics()
            ): Behavior[Command] = GameLoop(viewActor, entities, metaData, stats).standardBehavior()
 
-  private case class GameLoop(
-                               viewActor: ActorRef[ViewMessage],
-                               entities: Seq[GameEntity[Entity]],
-                               metaData: MetaData,
-                               stats: GameStatistics
-                             ):
+  /**
+   * The GameLoop Actor: update the whole game by exploiting the reactivity of an actor.
+   * This actor sends a [[UpdateLoop]] message to itself with a determined delay
+   * that depends on the a specific [[Speed]].
+   *
+   * @param viewActor the reference of the View Actor.
+   * @param entities the entities in game in a specific moment.
+   * @param metaData the meta-data of the game.
+   * @param stats the statistic of the game.
+   */
+  case class GameLoop(
+                       viewActor: ActorRef[ViewMessage],
+                       entities: Seq[GameEntity[Entity]],
+                       metaData: MetaData,
+                       stats: GameStatistics
+                     ):
 
+    /** Provides the normal behavior of the GameLoop.
+     *
+     * @return a new updated GameLoop instance with a specific [[Behavior]].
+     */
     def standardBehavior(): Behavior[Command] =
       Behaviors.withTimers(timer =>
         Behaviors.receive((ctx, msg) => {
@@ -65,7 +81,7 @@ object GameLoopActor:
               checkCollision(entities, ctx)
               val newWave = if isWaveOver(entities) then createWave(ctx)
                             else List.empty
-              val newStats = if isWaveOver(entities) then updateRound(stats)
+              val newStats = if isWaveOver(entities) then updateRoundStats(stats)
                              else stats
               updateAll(ctx, metaData.velocity, detectInterest(entities))
               startTimer(timer, UpdateLoop())
@@ -83,15 +99,19 @@ object GameLoopActor:
                 case plant if canPlacePlant(plant, entities, metaData) =>
                   val newGameSeq = entities :+ GameEntity(ctx.spawnAnonymous(TroopActor(troop)), troop)
                   val newMetaData = metaData - troop.asInstanceOf[Plant].cost
-                  val newStats = updateEntity(stats, troop)
+                  val newStats = updateEntityStats(stats, troop)
                   GameLoopActor(viewActor, newGameSeq, newMetaData, newStats)
                 case _ => GameLoopActor(viewActor, entities, metaData, stats)
 
-            case EntityDead(ref, entity) => GameLoopActor(viewActor, entities :- ref, metaData, removeEntity(stats, entity))
+            case EntityDead(ref, entity) => GameLoopActor(viewActor, entities :- ref, metaData, entityDeadStats(stats, entity))
 
             case _ => Behaviors.same
         }))
 
+    /** Provides the pause behavior of the GameLoop.
+     *
+     * @return a new updated GameLoop instance with a specific [[Behavior]].
+     */
     def pauseBehavior(): Behavior[Command] =
       Behaviors.receive((ctx, msg) => {
         msg match
@@ -102,6 +122,9 @@ object GameLoopActor:
           case _ => Behaviors.same
       })
 
+  /**
+   * The messages that GameLoop can handle.
+   */
   object GameLoopCommands:
     trait Command
 
@@ -127,9 +150,19 @@ object GameLoopActor:
 
     case class PlacePlant(troop: Troop) extends Command
 
+  /**
+   * An utility object for the GameLoop.
+   */
   object GameLoopUtils:
     val resourceTimer: FiniteDuration = FiniteDuration(3, "seconds")
 
+    /**
+     * Starts a [[TimerScheduler]] and after [[time]] duration will send itself
+     * a specific [[msg]].
+     * @param timer the timer to start.
+     * @param msg the message to send.
+     * @param time the duration of the timer.
+     */
     def startTimer(
                     timer: TimerScheduler[Command],
                     msg: Command,
@@ -137,22 +170,47 @@ object GameLoopActor:
                   ): Unit =
       timer.startSingleTimer(msg, time)
 
+    /**
+     * Creates a new wave of [[Zombie]], for the next round.
+     * @param ctx the context where to spawn the zombies actors.
+     * @return a new wave (sequence) of zombies.
+     */
     def createWave(ctx: ActorContext[Command]): Seq[GameEntity[Entity]] =
       waveGenerator.generateNextWave.enemies.map(e => GameEntity(ctx.spawnAnonymous(TroopActor(e)), e))
 
-    def removeEntity(
-                      stats: GameStatistics,
-                      entity: Option[Entity]
-                    ): GameStatistics =
-      if entity.exists(_.isInstanceOf[Zombie]) then stats played entity.get else stats
+    /**
+     * Checks if the [[entity]] dead was a [[Zombie]]
+     * and, just in case it was, update the [[statistics]].
+     * @param stats the statistics to update.
+     * @param entity the entity removed from the game.
+     * @return the statistics possibly updated.
+     */
+    def entityDeadStats(
+                         stats: GameStatistics,
+                         entity: Option[Entity]
+                       ): GameStatistics =
+      if entity.exists(_.isInstanceOf[Zombie]) then updateEntityStats(stats, entity.get) else stats
 
-    def updateEntity(
-                      stats: GameStatistics,
-                      entity: Entity
-                   ): GameStatistics =
+    /**
+     * Updates the [[statistics]] related to the [[Entity]].
+     * @param stats the statistics to update.
+     * @param entity the entity which updates the statistics.
+     * @return the statistics updated.
+     */
+    def updateEntityStats(
+                           stats: GameStatistics,
+                           entity: Entity
+                         ): GameStatistics =
       stats played entity
 
-    def updateRound(
+    /**
+     * Increases the [[statistics]] related to the game's [[round]].
+     *
+     * @param stats  the statistics to update.
+     * @param r the number of rounds to add.
+     * @return the statistics updated.
+     */
+    def updateRoundStats(
                      stats: GameStatistics,
                      r: Int = 1
                    ): GameStatistics =

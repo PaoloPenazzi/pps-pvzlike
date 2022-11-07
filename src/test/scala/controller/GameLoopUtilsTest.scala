@@ -75,11 +75,11 @@ class GameLoopUtilsTest extends AnyWordSpec with Matchers :
       }
 
       "update rounds" in {
-        updateRound(GameStatistics()) shouldBe GameStatistics(List.empty, 1)
+        updateRoundStats(GameStatistics()) shouldBe GameStatistics(List.empty, 1)
       }
 
       "update troop played" in {
-        updateEntity(GameStatistics(), shooter.entity) shouldBe GameStatistics(List(shooter.entity))
+        updateEntityStats(GameStatistics(), shooter.entity) shouldBe GameStatistics(List(shooter.entity))
       }
 
       "can't place two plant in the same place" in {
