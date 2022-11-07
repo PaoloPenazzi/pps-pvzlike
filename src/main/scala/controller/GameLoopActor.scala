@@ -63,6 +63,7 @@ object GameLoopActor:
             case ChangeGameSpeed(velocity) => GameLoopActor(viewActor, entities, metaData >>> velocity, stats)
 
             case UpdateLoop() =>
+              println(stats)
               checkCollision(entities, ctx)
               val newWave = if isWaveOver(entities) then createWave(ctx)
                             else List.empty
@@ -89,9 +90,10 @@ object GameLoopActor:
                   GameLoopActor(viewActor, newGameSeq, newMetaData, newStats)
                 case _ => GameLoopActor(viewActor, entities, metaData, stats)
 
-
             case EntityDead(ref, entity) =>
-              GameLoopActor(viewActor, entities :- GameEntity(ref, entity), metaData, stats)
+              GameLoopActor(viewActor, entities :- GameEntity(ref, entity), metaData, entity match
+                  case _: Zombie => stats played entity
+                  case _ => stats)
 
             case _ => Behaviors.same
         }))
@@ -156,13 +158,23 @@ object GameLoopActor:
                    ): GameStatistics =
       stats increaseRound r
 
-    def canPlacePlant(plant: Plant, entities: Seq[GameEntity[Entity]], metaData: MetaData): Boolean =
+    def canPlacePlant(
+                       plant: Plant,
+                       entities: Seq[GameEntity[Entity]],
+                       metaData: MetaData
+                     ): Boolean =
       isCellFree(plant, entities) && enoughSunFor(plant, metaData)
 
-    def isCellFree(plant: Plant, entities: Seq[GameEntity[Entity]]): Boolean =
+    def isCellFree(
+                    plant: Plant,
+                    entities: Seq[GameEntity[Entity]]
+                  ): Boolean =
       !(entities map (_.entity) exists (_.position == plant.position))
     
-    def enoughSunFor(plant: Plant, metaData: MetaData): Boolean =
+    def enoughSunFor(
+                      plant: Plant,
+                      metaData: MetaData
+                    ): Boolean =
       metaData.sun >= plant.cost
 
     def isWaveOver: Seq[GameEntity[Entity]] => Boolean = _ map (_.entity) collect { case enemy: Zombie => enemy } isEmpty
@@ -193,8 +205,9 @@ object GameLoopActor:
       viewActor ! Render(renderedEntities, ctx.self, metaData)
 
     object CollisionUtils:
-      def checkCollision(entities: Seq[GameEntity[Entity]],
-                         ctx: ActorContext[Command]
+      def checkCollision(
+                          entities: Seq[GameEntity[Entity]],
+                          ctx: ActorContext[Command]
                         ): Unit =
         detectCollision(entities) filter (_._2.nonEmpty) foreach { e =>
           if e._1.entity hitMultipleTimes
