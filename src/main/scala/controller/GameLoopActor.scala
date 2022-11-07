@@ -66,7 +66,7 @@ object GameLoopActor:
               checkCollision(entities, ctx)
               val newWave = if isWaveOver(entities) then createWave(ctx)
                             else List.empty
-              val newStats = if isWaveOver(entities) then updateWave(updateRound(stats), newWave.map(_.entity.asInstanceOf[Zombie]))
+              val newStats = if isWaveOver(entities) then updateRound(stats)
                              else stats
               updateAll(ctx, metaData.velocity, detectInterest(entities))
               startTimer(timer, UpdateLoop())
@@ -82,14 +82,16 @@ object GameLoopActor:
 
             case PlacePlant(troop) =>
               troop.asInstanceOf[Plant] match
-                case plant if metaData.sun < plant.cost => GameLoopActor(viewActor, entities, metaData, stats)
-                case _ =>
+                case plant if canPlacePlant(plant, entities, metaData) =>
                   val newGameSeq = entities :+ GameEntity(ctx.spawnAnonymous(TroopActor(troop)), troop)
                   val newMetaData = metaData - troop.asInstanceOf[Plant].cost
-                  val newStats = updatePlant(stats, troop)
+                  val newStats = updateEntity(stats, troop)
                   GameLoopActor(viewActor, newGameSeq, newMetaData, newStats)
+                case _ => GameLoopActor(viewActor, entities, metaData, stats)
 
-            case EntityDead(ref) => GameLoopActor(viewActor, entities filter { _.ref != ref }, metaData, stats)
+
+            case EntityDead(ref) =>
+              GameLoopActor(viewActor, entities filter {_.ref != ref}, metaData, stats)
 
             case _ => Behaviors.same
         }))
@@ -142,11 +144,11 @@ object GameLoopActor:
     def createWave(ctx: ActorContext[Command]): Seq[GameEntity[Entity]] =
       waveGenerator.generateNextWave.enemies.map(e => GameEntity(ctx.spawnAnonymous(TroopActor(e)), e))
 
-    def updatePlant(
-                   stats: GameStatistics,
-                   plant: Troop
+    def updateEntity(
+                      stats: GameStatistics,
+                      entity: Entity
                    ): GameStatistics =
-      stats playable plant
+      stats played entity
 
     def updateRound(
                      stats: GameStatistics,
@@ -154,11 +156,14 @@ object GameLoopActor:
                    ): GameStatistics =
       stats increaseRound r
 
-    def updateWave(
-                    stats: GameStatistics,
-                    zombies: Seq[Zombie]
-                  ): GameStatistics =
-      stats playWave zombies
+    def canPlacePlant(plant: Plant, entities: Seq[GameEntity[Entity]], metaData: MetaData): Boolean =
+      isCellFree(plant, entities) && enoughSunFor(plant, metaData)
+
+    def isCellFree(plant: Plant, entities: Seq[GameEntity[Entity]]): Boolean =
+      !(entities map (_.entity) exists (_.position == plant.position))
+    
+    def enoughSunFor(plant: Plant, metaData: MetaData): Boolean =
+      metaData.sun >= plant.cost
 
     def isWaveOver: Seq[GameEntity[Entity]] => Boolean = _ map (_.entity) collect { case enemy: Zombie => enemy } isEmpty
 

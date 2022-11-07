@@ -8,6 +8,7 @@ import controller.GameLoopActor.GameLoopCommands.Command
 import model.GameData.{GameEntity, GameSeq}
 import model.Statistics.GameStatistics
 import model.actors.{Collision, ModelMessage}
+import model.common.Utilities.MetaData
 import model.entities.*
 import model.entities.WorldSpace.LanesLength
 import org.scalatest.BeforeAndAfter
@@ -77,12 +78,16 @@ class GameLoopUtilsTest extends AnyWordSpec with Matchers :
         updateRound(GameStatistics()) shouldBe GameStatistics(List.empty, 1)
       }
 
-      "update waves" in {
-        updateWave(GameStatistics(), List(zombie.entity.asInstanceOf[Zombie])) shouldBe GameStatistics(List(zombie.entity))
+      "update troop played" in {
+        updateEntity(GameStatistics(), shooter.entity) shouldBe GameStatistics(List(shooter.entity))
       }
 
-      "update troop played" in {
-        updatePlant(GameStatistics(), PeaShooter()) shouldBe GameStatistics(List(PeaShooter()))
+      "can't place two plant in the same place" in {
+        isCellFree(PeaShooter((1, LanesLength / 2)), List(shooter, zombie)) shouldBe false
+      }
+
+      "can't place plant without enough money" in {
+        enoughSunFor(PeaShooter(), MetaData()) shouldBe false
       }
     }
   }
