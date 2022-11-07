@@ -1,0 +1,22 @@
+\newpage
+\section{Implementazione}
+
+
+\subsection{Francesco Foschini}
+Il mio compito all'interno del progetto, è stato quello di modellare la gerarchia di \texttt{Entity} del gioco.
+In particolare mi sono occupato della implementazione del model degli Zombie, e i proiettili.
+Ho partecipato inoltre allo sviluppo del Troop Actor del Menù Screen e del GameScreen.
+
+\subsubsection{Bullet}
+I proiettili rappresentano all'interno del gioco l'attacco delle piante e degli zombie che viene sparato dalle torri
+per infliggere danni. Il trait \texttt{Bullet} è quindi rappresentato dall'estensione del
+trait \texttt{Entity} a cui è stata aggiunta l'abilità di movimento (\texttt{Movement Ability}).
+Tutti i bullet presentano un comportamento comune: possiedono una posizione, una velocità, una dimensione ed un danno.
+
+Successivamente a una prima versione dei \texttt{Bullet} ho pensato di rifattorizzare i Bullet individuando due diversi sottotipi: \texttt{ZombieBullet} e \texttt{PlantBullet}.
+Il primo è un trait che modella l'attacco base degli zombie mentre il secondo si riferisce all'attacco delle piante.
+Attraverso il metodo checkCollision i PlantBullet possono collidere solamente contro le entità di tipo Zombie mentre,
+al contrario, gli ZombieBullet potranno colpire solamente le entità sottotipo di pianta.
+Mi sono successivamente concentrato nell'implementazione di due tipi di ZombieBullet: PawBullet (il bullet dei
+BasicZombie e FastZombie) e lo SwordBullet(il bullet dei WarriorZombie).
+La velocità e il danno di ogni tipo di bullet è definito nell'oggetto BulletDefaultValues.
