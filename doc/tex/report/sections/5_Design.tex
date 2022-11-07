@@ -48,6 +48,26 @@ stati identificati cinque attori:
     \item \textbf{BulletActor} - attore che incapsula il flusso di controllo di un singolo \textit{Bullet}.
     \item \textbf{TroopActor} - attore che incapsula il flusso di controllo di un singola \textit{Troop}.
 \end{itemize}
+In particolare si è voluto modellare gli attori relativi ai Bullet, Troop e
+View in modo tale da avere esposti al Main
+Controller solo determinate funzionalità a lui interessate.
+Così facendo questi tre attori non fanno altro che rispondere
+in maniera reattiva alle richieste del Controller ed inoltre permettono,
+attraverso un'interfaccia più semplice, l'accesso
+agli oggetti del Model che contengono un'interfaccia ben più complessa.
+Questo design è tratto dal pattern \textbf{Facade}.
+
+Ogni Controller avrà un comportamento principale legato alla natura dell'attore.
+Solo il GameLoop supporterà due \textit{behavior}:
+\begin{itemize}
+    \item \textit{Standard Behavior} - in questa fase l'attore si occuperà di aggiornare il dominio: dalle truppe
+    che l'utente vuole piazzare alle aggiornamento di quelle già in gioco.
+    \item \textit{Pause Behavior} - in questa fase il Loop di gioco sarà messo in pausa.
+\end{itemize}
+Se durante il suo comportamento principale l'attore GameLoop potrà gestire qualsivoglia messaggio,
+l'unico messaggio accettabile dallo stato di pausa sarà quello di ripartenza del Loop: non mandando messaggi di aggiornamento,
+non sarà necessario gestire altri tipi di messaggi. Inoltre, questo fa sì da non dover implementare alcuna logica di buffer:
+la funzione di \textit{stashing} di Akka non verrà presa in considerazione.
 
 
 
