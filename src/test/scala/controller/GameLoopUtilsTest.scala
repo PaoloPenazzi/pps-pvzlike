@@ -14,6 +14,7 @@ import model.entities.WorldSpace.LanesLength
 import org.scalatest.BeforeAndAfter
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
+import scala.language.implicitConversions
 
 class GameLoopUtilsTest extends AnyWordSpec with Matchers :
 
@@ -23,12 +24,12 @@ class GameLoopUtilsTest extends AnyWordSpec with Matchers :
   val secondZombieActor: TestInbox[ModelMessage] = TestInbox[ModelMessage]("secondZombie")
   val thirdZombieActor: TestInbox[ModelMessage] = TestInbox[ModelMessage]("thirdZombie")
   val plantActor: TestInbox[ModelMessage] = TestInbox[ModelMessage]("plant")
-  val bullet: GameEntity[Entity] = GameEntity(bulletActor.ref, PeaBullet((1, LanesLength)))
-  val secondBullet: GameEntity[Entity] = GameEntity(secondBulletActor.ref, CherryBullet((1, LanesLength)))
-  val zombie: GameEntity[Entity] = GameEntity(zombieActor.ref, BasicZombie((1, LanesLength)))
-  val secondZombie: GameEntity[Entity] = GameEntity(secondZombieActor.ref, BasicZombie((1, LanesLength)))
-  val thirdZombie: GameEntity[Entity] = GameEntity(thirdZombieActor.ref, BasicZombie((2, LanesLength)))
-  val shooter: GameEntity[Entity] = GameEntity(plantActor.ref, PeaShooter((1, LanesLength / 2)))
+  val bullet: GameEntity[Entity] = GameEntity(bulletActor.ref, Bullets.ofType[PeaBullet] withPosition (1, LanesLength))
+  val secondBullet: GameEntity[Entity] = GameEntity(secondBulletActor.ref, Bullets.ofType[CherryBullet] withPosition (1, LanesLength))
+  val zombie: GameEntity[Entity] = GameEntity(zombieActor.ref, Troops.ofType[BasicZombie] withPosition (1, LanesLength))
+  val secondZombie: GameEntity[Entity] = GameEntity(secondZombieActor.ref, Troops.ofType[BasicZombie] withPosition (1, LanesLength))
+  val thirdZombie: GameEntity[Entity] = GameEntity(thirdZombieActor.ref, Troops.ofType[BasicZombie] withPosition (2, LanesLength))
+  val shooter: GameEntity[Entity] = GameEntity(plantActor.ref, Troops.shooterOf[PeaBullet] withPosition (1, LanesLength / 2))
 
   import GameLoopActor.*
   import GameLoopActor.GameLoopUtils.*
@@ -83,11 +84,11 @@ class GameLoopUtilsTest extends AnyWordSpec with Matchers :
       }
 
       "can't place two plant in the same place" in {
-        isCellFree(PeaShooter((1, LanesLength / 2)), List(shooter, zombie)) shouldBe false
+        isCellFree(Troops.shooterOf[PeaBullet] withPosition (1, LanesLength), List(shooter, zombie)) shouldBe false
       }
 
       "can't place plant without enough money" in {
-        enoughSunFor(PeaShooter(), MetaData()) shouldBe false
+        enoughSunFor(Troops.shooterOf[PeaBullet], MetaData()) shouldBe false
       }
     }
   }

@@ -166,7 +166,7 @@ object GameLoopActor:
       isCellFree(plant, entities) && enoughSunFor(plant, metaData)
 
     def isCellFree(
-                    plant: Plant,
+                    plant: Troop,
                     entities: Seq[GameEntity[Entity]]
                   ): Boolean =
       !(entities map (_.entity) exists (_.position == plant.position))

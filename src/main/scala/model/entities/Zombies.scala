@@ -4,6 +4,7 @@ import model.entities.ZombieDefaultValues.*
 import model.entities.TroopState.*
 import model.entities.WorldSpace.{LanesLength, NumOfLanes, Position}
 
+import scala.language.implicitConversions
 import scala.concurrent.duration.FiniteDuration
 import scala.util.Random
 
@@ -30,10 +31,6 @@ trait Zombie(override val position: Position,
 
   override def velocity: Float = velocities(this)
 
-  override def collideWith(bullet: Bullet): Troop =
-    val newLife = Math.max(life - bullet.damage, 0)
-    if newLife == 0 then this withState Dead else this withLife newLife
-
   override def update(elapsedTime: FiniteDuration, interests: List[Entity]): Troop =
     val nextState = if interests.nonEmpty then Attacking else Moving
     state match
@@ -43,7 +40,6 @@ trait Zombie(override val position: Position,
 
   private def updatePosition(elapsedTime: FiniteDuration): Position =
     (position.y, position.x + (elapsedTime.length * velocity))
-
 
 /**
  * BasicZombie is the base enemy of the game.

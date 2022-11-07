@@ -17,8 +17,7 @@ scalacOptions ++= Seq(
   "-deprecation",
   "-encoding",
   "utf8",
-  "-feature",
-  "-Ymacro-annotations"
+  "-feature"
 )
 
 ThisBuild / scalaVersion := "3.2.0"
