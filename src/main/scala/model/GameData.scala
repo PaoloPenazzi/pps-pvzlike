@@ -5,6 +5,8 @@ import model.GameData.GameSelector.GameSelectorBuilder
 import model.actors.ModelMessage
 import model.entities.{Bullet, Entity, PeaShooter, Plant, Troop, Zombie}
 
+import scala.annotation.targetName
+
 object GameData :
 
   case class GameEntity[E <: Entity](ref: ActorRef[ModelMessage], entity: E)
@@ -12,6 +14,9 @@ object GameData :
   case class GameSeq(seq: Seq[GameEntity[Entity]]):
     def ofType[A <: Entity](using select: GameSelectorBuilder[A]): Seq[GameEntity[A]] =
       seq.collect(select.of)
+    @targetName("delete")
+    def :-(entity: GameEntity[Entity]): Seq[GameEntity[Entity]] =
+      seq filter {_ != entity}
   given Conversion[Seq[GameEntity[Entity]], GameSeq] = GameSeq(_)
     
   object GameSelector:

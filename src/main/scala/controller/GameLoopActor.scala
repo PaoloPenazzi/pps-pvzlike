@@ -91,7 +91,7 @@ object GameLoopActor:
 
 
             case EntityDead(ref, entity) =>
-              GameLoopActor(viewActor, entities filter {_.ref != ref}, metaData, stats)
+              GameLoopActor(viewActor, entities :- GameEntity(ref, entity), metaData, stats)
 
             case _ => Behaviors.same
         }))

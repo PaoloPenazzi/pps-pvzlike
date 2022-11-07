@@ -34,4 +34,8 @@ class GameDataTest extends AnyFlatSpec with Matchers :
     assertResult(seq.ofType[Troop])(List(zombie, shooter))
   }
 
+  "a seq" should "delete a dead element" in {
+    assertResult(seq :- bullet)(List(zombie, shooter))
+  }
+
 
