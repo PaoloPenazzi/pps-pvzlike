@@ -1,6 +1,6 @@
 package model.entities
 
-import model.common.DefaultValues.{basicZombieDefaultLife, fastZombieDefaultLife, warriorZombieDefaultLife, generateZombieSpawnPosition}
+import model.entities.ZombieDefaultValues.*
 import model.entities.TroopState.*
 import model.entities.WorldSpace.{LanesLength, NumOfLanes, Position}
 
@@ -21,6 +21,10 @@ trait Zombie(override val position: Position,
   override def isInterestedIn: Entity => Boolean =
     case plant: Plant => plant.position.y == position.y && plant.position.x < position.x && position.x - plant.position.x.toInt <= range
     case _ => false
+
+  override def bullet: ZombieBullet = bullets(this)
+
+  override def velocity: Float = velocities(this)
 
   override def collideWith(bullet: Bullet): Troop =
     val newLife = Math.max(life - bullet.damage, 0)
@@ -48,9 +52,7 @@ trait Zombie(override val position: Position,
  */
 case class BasicZombie(override val position: Position = generateZombieSpawnPosition,
                        override val life: Int = basicZombieDefaultLife,
-                       override val state: TroopState = Moving) extends Zombie(position, life, state):
-  override val velocity: Float = -0.01
-  override def bullet: Bullet = PawBullet(position)
+                       override val state: TroopState = zombieDefaultState) extends Zombie(position, life, state):
   override def withPosition(pos: Position): Troop = copy(position = pos)
   override def withLife(healthPoints: Int): Troop = copy(life = healthPoints)
   override def withState(newState: TroopState): Troop = copy(state = newState)
@@ -64,9 +66,7 @@ case class BasicZombie(override val position: Position = generateZombieSpawnPosi
  */
 case class FastZombie(override val position: Position = generateZombieSpawnPosition,
                       override val life: Int = fastZombieDefaultLife,
-                      override val state: TroopState = Moving) extends Zombie(position, life, state):
-  override val velocity: Float = -0.02
-  override def bullet: Bullet = PawBullet(position)
+                      override val state: TroopState = zombieDefaultState) extends Zombie(position, life, state):
   override def withPosition(pos: Position): Troop = copy(position = pos)
   override def withLife(healthPoints: Int): Troop = copy(life = healthPoints)
   override def withState(newState: TroopState): Troop = copy(state = newState)
@@ -81,11 +81,48 @@ case class FastZombie(override val position: Position = generateZombieSpawnPosit
  */
 case class WarriorZombie(override val position: Position = generateZombieSpawnPosition,
                          override val life: Int = warriorZombieDefaultLife,
-                         override val state: TroopState = Moving) extends Zombie(position, life, state):
-  override val velocity: Float = -0.005
-  override def bullet: Bullet = SwordBullet(position)
+                         override val state: TroopState = zombieDefaultState) extends Zombie(position, life, state):
   override def withPosition(pos: Position): Troop = copy(position = pos)
   override def withLife(healthPoints: Int): Troop = copy(life = healthPoints)
   override def withState(newState: TroopState): Troop = copy(state = newState)
 
 
+/**
+ * This object contains the default values for each type of [[Zombie]].
+ */
+object ZombieDefaultValues:
+  /**
+   * Every [[Zombie]], when spawned, is in [[Moving]] state.
+   */
+  val zombieDefaultState: TroopState = Moving
+  /**
+   * The life of the [[BasicZombie]] when spawned.
+   */
+  val basicZombieDefaultLife: Int = 100
+  /**
+   * The life of the [[FastZombie]] when spawned.
+   */
+  val fastZombieDefaultLife: Int = 80
+  /**
+   * The life of the [[WarriorZombie]] when spawned.
+   */
+  val warriorZombieDefaultLife: Int = 200
+
+  /**
+   * Returns the [[ZombieBullet]] shoot by the [[Zombie]].
+   */
+  val bullets: Zombie => ZombieBullet =
+    case basicZombie: BasicZombie => PawBullet(basicZombie.position)
+    case fastZombie: FastZombie => PawBullet(fastZombie.position)
+    case warriorZombie: WarriorZombie => SwordBullet(warriorZombie.position)
+
+  val velocities: Zombie => Float =
+    case basicZombie: BasicZombie => -0.01
+    case fastZombie: FastZombie => -0.02
+    case warriorZombie: WarriorZombie => -0.005
+
+  /**
+   * Generate the spawn position of Zombie
+   * @return the initial position of Zombie
+   */
+  def generateZombieSpawnPosition: Position = (Random.between(0, NumOfLanes), LanesLength + Random.between(0, 20))
