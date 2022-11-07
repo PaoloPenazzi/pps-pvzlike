@@ -8,11 +8,11 @@ import scala.concurrent.duration.FiniteDuration
 import scala.util.Random
 
 /**
- * A Enemy is an abstract entity that models the common behaviour of different types of enemy.
+ * A Zombie is an abstract entity that models the common behaviour of different types of Zombie.
  *
- * @param position the position in which the enemy is placed.
- * @param life the life that the enemy currently has.
- * @param state the state of the enemy.
+ * @param position the position in which zombie  is placed.
+ * @param life the life that the zombie currently has.
+ * @param state the state of the zombie.
  */
 trait Zombie(override val position: Position,
              override val life: Int,
@@ -40,11 +40,11 @@ trait Zombie(override val position: Position,
 
 
 /**
- * Zombie is the base enemy of the game.
+ * BasicZombie is the base enemy of the game.
  *
- * @param position the position in which the zombie is placed.
- * @param life the life that the zombie currently has.
- * @param state the state of the zombie.
+ * @param position the position in which BasicZombie is placed.
+ * @param life the life that BasicZombie currently has.
+ * @param state the state of BasicZombie.
  */
 case class BasicZombie(override val position: Position = generateZombieSpawnPosition,
                        override val life: Int = basicZombieDefaultLife,
