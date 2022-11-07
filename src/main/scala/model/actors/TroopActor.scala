@@ -4,8 +4,8 @@ import akka.actor.typed.{ActorRef, Behavior}
 import akka.actor.typed.scaladsl.Behaviors
 import controller.GameLoopActor.GameLoopCommands.{BulletSpawned, EntityDead, EntityUpdated, EndGame}
 import model.entities.*
+import TroopActorDefaultValues.endGameLimit
 import model.actors.BulletActor
-import model.common.DefaultValues.*
 import model.entities.TroopState.*
 import view.Game
 
@@ -58,3 +58,5 @@ object TroopActor:
       })
     })
 
+object TroopActorDefaultValues:
+  val endGameLimit: Int = -5

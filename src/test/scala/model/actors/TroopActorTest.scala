@@ -8,7 +8,6 @@ import akka.testkit.{ImplicitSender, TestActors, TestKit}
 import controller.Command
 import controller.GameLoopActor.GameLoopCommands.{EntityDead, BulletSpawned, EntityUpdated, GameLoopCommand}
 import model.actors.{BulletActor, Shoot, Update}
-import model.common.DefaultValues.*
 import model.entities.*
 import org.scalatest.BeforeAndAfterAll
 import org.scalatest.funsuite.AnyFunSuite
