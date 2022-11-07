@@ -2,10 +2,10 @@ package model.actors
 
 import akka.actor.typed.{ActorRef, Behavior}
 import akka.actor.typed.scaladsl.Behaviors
-import controller.GameLoopActor.GameLoopCommands.{BulletSpawned, EntityDead, EntityUpdated, EndGame}
+import controller.GameLoopActor.GameLoopCommands.{BulletSpawned, EntityDead, EntityUpdated, GameOver}
 import model.entities.*
+import TroopActorDefaultValues.endGameLimit
 import model.actors.BulletActor
-import model.common.DefaultValues.*
 import model.entities.TroopState.*
 import view.Game
 
@@ -23,7 +23,7 @@ object TroopActor:
           case Update(elapsedTime, entities, replyTo) =>
             val entityUpdated: Troop = troop.update(elapsedTime, entities)
             if entityUpdated.position.x < endGameLimit then
-              replyTo ! EndGame()
+              replyTo ! GameOver()
               Behaviors.same
             replyTo ! EntityUpdated(ctx.self, entityUpdated)
             entityUpdated.state match
@@ -45,8 +45,8 @@ object TroopActor:
                 val entityUpdated: Troop = troop collideWith bullet
                 entityUpdated.state match
                   case Dead =>
-                    replyTo ! EntityDead(ctx.self)
-                    ctx.children collect {case a: ActorRef[ModelMessage] => a} foreach (ref => replyTo ! EntityDead(ref))
+                    replyTo ! EntityDead(ctx.self, Some(troop))
+                    ctx.children collect {case a: ActorRef[ModelMessage] => a} foreach (ref => replyTo ! EntityDead(ref, None))
                     Behaviors.stopped
                   case _ =>
                     replyTo ! EntityUpdated(ctx.self, entityUpdated)
@@ -58,3 +58,5 @@ object TroopActor:
       })
     })
 
+object TroopActorDefaultValues:
+  val endGameLimit: Int = -5

@@ -82,7 +82,6 @@ class GameScreen() extends ScreenAdapter with EntityRenderer :
     button.setBounds(x, y, width, height)
     button.setTransform(true)
     button.onTouchDown(_ =>
-        System.out.println("touchdown")
         button.clearActions()
         button.setScale(1.2f)
         texture.toString match
@@ -93,7 +92,6 @@ class GameScreen() extends ScreenAdapter with EntityRenderer :
           case _ => pendingPlant = None
     )
     button.onTouchUp(() =>
-          System.out.println("touchup")
           button.addAction(Actions.scaleTo(1f, 1f, 0.5f))
     )
     stage.addActor(button)

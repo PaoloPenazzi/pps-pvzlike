@@ -4,13 +4,14 @@ import akka.actor.typed.ActorSystem
 import com.badlogic.gdx.utils.viewport.{FitViewport, Viewport}
 import com.badlogic.gdx.{Game, Gdx, ScreenAdapter}
 import controller.RootActor
-import controller.RootActor.RootCommands.StartGame
+import controller.RootActor.RootCommands.{RootCommand, Start}
+import controller.GameLoopActor.GameLoopCommands.Command
 import ViewportSpace.*
-import controller.Command
+import model.Statistics.GameStatistics
 
 object Game extends com.badlogic.gdx.Game:
   val viewport: Viewport = FitViewport(ViewportWidth, ViewportHeight)
-  var actorSystem: Option[ActorSystem[Command]] = None
+  var actorSystem: Option[ActorSystem[RootCommand]] = None
 
   def startNewGame(): Unit =
     Gdx.app.postRunnable(new Runnable():
@@ -18,14 +19,14 @@ object Game extends com.badlogic.gdx.Game:
         val gameScreen = GameScreen()
         setScreen(gameScreen)
         actorSystem = Some(ActorSystem(RootActor(), "launcher"))
-        actorSystem.foreach(_ ! StartGame(gameScreen))
+        actorSystem.foreach(_ ! Start(gameScreen))
     )
 
-  def endGame(): Unit =
+  def endGame(stats: GameStatistics): Unit =
     Gdx.app.postRunnable(new Runnable():
       override def run(): Unit =
         actorSystem.foreach(_.terminate())
-        setScreen(EndGameMenu())
+        setScreen(EndGameMenu(stats))
       )
 
   override def create(): Unit =

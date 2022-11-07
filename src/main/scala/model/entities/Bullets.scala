@@ -21,6 +21,8 @@ trait Bullet extends Entity with MovingAbility :
    * @return True if the [[Bullet]] should disappear, false otherwise.
    */
   def shouldDisappearAfterHitting(entity: Entity): Boolean = true
+  
+  def hitMultipleTimes: Boolean = false
 
   /**
    * @param entity The entity with which the bullet has potentially collided
@@ -75,6 +77,8 @@ case class SnowBullet(override val position: Position = defaultBulletPosition) e
  */
 case class CherryBullet(override val position: Position = defaultBulletPosition) extends PlantBullet :
   override def checkCollisionWith(entity: Entity): Boolean = isNearMyLane(entity) && collideWith(entity)
+
+  override def hitMultipleTimes: Boolean = true
 
   override def update(elapsedTime: FiniteDuration, interests: List[Entity]): Bullet = this
 

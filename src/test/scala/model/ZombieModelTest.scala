@@ -9,7 +9,7 @@ import model.entities.TroopState.*
 import scala.concurrent.duration.FiniteDuration
 import scala.language.implicitConversions
 
-class EnemyModelTest extends AnyFlatSpec with should.Matchers:
+class ZombieModelTest extends AnyFlatSpec with should.Matchers:
   private val testingLane = 1
   private val otherLane = 2
   private val zombie: Troop = Troops.ofType[BasicZombie] withPosition (testingLane, 80)

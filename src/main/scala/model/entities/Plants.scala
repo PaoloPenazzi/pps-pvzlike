@@ -1,6 +1,5 @@
 package model.entities
 
-import model.common.DefaultValues.*
 import PlantDefaultValues.*
 import com.sun.jdi.ClassType
 import model.entities.TroopState.*

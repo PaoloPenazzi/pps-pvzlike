@@ -1,7 +1,5 @@
 package model.entities
 
-import model.common.DefaultValues
-import model.common.DefaultValues.*
 import model.entities.TroopState.{Attacking, Dead, Idle}
 import model.entities.WorldSpace.{CellLength, Position, given}
 

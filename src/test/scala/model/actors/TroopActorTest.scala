@@ -5,10 +5,8 @@ import akka.actor.testkit.typed.Effect
 import akka.actor.testkit.typed.scaladsl.{ActorTestKit, BehaviorTestKit, ScalaTestWithActorTestKit, TestInbox}
 import akka.actor.typed.scaladsl.Behaviors
 import akka.testkit.{ImplicitSender, TestActors, TestKit}
-import controller.Command
-import controller.GameLoopActor.GameLoopCommands.{EntityDead, BulletSpawned, EntityUpdated, GameLoopCommand}
+import controller.GameLoopActor.GameLoopCommands.{EntityDead, BulletSpawned, EntityUpdated, Command}
 import model.actors.{BulletActor, Shoot, Update}
-import model.common.DefaultValues.*
 import model.entities.*
 import org.scalatest.BeforeAndAfterAll
 import org.scalatest.funsuite.AnyFunSuite
@@ -77,7 +75,7 @@ class TroopActorTest extends AnyWordSpec with BeforeAndAfterAll with Matchers :
         lowHealthPlantActor run Collision(PeaBullet(1, 1), inbox.ref)
         assert(inbox.hasMessages)
         val message = inbox.receiveMessage()
-        assert(message.isInstanceOf[EntityDead])
+        assert(message.isInstanceOf[EntityDead[Entity]])
       }
     }
   }
