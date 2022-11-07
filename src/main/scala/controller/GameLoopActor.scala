@@ -90,7 +90,7 @@ object GameLoopActor:
                 case _ => GameLoopActor(viewActor, entities, metaData, stats)
 
 
-            case EntityDead(ref) =>
+            case EntityDead(ref, entity) =>
               GameLoopActor(viewActor, entities filter {_.ref != ref}, metaData, stats)
 
             case _ => Behaviors.same
@@ -123,7 +123,7 @@ object GameLoopActor:
 
     case class ChangeGameSpeed(velocity: Speed) extends Command
 
-    case class EntityDead(ref: ActorRef[ModelMessage]) extends Command
+    case class EntityDead[E <: Entity](ref: ActorRef[ModelMessage], entity: E) extends Command
 
     case class EntityUpdated[E <: Entity](ref: ActorRef[ModelMessage], entity: E) extends Command
 

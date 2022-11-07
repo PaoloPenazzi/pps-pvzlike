@@ -76,7 +76,7 @@ class TroopActorTest extends AnyWordSpec with BeforeAndAfterAll with Matchers :
         lowHealthPlantActor run Collision(PeaBullet(1, 1), inbox.ref)
         assert(inbox.hasMessages)
         val message = inbox.receiveMessage()
-        assert(message.isInstanceOf[EntityDead])
+        assert(message.isInstanceOf[EntityDead[Entity]])
       }
     }
   }
