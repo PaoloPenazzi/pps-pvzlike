@@ -1,6 +1,5 @@
 package model.entities
 
-import model.common.DefaultValues.*
 import PlantDefaultValues.*
 import model.entities.TroopState.*
 import model.entities.WorldSpace.{Position, given}
