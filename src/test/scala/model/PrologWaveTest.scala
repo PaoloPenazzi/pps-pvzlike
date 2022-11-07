@@ -22,9 +22,9 @@ class PrologWaveTest extends AnyFlatSpec with should.Matchers:
     val solution: LazyList[SolveInfo] = engine solve WaveTerm.queryToTerm(query)
     PrologSolution.waveFromPrologSolution(solution.head).foldRight(0)((e, acc) => {
       e match
-        case BasicZombie(_, _, _) => acc + 1
-        case FastZombie(_, _, _) => acc + 2
-        case WarriorZombie(_, _, _) => acc + 3
+        case BasicZombie(_, _, _, _) => acc + 1
+        case FastZombie(_, _, _, _) => acc + 2
+        case WarriorZombie(_, _, _, _) => acc + 3
     }) shouldEqual 6
   }
 
