@@ -19,8 +19,12 @@ trait Zombie(override val position: Position,
              override val state: TroopState) extends Troop with MovingAbility:
 
   override def isInterestedIn: Entity => Boolean =
-    case plant: Plant => plant.position.y == position.y && plant.position.x < position.x && position.x - plant.position.x.toInt <= range
+    case plant: Plant => isInMyLane(plant) && isInFrontOfMe(plant) && isInRange(plant)
     case _ => false
+
+  private def isInMyLane(plant: Plant): Boolean = plant.position.y == position.y
+  private def isInFrontOfMe(plant: Plant): Boolean = position.x > plant.position.x 
+  private def isInRange(plant: Plant): Boolean = position.x - plant.position.x.toInt <= range
 
   override def bullet: ZombieBullet = bullets(this)
 
