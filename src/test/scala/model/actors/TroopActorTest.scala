@@ -5,8 +5,7 @@ import akka.actor.testkit.typed.Effect
 import akka.actor.testkit.typed.scaladsl.{ActorTestKit, BehaviorTestKit, ScalaTestWithActorTestKit, TestInbox}
 import akka.actor.typed.scaladsl.Behaviors
 import akka.testkit.{ImplicitSender, TestActors, TestKit}
-import controller.Command
-import controller.GameLoopActor.GameLoopCommands.{EntityDead, BulletSpawned, EntityUpdated, GameLoopCommand}
+import controller.GameLoopActor.GameLoopCommands.{EntityDead, BulletSpawned, EntityUpdated, Command}
 import model.actors.{BulletActor, Shoot, Update}
 import model.entities.*
 import org.scalatest.BeforeAndAfterAll
@@ -21,7 +20,7 @@ import WorldSpace.LanesLength
 
 class TroopActorTest extends AnyWordSpec with BeforeAndAfterAll with Matchers :
 
-  val plant: Troop = Troops.ofType[PeaShooter] withPosition (1, 10)
+  val plant: Troop = Troops.shooterOf[PeaBullet] withPosition (1, 10)
   val zombie: Troop = BasicZombie((1, LanesLength + 2))
   val plantActor: BehaviorTestKit[ModelMessage] = BehaviorTestKit(TroopActor(plant))
   val zombieActor: BehaviorTestKit[ModelMessage] = BehaviorTestKit(TroopActor(zombie))
@@ -76,7 +75,7 @@ class TroopActorTest extends AnyWordSpec with BeforeAndAfterAll with Matchers :
         lowHealthPlantActor run Collision(PeaBullet(1, 1), inbox.ref)
         assert(inbox.hasMessages)
         val message = inbox.receiveMessage()
-        assert(message.isInstanceOf[EntityDead])
+        assert(message.isInstanceOf[EntityDead[Entity]])
       }
     }
   }

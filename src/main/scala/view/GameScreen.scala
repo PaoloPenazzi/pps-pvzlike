@@ -13,7 +13,7 @@ import com.badlogic.gdx.{Gdx, ScreenAdapter}
 import view.View.EntityRenderer
 import view.ViewportSpace.*
 import view.Sprites.{height, spriteName, width}
-import model.entities.{CherryBomb, Entity, PeaShooter, Troop, Troops, Wallnut}
+import model.entities.{CherryBomb, Entity, PeaBullet, Shooter, SnowBullet, Troop, Troops, Wallnut}
 import model.common.Utilities.MetaData
 import controller.ViewActor.sendPlacePlant
 import ScalaGDX.*
@@ -60,9 +60,11 @@ class GameScreen() extends ScreenAdapter with EntityRenderer :
     val peashooterCard: Texture = new Texture(Gdx.files.classpath("assets/gameWindow/peashooter-card.png"))
     val wallnutCard: Texture = new Texture(Gdx.files.classpath("assets/gameWindow/wallnut-card.png"))
     val cherryBombCard: Texture = new Texture(Gdx.files.classpath("assets/gameWindow/cherrybomb-card.png"))
+    val snowshooterCard: Texture = new Texture(Gdx.files.classpath("assets/gameWindow/snowshooter-card.png"))
     createButtonFromImage(peashooterCard, 0, ViewportHeight - HUDHeight, 1.5f, 1.2f)
     createButtonFromImage(wallnutCard, 1.5f, ViewportHeight - HUDHeight, 1.5f, 1.2f)
     createButtonFromImage(cherryBombCard, 3.0f, ViewportHeight - HUDHeight, 1.5f, 1.2f)
+    createButtonFromImage(snowshooterCard, 4.5f, ViewportHeight - HUDHeight, 1.5f, 1.2f)
     Gdx.input.setInputProcessor(stage)
     stage.onTouchDown( pos =>
       for
@@ -80,17 +82,16 @@ class GameScreen() extends ScreenAdapter with EntityRenderer :
     button.setBounds(x, y, width, height)
     button.setTransform(true)
     button.onTouchDown(_ =>
-        System.out.println("touchdown")
         button.clearActions()
         button.setScale(1.2f)
         texture.toString match
-          case s if s.matches("""\S*peashooter\S*""") => pendingPlant = Option(Troops.ofType[PeaShooter])
+          case s if s.matches("""\S*peashooter\S*""") => pendingPlant = Option(Troops.shooterOf[PeaBullet])
+          case s if s.matches("""\S*snowshooter\S*""") => pendingPlant = Option(Troops.shooterOf[SnowBullet])
           case s if s.matches("""\S*wallnut\S*""") => pendingPlant = Option(Troops.ofType[Wallnut])
           case s if s.matches("""\S*cherrybomb\S*""") => pendingPlant = Option(Troops.ofType[CherryBomb])
           case _ => pendingPlant = None
     )
     button.onTouchUp(() =>
-          System.out.println("touchup")
           button.addAction(Actions.scaleTo(1f, 1f, 0.5f))
     )
     stage.addActor(button)

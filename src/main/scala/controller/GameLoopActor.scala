@@ -2,162 +2,235 @@ package controller
 
 import akka.actor.typed.*
 import akka.actor.typed.scaladsl.*
-import controller.GameLoopActor.GameLoopCommands.{StartLoop, UpdateLoop}
+import controller.GameLoopActor.GameLoopCommands.{StartGame, UpdateLoop}
+import model.GameData
+import model.GameData.{GameEntity, GameSeq}
+import model.Statistics.GameStatistics
 import model.actors.*
-import model.common.Utilities.{MetaData, Sun, Velocity}
+import model.common.Utilities.{MetaData, Speed, Sun}
 import model.entities.*
+import model.entities.WorldSpace.*
+import model.waves.{Generator, WaveGenerator}
+import view.Game
 
 import scala.collection.immutable.Seq
 import scala.collection.mutable
 import scala.concurrent.duration.FiniteDuration
-import scala.language.postfixOps
-import scala.language.implicitConversions
-import model.entities.WorldSpace.*
-import model.waves.{Generator, WaveGenerator}
-import view.Game
+import scala.language.{implicitConversions, postfixOps}
+
 object GameLoopActor:
 
   val waveGenerator: WaveGenerator = Generator()
 
   import GameLoopCommands.*
+  import GameLoopUtils.*
+  import GameLoopUtils.CollisionUtils.*
 
-  def apply(viewActor: ActorRef[ViewMessage],
-            entities: Seq[(ActorRef[ModelMessage], Entity)] = List.empty,
-            metaData: MetaData = MetaData()): Behavior[Command] = GameLoop(viewActor, entities, metaData).standardBehavior
+  def apply(
+             viewActor: ActorRef[ViewMessage],
+             entities: Seq[GameEntity[Entity]] = List.empty,
+             metaData: MetaData = MetaData(),
+             stats: GameStatistics = GameStatistics()
+           ): Behavior[Command] = GameLoop(viewActor, entities, metaData, stats).standardBehavior()
 
-  private case class GameLoop(viewActor: ActorRef[ViewMessage],
-                           entities: Seq[(ActorRef[ModelMessage], Entity)],
-                           metaData: MetaData) extends Controller with PauseAbility:
+  private case class GameLoop(
+                               viewActor: ActorRef[ViewMessage],
+                               entities: Seq[GameEntity[Entity]],
+                               metaData: MetaData,
+                               stats: GameStatistics
+                             ):
 
-    override def standardBehavior: Behavior[Command] =
+    def standardBehavior(): Behavior[Command] =
       Behaviors.withTimers(timer =>
         Behaviors.receive((ctx, msg) => {
           msg match
-            case StartLoop() =>
+            case StartGame() =>
               waveGenerator.resetWaves()
               startTimer(timer, UpdateLoop())
-              startTimer(timer, UpdateResources(), FiniteDuration(6, "seconds"))
-              GameLoopActor(viewActor, entities, metaData)
+              startTimer(timer, UpdateResources(), resourceTimer)
+              Behaviors.same
 
-            case EndGame() => 
-              Game.endGame()
-              Behaviors.stopped
+            case GameOver() => Game.endGame(stats); Behaviors.stopped
 
-            case PauseLoop() => pauseBehavior
+
+            case PauseGame() => pauseBehavior()
 
             case UpdateResources() =>
-              startTimer(timer, UpdateResources(), FiniteDuration(3, "seconds"))
-              GameLoopActor(viewActor, entities, metaData + Sun.Normal.value)
+              startTimer(timer, UpdateResources(), resourceTimer)
+              GameLoopActor(viewActor, entities, metaData + Sun.Normal.value, stats)
 
-            case ChangeVelocity(velocity) => GameLoopActor(viewActor, entities, metaData >>> velocity)
+            case ChangeGameSpeed(velocity) => GameLoopActor(viewActor, entities, metaData >>> velocity, stats)
 
             case UpdateLoop() =>
-              detectCollision foreach { e => e._1._1 ! Collision(e._2._2, ctx.self); e._2._1 ! Collision(e._1._2, ctx.self);
-                println("Collision between: " + e._2._2 + " AND " + e._1._2)}
-              updateAll(ctx, detectInterest)
-              val newWave = if isWaveOver then createWave(ctx) else List.empty
+              checkCollision(entities, ctx)
+              val newWave = if isWaveOver(entities) then createWave(ctx)
+                            else List.empty
+              val newStats = if isWaveOver(entities) then updateRound(stats)
+                             else stats
+              updateAll(ctx, metaData.velocity, detectInterest(entities))
               startTimer(timer, UpdateLoop())
-              GameLoopActor(viewActor, newWave ++ entities, metaData)
+              GameLoopActor(viewActor, newWave ++ entities, metaData, newStats)
 
             case EntityUpdated(ref, entity) =>
-              val newEntities = entities collect { case x if x._1 == ref => (ref, entity) case x => x}
-              render(ctx, newEntities.map(_._2).toList)
-              GameLoopActor(viewActor, newEntities, metaData)
+              val newEntities = entities collect { case x if x.ref == ref => GameEntity(ref, entity) case x => x }
+              render(ctx, viewActor, metaData, newEntities.map(_.entity).toList)
+              GameLoopActor(viewActor, newEntities, metaData, stats)
 
-            case BulletSpawned(ref, bullet) =>
-              GameLoopActor(viewActor, entities :+ (ref, bullet), metaData)
+            case BulletSpawned(ref, bullet) => GameLoopActor(viewActor, entities :+ GameEntity(ref, bullet), metaData, stats)
 
             case PlacePlant(troop) =>
               troop.asInstanceOf[Plant] match
-                case plant if metaData.sun < plant.cost => GameLoopActor(viewActor, entities, metaData)
-                case _ =>
-                  GameLoopActor(viewActor, entities :+ (ctx.spawnAnonymous(TroopActor(troop)), troop), metaData - troop.asInstanceOf[Plant].cost)
+                case plant if canPlacePlant(plant, entities, metaData) =>
+                  val newGameSeq = entities :+ GameEntity(ctx.spawnAnonymous(TroopActor(troop)), troop)
+                  val newMetaData = metaData - troop.asInstanceOf[Plant].cost
+                  val newStats = updateEntity(stats, troop)
+                  GameLoopActor(viewActor, newGameSeq, newMetaData, newStats)
+                case _ => GameLoopActor(viewActor, entities, metaData, stats)
 
-            case EntityDead(ref) =>
-              GameLoopActor(viewActor, entities filter { _._1 != ref }, metaData)
+            case EntityDead(ref, entity) => GameLoopActor(viewActor, entities :- ref, metaData, removeEntity(stats, entity))
 
             case _ => Behaviors.same
         }))
 
-    override def pauseBehavior: Behavior[Command] =
+    def pauseBehavior(): Behavior[Command] =
       Behaviors.receive((ctx, msg) => {
         msg match
-          
-          case ResumeLoop() =>
+          case ResumeGame() =>
             ctx.self ! UpdateLoop()
-            GameLoopActor(viewActor, entities, metaData)
+            GameLoopActor(viewActor, entities, metaData, stats)
 
           case _ => Behaviors.same
       })
 
-    private def startTimer(timer: TimerScheduler[Command], msg: Command, time: FiniteDuration = metaData.velocity.speed): Unit = timer.startSingleTimer(msg, time)
-
-    private def createWave(ctx: ActorContext[Command]) =
-      waveGenerator.generateNextWave.enemies.map(e => (ctx.spawnAnonymous(TroopActor(e)), e))
-
-    private def detectCollision =
-      for
-        e1 <- entities
-        e2 <- entities
-        if e1 != e2
-        if e1._2.isInstanceOf[Bullet]
-        if e1._2.asInstanceOf[Bullet] checkCollisionWith e2._2
-      yield (e1, e2)
-
-    private def detectInterest =
-      for
-        e1 <- entities
-      yield
-        (e1._1, for
-          e2 <- entities
-          if e1 != e2
-          if e1._2 isInterestedIn e2._2
-        yield e2._2)
-
-    private def isWaveOver: Boolean = entities map (_._2) collect { case enemy: Zombie => enemy } isEmpty
-
-    private def updateAll(ctx: ActorContext[Command], interests: Seq[(ActorRef[ModelMessage], Seq[Entity])]): Unit =
-      interests.foreach(e => e._1 ! Update(metaData.velocity.speed, e._2.toList, ctx.self))
-
-    private def render(ctx: ActorContext[Command], renderedEntities: List[Entity]): Unit = viewActor ! Render(renderedEntities, ctx.self, metaData)
-
   object GameLoopCommands:
-    sealed trait GameLoopCommand extends Command
+    trait Command
 
-    case class StartLoop() extends GameLoopCommand
+    case class StartGame() extends Command
 
-    case class PauseLoop() extends GameLoopCommand
+    case class PauseGame() extends Command
 
-    case class ResumeLoop() extends GameLoopCommand
+    case class ResumeGame() extends Command
 
-    case class UpdateLoop() extends GameLoopCommand
+    case class UpdateLoop() extends Command
 
-    case class EndGame() extends GameLoopCommand
+    case class GameOver() extends Command
 
-    case class UpdateResources() extends GameLoopCommand
+    case class UpdateResources() extends Command
 
-    case class ChangeVelocity(velocity: Velocity) extends GameLoopCommand
+    case class ChangeGameSpeed(velocity: Speed) extends Command
 
-    case class EntityDead(ref: ActorRef[ModelMessage]) extends GameLoopCommand
+    case class EntityDead[E <: Entity](ref: ActorRef[ModelMessage], entity: Option[E]) extends Command
 
-    case class EntityUpdated[E <: Entity](ref: ActorRef[ModelMessage], entity: E) extends GameLoopCommand
+    case class EntityUpdated[E <: Entity](ref: ActorRef[ModelMessage], entity: E) extends Command
 
-    case class BulletSpawned(ref: ActorRef[ModelMessage], bullet: Bullet) extends GameLoopCommand
+    case class BulletSpawned(ref: ActorRef[ModelMessage], bullet: Bullet) extends Command
 
-    case class PlacePlant(troop: Troop) extends GameLoopCommand
+    case class PlacePlant(troop: Troop) extends Command
+
+  object GameLoopUtils:
+    val resourceTimer: FiniteDuration = FiniteDuration(3, "seconds")
+
+    def startTimer(
+                    timer: TimerScheduler[Command],
+                    msg: Command,
+                    time: FiniteDuration = Speed.Normal.speed
+                  ): Unit =
+      timer.startSingleTimer(msg, time)
+
+    def createWave(ctx: ActorContext[Command]): Seq[GameEntity[Entity]] =
+      waveGenerator.generateNextWave.enemies.map(e => GameEntity(ctx.spawnAnonymous(TroopActor(e)), e))
+
+    def removeEntity(
+                      stats: GameStatistics,
+                      entity: Option[Entity]
+                    ): GameStatistics =
+      if entity.exists(_.isInstanceOf[Zombie]) then stats played entity.get else stats
+
+    def updateEntity(
+                      stats: GameStatistics,
+                      entity: Entity
+                   ): GameStatistics =
+      stats played entity
+
+    def updateRound(
+                     stats: GameStatistics,
+                     r: Int = 1
+                   ): GameStatistics =
+      stats increaseRound r
+
+    def canPlacePlant(
+                       plant: Plant,
+                       entities: Seq[GameEntity[Entity]],
+                       metaData: MetaData
+                     ): Boolean =
+      isCellFree(plant, entities) && enoughSunFor(plant, metaData)
+
+    def isCellFree(
+                    plant: Troop,
+                    entities: Seq[GameEntity[Entity]]
+                  ): Boolean =
+      !(entities map (_.entity) exists (_.position == plant.position))
     
+    def enoughSunFor(
+                      plant: Plant,
+                      metaData: MetaData
+                    ): Boolean =
+      metaData.sun >= plant.cost
 
+    def isWaveOver: Seq[GameEntity[Entity]] => Boolean = _ map (_.entity) collect { case enemy: Zombie => enemy } isEmpty
 
+    def detectInterest(entities: Seq[GameEntity[Entity]]): Seq[(ActorRef[ModelMessage], Seq[Entity])] =
+      for
+        e <- entities
+      yield
+        (e.ref, for
+          e2 <- entities
+          if e != e2
+          if e.entity isInterestedIn e2.entity
+        yield e2.entity)
 
+    def updateAll(
+                   ctx: ActorContext[Command],
+                   velocity: Speed,
+                   interests: Seq[(ActorRef[ModelMessage], Seq[Entity])]
+                 ): Unit =
+      interests foreach (e => e._1 ! Update(velocity.speed, e._2.toList, ctx.self))
 
+    def render(
+                ctx: ActorContext[Command],
+                viewActor: ActorRef[ViewMessage],
+                metaData: MetaData,
+                renderedEntities: List[Entity]
+              ): Unit =
+      viewActor ! Render(renderedEntities, ctx.self, metaData)
 
+    object CollisionUtils:
+      def checkCollision(
+                          entities: Seq[GameEntity[Entity]],
+                          ctx: ActorContext[Command]
+                        ): Unit =
+        detectCollision(entities) filter (_._2.nonEmpty) foreach { e =>
+          if e._1.entity hitMultipleTimes
+          then e._2 foreach { r => sendCollisionMessage(e._1, r, ctx); sendCollisionMessage(r, e._1, ctx) }
+          else {
+            sendCollisionMessage(e._1, e._2.head, ctx);
+            sendCollisionMessage(e._2.head, e._1, ctx)
+          }
+        }
 
+      def sendCollisionMessage[A <: Entity, E <: Entity](
+                                                          to: GameEntity[A],
+                                                          from: GameEntity[E],
+                                                          ctx: ActorContext[Command]
+                                                        ): Unit =
+        to.ref ! Collision(from.entity, ctx.self)
 
-
-
-
-
-  
-  
-
-
+      def detectCollision(entities: Seq[GameEntity[Entity]]): Seq[(GameEntity[Bullet], Seq[GameEntity[Troop]])] =
+        import GameData.given
+        for
+          b <- entities.ofType[Bullet]
+        yield
+          (b, for
+            e <- entities.ofType[Troop]
+            if b.entity checkCollisionWith e.entity
+          yield e)

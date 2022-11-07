@@ -1,7 +1,7 @@
 package model.actors
 
 import akka.actor.typed.ActorRef
-import controller.Command
+import controller.GameLoopActor.GameLoopCommands.Command
 import model.entities.{Bullet, Entity}
 
 import scala.concurrent.duration.FiniteDuration

@@ -5,7 +5,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.{Button, Skin, TextButton}
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener
 import com.badlogic.gdx.scenes.scene2d.{InputEvent, Stage}
 import com.badlogic.gdx.{Gdx, ScreenAdapter}
-import controller.RootActor.RootCommands.StartGame
+import model.Statistics.GameStatistics
 import model.entities.Entity
 import model.entities.WorldSpace.Position
 import view.Game
@@ -17,19 +17,21 @@ import com.badlogic.gdx.graphics.g2d.{BitmapFont, SpriteBatch}
 import scala.language.implicitConversions
 
 object EndGameMenu:
-  def apply() = new EndGameMenu()
+  def apply(stats: GameStatistics) = new EndGameMenu(stats)
 
-  class EndGameMenu() extends ScreenAdapter :
+  class EndGameMenu(stats: GameStatistics) extends ScreenAdapter :
     private lazy val stage = new Stage(Game.viewport)
     lazy val font: BitmapFont = BitmapFont(Gdx.files.internal("assets/gameWindow/font.fnt"), Gdx.files.internal("assets/gameWindow/font.png"), false)
     lazy val batch: SpriteBatch = SpriteBatch()
+
     override def render(delta: Float): Unit =
       Gdx.gl.glClearColor(0, 0, 0, 1)
       Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
-
       batch.begin()
       font.getData.setScale(0.05f)
-      font.draw(batch, "PVZ", ViewportWidth.toFloat / 2.3f, ViewportHeight - HUDHeight / 2)
+      font.draw(batch, "Hai perso", ViewportWidth / 2.3f, ViewportHeight - HUDHeight / 2)
+      //font.draw(batch, "Hai ucciso: " + stats.getZombies.size.toString, ViewportWidth.toFloat / 2.3f, ViewportHeight - HUDHeight / 3)
+      //font.draw(batch, "Hai superato: " + stats.rounds.toString, ViewportWidth.toFloat / 2.3f, ViewportHeight - HUDHeight / 4)
       batch.end()
       stage.draw(); //Draw the ui
       stage.act(delta)
