@@ -1,30 +1,25 @@
 package model
 
-
-import model.entities.{Bullet, FastZombie, PeaBullet, PeaShooter, Troop, Troops, BasicZombie, WarriorZombie}
+import model.entities.{BasicZombie, Bullet, FastZombie, PeaBullet, Shooter, Troop, Troops, WarriorZombie, Bullets}
 import org.scalatest.*
 import org.scalatest.flatspec.*
 import org.scalatest.matchers.*
 import model.entities.TroopState.*
 
 import scala.concurrent.duration.FiniteDuration
-
+import scala.language.implicitConversions
 
 class EnemyModelTest extends AnyFlatSpec with should.Matchers:
-
   private val testingLane = 1
   private val otherLane = 2
   private val zombie: Troop = Troops.ofType[BasicZombie] withPosition (testingLane, 80)
   private val fastZombie: Troop = Troops.ofType[FastZombie] withPosition (testingLane, 80)
   private val warriorZombie: Troop = Troops.ofType[WarriorZombie] withPosition (testingLane, 80)
-
-  private val plantInOtherLane: Troop = Troops.ofType[PeaShooter] withPosition (otherLane, 10)
-  private val plantInTheSameLane: Troop = Troops.ofType[PeaShooter] withPosition (testingLane, 10)
-  private val plantInRange: Troop = Troops.ofType[PeaShooter] withPosition (testingLane, 75)
-
-  private val dummyPlant: Troop = Troops.ofType[PeaShooter] withPosition (otherLane, 50)
+  private val plantInTheSameLane: Troop = Troops.shooterOf[PeaBullet] withPosition (testingLane, 10)
+  private val plantInRange: Troop = Troops.shooterOf[PeaBullet] withPosition (testingLane, 75)
+  private val dummyPlant: Troop = Troops.shooterOf[PeaBullet] withPosition (otherLane, 50)
   private val dummyZombie: Troop = Troops.ofType[BasicZombie] withPosition (otherLane, 50)
-  private val dummyBullet: Bullet = PeaBullet(0,0)
+  private val dummyBullet: Bullet = Bullets.ofType[PeaBullet]
 
 
   "A BasicZombie" should "be in Moving state if it can't attack any plant" in {
@@ -84,15 +79,3 @@ class EnemyModelTest extends AnyFlatSpec with should.Matchers:
   "A WarriorZombie" should "not have interests" in {
     List(dummyZombie, plantInTheSameLane, dummyBullet) filter warriorZombie.isInterestedIn shouldBe List.empty
   }
-
-
-
-  import org.scalatest.funsuite.AnyFunSuite
-  import org.scalatest.matchers.should.Matchers.*
-
-  class EnemyTest extends AnyFunSuite:
-      test("Enemy correctly defines constructors") {
-        "Enemy(1, LanesLength / 2)" should compile
-  }
-
-

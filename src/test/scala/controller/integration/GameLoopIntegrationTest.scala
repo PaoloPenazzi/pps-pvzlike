@@ -12,6 +12,7 @@ import model.entities.WorldSpace.LanesLength
 import org.scalatest.BeforeAndAfter
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
+import scala.language.implicitConversions
 
 class GameLoopIntegrationTest extends AnyWordSpec with BeforeAndAfter with Matchers :
 
@@ -19,9 +20,10 @@ class GameLoopIntegrationTest extends AnyWordSpec with BeforeAndAfter with Match
                         seedActor: TestInbox[ModelMessage] = TestInbox[ModelMessage]("seed"),
                         zombieActor: TestInbox[ModelMessage] = TestInbox[ModelMessage]("zombie"),
                         plantActor: TestInbox[ModelMessage] = TestInbox[ModelMessage]("plant")):
-    val bullet: (ActorRef[ModelMessage], PeaBullet) = (seedActor.ref, PeaBullet((1, LanesLength)))
-    val zombie: (ActorRef[ModelMessage], BasicZombie) = (zombieActor.ref, BasicZombie((1, LanesLength)))
-    val shooter: (ActorRef[ModelMessage], PeaShooter) = (plantActor.ref, PeaShooter((1, LanesLength / 2)))
+    val bullet: (ActorRef[ModelMessage], Bullet) = (seedActor.ref, Bullets.ofType[PeaBullet] withPosition (1, LanesLength))
+    val zombie: (ActorRef[ModelMessage], Troop) = (zombieActor.ref, Troops.ofType[BasicZombie] withPosition (1, LanesLength))
+    val shooter: (ActorRef[ModelMessage], Troop) =
+      (plantActor.ref, Troops.shooterOf[PeaBullet] withPosition (1, LanesLength / 2))
     val entities: Seq[(ActorRef[ModelMessage], Entity)] = List(bullet, zombie, shooter)
     val gameLoopActor: BehaviorTestKit[Command] = BehaviorTestKit(GameLoopActor(viewActor.ref, List(bullet, zombie, shooter)))
 

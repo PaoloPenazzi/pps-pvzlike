@@ -6,11 +6,12 @@ import controller.{GameLoopActor, ViewMessage}
 import model.GameData.{GameEntity, GameSeq}
 import model.actors.ModelMessage
 import model.entities.WorldSpace.{LanesLength, Position}
-import model.entities.{Bullet, Zombie, Entity, PeaBullet, PeaShooter, Plant, BasicZombie}
+import model.entities.{BasicZombie, Bullet, Entity, PeaBullet, Plant, Troops, Zombie, Bullets}
 import org.scalatest.BeforeAndAfter
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
+import scala.language.implicitConversions
 
 class GameDataTest extends AnyFlatSpec with BeforeAndAfter with Matchers :
   var seedActor: TestInbox[ModelMessage] = _
@@ -28,9 +29,9 @@ class GameDataTest extends AnyFlatSpec with BeforeAndAfter with Matchers :
     zombieActor = TestInbox[ModelMessage]("zombie")
     plantActor = TestInbox[ModelMessage]("plant")
 
-    bullet = GameEntity(seedActor.ref, PeaBullet(1, LanesLength))
-    zombie = GameEntity(zombieActor.ref, BasicZombie((1, LanesLength)))
-    shooter = GameEntity(plantActor.ref, PeaShooter(Position(1, LanesLength / 2)))
+    bullet = GameEntity(seedActor.ref, Bullets.ofType[PeaBullet] withPosition (1, LanesLength))
+    zombie = GameEntity(zombieActor.ref, Troops.ofType[BasicZombie] withPosition (1, LanesLength))
+    shooter = GameEntity(plantActor.ref, Troops.shooterOf[PeaBullet] withPosition (1, LanesLength / 2))
 
     seq = GameSeq(List(bullet, zombie, shooter))
   }
