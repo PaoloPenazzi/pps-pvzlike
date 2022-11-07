@@ -28,9 +28,7 @@ trait Zombie(override val position: Position,
 
   override def collideWith(bullet: Bullet): Troop =
     val newLife = Math.max(life - bullet.damage, 0)
-    if newLife == 0
-    then this withLife newLife withState Dead
-    else this withLife newLife withState state
+    if newLife == 0 then this withState Dead else this withLife newLife
 
   override def update(elapsedTime: FiniteDuration, interests: List[Entity]): Troop =
     val nextState = if interests.nonEmpty then Attacking else Moving
@@ -116,6 +114,9 @@ object ZombieDefaultValues:
     case fastZombie: FastZombie => PawBullet(fastZombie.position)
     case warriorZombie: WarriorZombie => SwordBullet(warriorZombie.position)
 
+  /**
+   * Returns the velocity of [[Zombie]].
+   */
   val velocities: Zombie => Float =
     case basicZombie: BasicZombie => -0.01
     case fastZombie: FastZombie => -0.02
