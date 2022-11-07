@@ -1,6 +1,6 @@
 package model
 
-import model.entities.{BasicZombie, Entity, Zombie}
+import model.entities.{BasicZombie, Entity, Plant, Zombie}
 
 object Statistics:
 
@@ -15,19 +15,20 @@ object Statistics:
         case zombie: Zombie => acc :+ zombie
         case _ => acc
       })
-    def playWave(seq: Seq[Zombie]): GameStatistics =
-      GameStatistics(stats.entities :++ seq, stats.rounds)
 
+  trait PlantStatsOps:
+    stats: GameStats =>
+    def getPlants: Seq[Plant] = stats.entities.collect{case e: Plant => e}
 
   trait GameStatsOps:
-    def playable(entities: Entity): GameStats
+    def played(entity: Entity): GameStats
     def increaseRound(r: Int): GameStats
 
   case class GameStatistics(
                              entities: Seq[Entity] = List.empty,
                              rounds: Int = 0
-                           ) extends GameStats with GameStatsOps with ZombieStatsOps:
-    override def playable(entity: Entity): GameStatistics = GameStatistics(entities :+ entity, rounds)
+                           ) extends GameStats with GameStatsOps with ZombieStatsOps with PlantStatsOps:
+    override def played(entity: Entity): GameStatistics = GameStatistics(entities :+ entity, rounds)
     override def increaseRound(r: Int = 1): GameStatistics = GameStatistics(entities, rounds + r)
 
 
