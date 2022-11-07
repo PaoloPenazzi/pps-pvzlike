@@ -23,7 +23,7 @@ trait Zombie(override val position: Position,
     case _ => false
 
   private def isInMyLane(plant: Plant): Boolean = plant.position.y == position.y
-  private def isInFrontOfMe(plant: Plant): Boolean = position.x > plant.position.x 
+  private def isInFrontOfMe(plant: Plant): Boolean = position.x > plant.position.x
   private def isInRange(plant: Plant): Boolean = position.x - plant.position.x.toInt <= range
 
   override def bullet: ZombieBullet = bullets(this)
@@ -124,7 +124,7 @@ object ZombieDefaultValues:
   val velocities: Zombie => Float =
     case basicZombie: BasicZombie => -0.01
     case fastZombie: FastZombie => -0.02
-    case warriorZombie: WarriorZombie => -0.005
+    case warriorZombie: WarriorZombie => -0.008
 
   /**
    * Generate the spawn position of Zombie
