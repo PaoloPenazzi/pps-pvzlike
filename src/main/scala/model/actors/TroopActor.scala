@@ -45,8 +45,8 @@ object TroopActor:
                 val entityUpdated: Troop = troop collideWith bullet
                 entityUpdated.state match
                   case Dead =>
-                    replyTo ! EntityDead(ctx.self, troop)
-                    ctx.children collect {case a: ActorRef[ModelMessage] => a} foreach (ref => replyTo ! EntityDead(ref, troop))
+                    replyTo ! EntityDead(ctx.self, Some(troop))
+                    ctx.children collect {case a: ActorRef[ModelMessage] => a} foreach (ref => replyTo ! EntityDead(ref, None))
                     Behaviors.stopped
                   case _ =>
                     replyTo ! EntityUpdated(ctx.self, entityUpdated)

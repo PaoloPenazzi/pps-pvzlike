@@ -50,9 +50,8 @@ object GameLoopActor:
               startTimer(timer, UpdateResources(), resourceTimer)
               Behaviors.same
 
-            case GameOver() =>
-              Game.endGame(stats)
-              Behaviors.stopped
+            case GameOver() => Game.endGame(stats); Behaviors.stopped
+
 
             case PauseGame() => pauseBehavior()
 
@@ -78,8 +77,7 @@ object GameLoopActor:
               render(ctx, viewActor, metaData, newEntities.map(_.entity).toList)
               GameLoopActor(viewActor, newEntities, metaData, stats)
 
-            case BulletSpawned(ref, bullet) =>
-              GameLoopActor(viewActor, entities :+ GameEntity(ref, bullet), metaData, stats)
+            case BulletSpawned(ref, bullet) => GameLoopActor(viewActor, entities :+ GameEntity(ref, bullet), metaData, stats)
 
             case PlacePlant(troop) =>
               troop.asInstanceOf[Plant] match
@@ -90,10 +88,7 @@ object GameLoopActor:
                   GameLoopActor(viewActor, newGameSeq, newMetaData, newStats)
                 case _ => GameLoopActor(viewActor, entities, metaData, stats)
 
-            case EntityDead(ref, entity) =>
-              GameLoopActor(viewActor, entities :- GameEntity(ref, entity), metaData, entity match
-                  case _: Zombie => stats played entity
-                  case _ => stats)
+            case EntityDead(ref, entity) => GameLoopActor(viewActor, entities :- ref, metaData, removeEntity(stats, entity))
 
             case _ => Behaviors.same
         }))
@@ -125,7 +120,7 @@ object GameLoopActor:
 
     case class ChangeGameSpeed(velocity: Speed) extends Command
 
-    case class EntityDead[E <: Entity](ref: ActorRef[ModelMessage], entity: E) extends Command
+    case class EntityDead[E <: Entity](ref: ActorRef[ModelMessage], entity: Option[E]) extends Command
 
     case class EntityUpdated[E <: Entity](ref: ActorRef[ModelMessage], entity: E) extends Command
 
@@ -145,6 +140,12 @@ object GameLoopActor:
 
     def createWave(ctx: ActorContext[Command]): Seq[GameEntity[Entity]] =
       waveGenerator.generateNextWave.enemies.map(e => GameEntity(ctx.spawnAnonymous(TroopActor(e)), e))
+
+    def removeEntity(
+                      stats: GameStatistics,
+                      entity: Option[Entity]
+                    ): GameStatistics =
+      if entity.exists(_.isInstanceOf[Zombie]) then stats played entity.get else stats
 
     def updateEntity(
                       stats: GameStatistics,

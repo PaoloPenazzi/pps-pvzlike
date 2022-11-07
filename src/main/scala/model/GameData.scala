@@ -15,8 +15,8 @@ object GameData :
     def ofType[A <: Entity](using select: GameSelectorBuilder[A]): Seq[GameEntity[A]] =
       seq.collect(select.of)
     @targetName("delete")
-    def :-(entity: GameEntity[Entity]): Seq[GameEntity[Entity]] =
-      seq filter {_ != entity}
+    def :-(ref: ActorRef[ModelMessage]): Seq[GameEntity[Entity]] =
+      seq filter {_.ref != ref}
   given Conversion[Seq[GameEntity[Entity]], GameSeq] = GameSeq(_)
     
   object GameSelector:
