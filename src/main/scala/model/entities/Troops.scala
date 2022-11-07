@@ -2,6 +2,7 @@ package model.entities
 
 import model.entities.Bullets.BulletBuilder
 import model.entities.WorldSpace.{Position, given}
+import TroopState.*
 import scala.language.implicitConversions
 
 /**
@@ -14,7 +15,9 @@ trait Troop extends Entity with AttackingAbility :
    * @param bullet The [[Bullet]] that hit the [[Troop]].
    * @return The Entity updated after the collision.
    */
-  def collideWith(bullet: Bullet): UpdatedEntity
+  def collideWith(bullet: Bullet): Troop =
+    val troop = bullet applyDamage this
+    if troop.life <= 0 then troop withState Dead else troop
 
   /**
    * @return The current life of the [[Troop]].

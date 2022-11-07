@@ -33,10 +33,6 @@ trait Plant extends Troop :
     case enemy: Zombie => isInMyLane(enemy) && isInRange(enemy) && isNotBehindMe(enemy)
     case _ => false
 
-  override def collideWith(bullet: Bullet): Troop =
-    val newLife: Int = Math.max(life - bullet.damage, 0)
-    if newLife == 0 then this withState Dead else this withLife newLife
-
   override def update(elapsedTime: FiniteDuration, interests: List[Entity]): Troop =
     state match
       case Idle | Attacking => if interests.isEmpty then this withState Idle else this withState Attacking
@@ -59,7 +55,7 @@ trait Plant extends Troop :
 
 case class Shooter[B <: Bullet](bulletType: B,
                                 override val position: Position = (0, 0),
-                                override val life: Int = peashooterDefaultLife,
+                                override val life: Int = shooterDefaultLife,
                                 override val state: TroopState = defaultPlantState) extends Plant :
   type BulletType = B
 
@@ -135,7 +131,7 @@ object PlantDefaultValues:
   /**
    * The life of the [[Shooter]] when spawned.
    */
-  val peashooterDefaultLife: Int = 100
+  val shooterDefaultLife: Int = 100
   /**
    * The life of the [[Wallnut]] when spawned.
    */

@@ -28,6 +28,9 @@ trait Bullet extends Entity with MovingAbility :
    */
   def checkCollisionWith(entity: Entity): Boolean = collideWith(entity) && isInMyLane(entity)
 
+  def applyDamage(troop: Troop): Troop =
+    troop withLife (troop.life - damage)
+
   private def isInMyLane(entity: Entity): Boolean = entity.position.y == position.y
 
   protected def collideWith(entity: Entity): Boolean =
@@ -61,6 +64,8 @@ case class PeaBullet(override val position: Position = defaultBulletPosition) ex
   override def withPosition(pos: Position): PeaBullet = copy(position = pos)
 
 case class SnowBullet(override val position: Position = defaultBulletPosition) extends PlantBullet :
+  override def applyDamage(troop: Troop): Troop =
+    super.applyDamage(troop)
   override def withPosition(pos: Position): SnowBullet = copy(position = pos)
 
 /**
@@ -125,11 +130,12 @@ object Bullets:
 
   def ofType[B <: Bullet](using bulletBuilder: BulletBuilder[B]): B =
     bulletBuilder.build
+
 /**
  * This object contains the default values for each type of [[Bullet]].
  */
 object BulletDefaultValues:
-  val defaultBulletPosition: Position = (0,0)
+  val defaultBulletPosition: Position = (0, 0)
 
   /**
    * Returns the damage made by the [[Bullet]].
