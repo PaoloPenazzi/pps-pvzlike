@@ -1,5 +1,3 @@
-import controller.RootActor
-import controller.RootActor.RootCommands.StartGame
 import akka.actor.typed.ActorSystem
 import com.badlogic.gdx.backends.lwjgl3.*
 import view.Game

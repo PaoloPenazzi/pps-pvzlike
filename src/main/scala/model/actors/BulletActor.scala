@@ -2,7 +2,7 @@ package model.actors
 
 import akka.actor.typed.{ActorRef, Behavior}
 import akka.actor.typed.scaladsl.Behaviors
-import controller.GameLoopActor.GameLoopCommands.{EntityUpdated, GameLoopCommand, EntityDead}
+import controller.GameLoopActor.GameLoopCommands.{EntityUpdated, Command, EntityDead}
 import model.entities.{Bullet, Zombie}
 
 object BulletActor:
@@ -20,7 +20,7 @@ object BulletActor:
         case Collision(entity, replyTo) =>
           if bullet shouldDisappearAfterHitting entity
           then
-            replyTo ! EntityDead(ctx.self)
+            replyTo ! EntityDead(ctx.self, Some(bullet))
             Behaviors.stopped
           Behaviors.same
 
