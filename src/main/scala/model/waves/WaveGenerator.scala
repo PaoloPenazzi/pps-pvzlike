@@ -4,16 +4,18 @@ import alice.tuprolog.SolveInfo
 import model.entities.WorldSpace.*
 import model.entities.{BasicZombie, FastZombie, WarriorZombie, Zombie}
 import model.waves.PrologWaveManager.PrologEngine.PrologEngine
+import model.waves.PrologWaveManager.PrologTheory.given
 import model.waves.PrologWaveManager.{PrologSolution, PrologTheory, WaveTerm}
 import model.waves.WaveGenerator.*
 
 import scala.annotation.tailrec
+import scala.language.implicitConversions
 import scala.util.Random
 
 /** Creates the [[Wave]]: a specific [[Seq]] of [[Zombie]] based on a given [[waveNumber]]. */
 object WaveGenerator:
   val pathTheory = "prolog/waves.pl"
-  private val prolog: PrologEngine = PrologEngine(PrologTheory.getTheory(pathTheory))
+  private val prolog: PrologEngine = PrologEngine(pathTheory)
 
   /** Generates the next wave using Prolog.
    *
