@@ -32,9 +32,9 @@ trait Zombie(override val position: Position,
   override def bullet: ZombieBullet = bullets(this)
 
   /**
-   *
-   * @param velocity
-   * @return
+   * Change entitie's velocity
+   * @param velocity the new velocity of zombie
+   * @return a new istance of zombie with new velocity
    */
   def withVelocity(velocity: Float): Troop
 
