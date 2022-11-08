@@ -84,7 +84,7 @@ class GameLoopUtilsTest extends AnyWordSpec with Matchers :
       }
 
       "can't place two plant in the same place" in {
-        isCellFree(Troops.shooterOf[PeaBullet] withPosition (1, LanesLength), List(shooter, zombie)) shouldBe false
+        isCellFree(Troops.shooterOf[PeaBullet] withPosition (1, LanesLength / 2), List(shooter.asInstanceOf[GameEntity[Plant]])) shouldBe false
       }
 
       "can't place plant without enough money" in {
