@@ -54,11 +54,14 @@ object Troops:
     def build: T
 
   /**
-   * Given instances to create [[Troop]] depending on the type.
+   * Given instances to create a [[BasicZombie]].
    */
   given TroopBuilder[BasicZombie, Bullet] with
     override def build: BasicZombie = BasicZombie()
 
+  /**
+   * Given instances to create a [[FastZombie]].
+   */
   given TroopBuilder[FastZombie, Bullet] with
     override def build: FastZombie = FastZombie()
 
@@ -78,15 +81,21 @@ object Troops:
     override def build: Shooter[SnowBullet] = Shooter[SnowBullet](Bullets.ofType[SnowBullet])
 
   /**
-   * A DSL method to create [[Troop]].
+   * A DSL method to create every type of [[Troop]], except the [[Shooter]] which have its own method (see [[shooterOf]]).
    *
    * @param troopBuilder The [[TroopBuilder]] of the type needed.
    * @tparam T The [[Troop]] type.
-   * @return The [[Troop]] of the specified type with position (0,0).
+   * @return The [[Troop]] of the specified type.
    */
   def ofType[T <: Troop](using troopBuilder: TroopBuilder[T, Bullet]): T =
     troopBuilder.build
 
+  /**
+   * A DSL method to create a [[Shooter]].
+   * @param troopBuilder The [[TroopBuilder]] of the type needed.
+   * @tparam B the [[Bullet]] type.
+   * @return The [[Shooter]] of the specified type.
+   */
   def shooterOf[B <: Bullet](using troopBuilder: TroopBuilder[Shooter[B], B]): Shooter[B] =
     troopBuilder.build
 
