@@ -24,5 +24,11 @@ class BulletModelTest extends AnyFlatSpec with should.Matchers:
   "A Bullet" should "disappear after hitting" in {
     assertResult(true)(bullet shouldDisappearAfterHitting plant)
   }
+  "A Bullet" should "collide with a Troop in his range" in {
+    assertResult(true)(bullet checkCollisionWith plant)
+  }
+  "A PawBullet" should "apply a correct damage" in {
+    assertResult(plant.life - bullet.damage)((bullet applyDamage plant).life)
+  }
 
 
