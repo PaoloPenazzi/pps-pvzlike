@@ -28,7 +28,7 @@ class GameScreen extends ScreenBehavior with EntityRenderer :
       given Ordering[Entity] = (e1, e2) => e2.position.y - e1.position.y
       entities.sorted.map(e => Drawable(spriteName(e), projectX(e.position.x), projectY(e.position.y), width(e), height(e)))
 
-    Drawable(GameBackground -3, 0, 25, ViewportHeight - HUDHeight)
+    Drawable(GameBackground, -3, 0, 25, ViewportHeight - HUDHeight)
       +: drawableEntities
 
   override def writables: Seq[Writable] =
