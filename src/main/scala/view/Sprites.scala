@@ -6,6 +6,8 @@ import model.entities.WorldSpace.LanesLength
 import view.ViewportSpace.gridWidth
 
 object Sprites {
+  val MainMenuBackground: String = "assets/background/mainmenu.png"
+
   def spriteName(entity: Entity): String = "assets/" + (entity match
     case s: Shooter[_] => s.bullet match
       case _: PeaBullet => "troops/peashooter.png"
