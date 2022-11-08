@@ -27,6 +27,11 @@ object GameData :
       override def of: PartialFunction[GameEntity[Entity], GameEntity[Troop]] =
         { case e if e.entity.isInstanceOf[Troop] => GameEntity(e.ref, e.entity.asInstanceOf[Troop]) }
 
+    given GameSelectorBuilder[Plant] with
+      override def of: PartialFunction[GameEntity[Entity], GameEntity[Plant]] = {
+        case e if e.entity.isInstanceOf[Plant] => GameEntity(e.ref, e.entity.asInstanceOf[Plant])
+      }
+
     given GameSelectorBuilder[Bullet] with
       override def of: PartialFunction[GameEntity[Entity], GameEntity[Bullet]] =
         { case e if e.entity.isInstanceOf[Bullet] => GameEntity(e.ref, e.entity.asInstanceOf[Bullet]) }
