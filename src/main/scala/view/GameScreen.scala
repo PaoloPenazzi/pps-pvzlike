@@ -3,7 +3,7 @@ package view
 import com.badlogic.gdx.scenes.scene2d.Actor
 import view.View.EntityRenderer
 import view.ViewportSpace.*
-import view.Sprites.{cardName, height, spriteName, width}
+import view.Sprites.{GameBackground, cardName, height, spriteName, width}
 import model.entities.{CherryBomb, Entity, PeaBullet, Shooter, SnowBullet, Troop, Troops, Wallnut}
 import model.common.Utilities.MetaData
 import controller.ViewActor.sendPlacePlant
@@ -13,6 +13,7 @@ import view.ScalaGDX.{Drawable, Writable}
 import ScalaGDX.{PulsingImageButton, given}
 import ScalaGDX.Utils.texture
 import view.ScalaGDX.Screen.ScreenBehavior
+
 import scala.language.implicitConversions
 
 
@@ -27,7 +28,7 @@ class GameScreen extends ScreenBehavior with EntityRenderer :
       given Ordering[Entity] = (e1, e2) => e2.position.y - e1.position.y
       entities.sorted.map(e => Drawable(spriteName(e), projectX(e.position.x), projectY(e.position.y), width(e), height(e)))
 
-    Drawable("assets/background/day.png", -3, 0, 25, ViewportHeight - HUDHeight)
+    Drawable(GameBackground -3, 0, 25, ViewportHeight - HUDHeight)
       +: drawableEntities
 
   override def writables: Seq[Writable] =
