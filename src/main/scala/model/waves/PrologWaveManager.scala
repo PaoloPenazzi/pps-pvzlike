@@ -5,6 +5,7 @@ import model.entities.{BasicZombie, FastZombie, Troops, WarriorZombie, Zombie}
 
 import java.util.Scanner
 import scala.io.Source
+import scala.language.implicitConversions
 
 object PrologWaveManager:
   
@@ -33,8 +34,9 @@ object PrologWaveManager:
         LazyList.continually(engine solve term)
 
       override def generateWave(power: Int): List[Zombie] =
+        import WaveTerm.given
         val query: String = "wave(" + power + ", L)"
-        val solution: LazyList[SolveInfo] = solve(WaveTerm.queryToTerm(query))
+        val solution: LazyList[SolveInfo] = solve(query)
         PrologSolution.waveFromPrologSolution(solution.head)
     }
 
@@ -50,12 +52,10 @@ object PrologWaveManager:
     private def getStringTheory(resourcePath: String): String = Source.fromResource(resourcePath).mkString
 
   object WaveTerm:
-    /**
-     * Transform a [[String]] in a [[Term]].
-     * @param query the goal to be resolved.
+    /** Converts a [[String]] in a [[Term]].
      * @return the corresponding [[Term]].
      */
-    def queryToTerm(query: String): Term = Term.createTerm(query)
+    given Conversion[String, Term] = Term.createTerm(_)
 
   object PrologSolution:
     /**
