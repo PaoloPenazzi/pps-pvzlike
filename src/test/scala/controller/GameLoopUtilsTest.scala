@@ -75,13 +75,13 @@ class GameLoopUtilsTest extends AnyWordSpec with Matchers :
       "create a new wave of zombies" in {
         Behaviors.setup {
           (ctx: ActorContext[Command]) =>
-            createWave(ctx).getClass shouldBe Seq.getClass
+            assert(createWave(ctx, 2).nonEmpty)
             Behaviors.empty
         }
       }
 
       "update rounds" in {
-        updateRoundStats(GameStatistics()) shouldBe GameStatistics(List.empty, 1)
+        updateRoundStats(GameStatistics()) shouldBe GameStatistics(List.empty, 2)
       }
 
       "update troop played" in {

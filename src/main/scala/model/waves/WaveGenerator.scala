@@ -33,7 +33,7 @@ object WaveGenerator:
   /**
    * Generates the next wave using Prolog.
    *
-   * @param waveNumber the wave number.
+   * @param waveNumber the wave number. It shall be a positive integer.
    * @return The next [[Wave]].
    */
   def generateNextWave(waveNumber: Int): Wave =
@@ -43,7 +43,7 @@ object WaveGenerator:
   /**
    * Generates the next wave using Scala. Only [[BasicZombie]] are spawned.
    *
-   * @param waveNumber the wave number.
+   * @param waveNumber the wave number. It shall be a positive integer.
    * @return The next [[Wave]].
    */
   def generateNextBasicWave(waveNumber: Int): Wave =

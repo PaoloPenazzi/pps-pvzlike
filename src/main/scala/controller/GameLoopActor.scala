@@ -12,7 +12,7 @@ import model.actors.*
 import model.common.Utilities.{MetaData, Speed, Sun}
 import model.entities.*
 import model.entities.WorldSpace.*
-import model.waves.{Generator, WaveGenerator}
+import model.waves.WaveGenerator
 import view.Game
 
 import scala.collection.immutable.Seq
@@ -25,8 +25,6 @@ import scala.language.{implicitConversions, postfixOps}
  * Send [[ModelMessage]] messages to the Model and [[ViewMessage]] messages to the View.
  * */
 object GameLoopActor:
-
-  val waveGenerator: WaveGenerator = Generator()
 
   def apply(
              viewActor: ActorRef[ViewMessage],
@@ -61,7 +59,6 @@ object GameLoopActor:
         Behaviors.receive((ctx, msg) => {
           msg match
             case StartGame() =>
-              waveGenerator.resetWaves()
               startTimer(timer, UpdateLoop())
               startTimer(timer, UpdateResources(), resourceTimer)
               Behaviors.same
@@ -79,7 +76,7 @@ object GameLoopActor:
 
             case UpdateLoop() =>
               handleCollision(entities, ctx)
-              val newWave = if isWaveOver(entities) then createWave(ctx)
+              val newWave = if isWaveOver(entities) then createWave(ctx, stats.rounds)
               else List.empty
               val newStats = if isWaveOver(entities) then updateRoundStats(stats)
               else stats
@@ -165,10 +162,11 @@ object GameLoopActor:
     /** Creates a new wave of [[Zombie]], for the next round.
      *
      * @param ctx the context where to spawn the zombies actors.
+     * @param round the number of rounds.
      * @return a new wave (sequence) of zombies.
      */
-    def createWave(ctx: ActorContext[Command]): Seq[GameEntity[Entity]] =
-      waveGenerator.generateNextWave.enemies.map(e => GameEntity(ctx.spawnAnonymous(TroopActor(e)), e))
+    def createWave(ctx: ActorContext[Command], round: Int): Seq[GameEntity[Entity]] =
+      WaveGenerator.generateNextWave(round).enemies.map(e => GameEntity(ctx.spawnAnonymous(TroopActor(e)), e))
 
     /** Checks if the [[entity]] dead was a [[Zombie]]
      * and, just in case it was, update the [[statistics]].
