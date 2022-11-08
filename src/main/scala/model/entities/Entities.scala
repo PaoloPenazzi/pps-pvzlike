@@ -55,7 +55,6 @@ trait MovingAbility extends Entity :
    */
   def velocity: Float
 
-
 /**
  * Add the ability to attack to an [[Entity]].
  */

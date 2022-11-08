@@ -46,7 +46,7 @@ trait Bullet extends Entity with MovingAbility :
   override def update(elapsedTime: FiniteDuration, interests: List[Entity]): Bullet =
     this withPosition newPositionAfter(elapsedTime)
 
-  protected def newPositionAfter(elapsedTime: FiniteDuration): Position =
+  private def newPositionAfter(elapsedTime: FiniteDuration): Position =
     (position.y, position.x + (elapsedTime.length * velocity))
 
 /**

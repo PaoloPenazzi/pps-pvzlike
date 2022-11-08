@@ -9,14 +9,47 @@ Ho partecipato inoltre allo sviluppo del Troop Actor del Menù Screen e del Game
 
 \subsubsection{Bullet}
 I proiettili rappresentano all'interno del gioco l'attacco delle piante e degli zombie che viene sparato dalle torri
-per infliggere danni. Il trait \texttt{Bullet} è quindi rappresentato dall'estensione del
-trait \texttt{Entity} a cui è stata aggiunta l'abilità di movimento (\texttt{Movement Ability}).
+per infliggere danni. Grazie alla buona gerarchia di caratteristiche definite in \texttt{Entity}, è stato possibile grazie  ai \textbf{mixin}
+dotare il trait \texttt{Bullet} dell'abilità di movimento (\texttt{Movement Ability}).
+Il trait Bullet rappresenta quindi l'entità base "sparata" da una Troop.
 Tutti i bullet presentano un comportamento comune: possiedono una posizione, una velocità, una dimensione ed un danno.
 
-Successivamente a una prima versione dei \texttt{Bullet} ho pensato di rifattorizzare i Bullet individuando due diversi sottotipi: \texttt{ZombieBullet} e \texttt{PlantBullet}.
+
+Successivamente a una prima versione dei Bullet ho pensato di rifattorizzare i Bullet individuando due diversi sottotipi: \texttt{ZombieBullet} e \texttt{PlantBullet}.
 Il primo è un trait che modella l'attacco base degli zombie mentre il secondo si riferisce all'attacco delle piante.
 Attraverso il metodo checkCollision i PlantBullet possono collidere solamente contro le entità di tipo Zombie mentre,
-al contrario, gli ZombieBullet potranno colpire solamente le entità sottotipo di pianta.
+al contrario, gli ZombieBullet potranno colpire solamente le entità sottotipo di Plant.
 Mi sono successivamente concentrato nell'implementazione di due tipi di ZombieBullet: PawBullet (il bullet dei
 BasicZombie e FastZombie) e lo SwordBullet(il bullet dei WarriorZombie).
+Lo SwordBullet è un attacco molto più potente rispetto al PawBullet.
+
+Volendo seguire un approccio puramente funzionale il metodo di aggiornamento della posizione di un bullet deve crearne uno nuovo
+con i valori aggiornati. Questo comportamento è comune a tutti i bullet, ma l'aggiornamento
+di ognuno di questi deve tornare il tipo di bullet corretto. A tal proposito è stato utilizzato il metodo
+di libreria di scala  \texttt{copy()}.
+
 La velocità e il danno di ogni tipo di bullet è definito nell'oggetto BulletDefaultValues.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{img/class-bullet}
+    \caption{Diagramma delle classi rappresentante i \texttt{ZombieBullet}.}
+    \label{fig:class-bullet}
+\end{figure}
+
+\subsubsection{Zombie}
+Gli Zombie rappresentano una delle entità fondamentali del gioco. In particolare, rappresentano i nemici che l'utente
+deve cercare di eliminare attraverso il piazzamento delle piante nel campo di gioco.
+Tutti gli zombie sono in grado di muoversi "orrizzontalmente" nelle lane del campo di gioco con una certa velocità: pertanto
+attraverso il meccanismo dei mixin il \texttt{trait Zombie} estende il \texttt{trait Troop} a cui aggiunge poi l' abilità \texttt{MovingAbility}.
+
+Quando uno zombie è colpito da un CherryBullet potrebbe essere rallentato, per questo motivo si è deciso di
+mettere la velocità in ciascun costruttore per ciascun tipo di zombie implementato.
+In questo modo, seguendo un approccio funzionale, quando il CherryBullet collide con uno specifico Zombie
+istanzierà nuovamente lo zombie con la velocità aggiornata.
+A tal proposito è stata implementata una val \texttt{slowVelocities} dentro all'object ZombieDefaultValues.
+E' infatti nell'object \texttt{ZombieDefaultValue} che sono definite tutte le caratteristiche principali per ogni
+tipo di Zombie implementato: stato iniziale e di default (\texttt{Moving}), vita iniziale,
+il tipo bullet sparato, la velocità di default, la velocità degli Zombie rallentati e un metodo per generare
+la posizione iniziale degli zombie.
+
