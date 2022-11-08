@@ -96,7 +96,7 @@ object GameLoopActor:
 
             case PlacePlant(troop) =>
               troop.asInstanceOf[Plant] match
-                case plant if canPlacePlant(plant, entities.ofType[Plant], metaData) =>
+                case plant if canPlacePlant(plant, entities.of[Plant], metaData) =>
                   val newGameSeq = entities :+ GameEntity(ctx.spawnAnonymous(TroopActor(troop)), troop)
                   val newMetaData = metaData - troop.asInstanceOf[Plant].cost
                   val newStats = updateEntityStats(stats, troop)
@@ -200,7 +200,7 @@ object GameLoopActor:
 
     /** Checks if a [[plant]] is placeable.
      *
-     * @param plant the plant to place.
+     * @param plant    the plant to place.
      * @param entities the entities in game.
      * @param metaData the meta-data's game.
      * @return [[true]] if the plant is placeable, [[false]] otherwise.
@@ -210,7 +210,7 @@ object GameLoopActor:
 
     /** Checks if a cell is free.
      *
-     * @param plant the plant to place.
+     * @param plant    the plant to place.
      * @param entities the entities in game.
      * @return [[true]] if the cell is free, [[false]] otherwise.
      */
@@ -219,7 +219,7 @@ object GameLoopActor:
 
     /** Checks if the user has enough sun/resources to place the plant.
      *
-     * @param plant the plant to place.
+     * @param plant    the plant to place.
      * @param metaData the meta-data's game.
      * @return [[true]] if the user has enough sun, [[false]] otherwise.
      */
@@ -251,8 +251,8 @@ object GameLoopActor:
 
     /** Sends [[Update]] messages to all entities in game.
      *
-     * @param ctx the [[ActorContext]] of the sender, who wants the replies.
-     * @param speed the game update's frequency.
+     * @param ctx       the [[ActorContext]] of the sender, who wants the replies.
+     * @param speed     the game update's frequency.
      * @param interests the interests for each [[Entity]] in game.
      */
     def updateAll(ctx: ActorContext[Command], speed: Speed, interests: Seq[(ActorRef[ModelMessage], Seq[Entity])]): Unit =
@@ -260,22 +260,12 @@ object GameLoopActor:
 
     /** A specific object for collision management */
     object CollisionUtils:
-
-      trait Collision:
-        type A <: Entity
-        type B <: Entity
-        def entity: GameEntity[A]
-        def collidedEntities: Seq[GameEntity[B]]
-        def sendCollisionMessages(receiver: GameEntity[B], ctx: ActorContext[Command]): Unit =
-          entity.ref ! Collision(receiver.entity, ctx.self)
-          receiver.ref ! Collision(entity.entity, ctx.self)
-
-      case class BulletTroopCollision(bullet: GameEntity[Bullet], troopsCollided: Seq[GameEntity[Troop]]) extends Collision:
-        override type A = Bullet
-        override type B = Troop
-        override def entity: GameEntity[Bullet] = bullet
-        override def collidedEntities: Seq[GameEntity[Troop]] = troopsCollided
-
+      /** Manages the whole collision's process:
+       * checks the [[Collision]] and, in case, sends [[Collision]] messages.
+       *
+       * @param entities the entities in game.
+       * @param ctx      the [[ActorContext]] that wants to receive the replies.
+       */
       def handleCollision(entities: Seq[GameEntity[Entity]], ctx: ActorContext[Command]): Unit =
         checkCollision(entities) filter (_.collidedEntities.nonEmpty) foreach { e =>
           if e.entity.entity hitMultipleTimes
@@ -285,12 +275,61 @@ object GameLoopActor:
           }
         }
 
+      /** Detects [[Collision]] between all entities in game.
+       *
+       * @param entities the entities in game
+       * @return
+       */
       def checkCollision(entities: Seq[GameEntity[Entity]]): Seq[BulletTroopCollision] =
         import GameData.given
         for
-          b <- entities.ofType[Bullet]
+          b <- entities.of[Bullet]
         yield
           BulletTroopCollision(b, for
-            e <- entities.ofType[Troop]
+            e <- entities.of[Troop]
             if b.entity checkCollisionWith e.entity
           yield e)
+
+      /** Defines a collision between two [[GameEntity]] */
+      trait Collision:
+        /** The type of the first [[GameEntity]] that has collided. */
+        type A <: Entity
+
+        /** The type of [[GameEntity]] that makes up
+         * the sequence of [[Entity]] that collided with another [[GameEntity]].
+         */
+        type B <: Entity
+
+        /**
+         *
+         * @return the [[GameEntity]] with [[A]] type.
+         */
+        def entity: GameEntity[A]
+
+        /**
+         *
+         * @return the [[GameEntity]]'s sequence with [[B]] type collided with [[entity]].
+         */
+        def collidedEntities: Seq[GameEntity[B]]
+
+        /** Send [[Collision]] messages to both [[entity]] and a [[GameEntity]] that has collided with him.
+         *
+         * @param receiver the [[GameEntity]] collided with [[entity]].
+         * @param ctx      the [[ActorContext]] that wants to receive the replies.
+         */
+        def sendCollisionMessages(receiver: GameEntity[B], ctx: ActorContext[Command]): Unit =
+          entity.ref ! Collision(receiver.entity, ctx.self)
+          receiver.ref ! Collision(entity.entity, ctx.self)
+
+      /** An implementation of a [[Collision]] between a [[Bullet]] and a [[Troop]].
+       *
+       * @param bullet         the [[GameEntity]] involved in the collision.
+       * @param troopsCollided the [[Seq]] of [[GameEntity]] involved in the collision.
+       */
+      case class BulletTroopCollision(bullet: GameEntity[Bullet], troopsCollided: Seq[GameEntity[Troop]]) extends Collision :
+        override type A = Bullet
+        override type B = Troop
+
+        override def entity: GameEntity[Bullet] = bullet
+
+        override def collidedEntities: Seq[GameEntity[Troop]] = troopsCollided
