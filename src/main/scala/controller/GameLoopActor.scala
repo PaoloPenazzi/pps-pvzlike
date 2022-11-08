@@ -22,7 +22,7 @@ import scala.language.{implicitConversions, postfixOps}
 
 /** It's the actor responsible of system's update and deals with the incoming input from the view.
  *
- * Send [[ModelMessage]] messages to the Model and [[ViewMessage]] messages to the View.
+ * Sends [[ModelMessage]] messages to the Model and [[ViewMessage]] messages to the View.
  * */
 object GameLoopActor:
 
@@ -34,7 +34,7 @@ object GameLoopActor:
            ): Behavior[Command] =
     GameLoop(viewActor, entities, metaData, stats).standardBehavior()
 
-  /** The GameLoop Actor: update the whole game by exploiting the reactivity of an actor.
+  /** The GameLoop Actor: updates the whole game by exploiting the reactivity of an actor.
    * This actor sends a [[UpdateLoop]] message to itself with a determined delay
    * that depends on the a specific [[Speed]].
    *
@@ -43,7 +43,7 @@ object GameLoopActor:
    * @param metaData  the meta-data of the game.
    * @param stats     the statistic of the game.
    */
-  case class GameLoop(
+  private case class GameLoop(
                        viewActor: ActorRef[ViewMessage],
                        entities: Seq[GameEntity[Entity]],
                        metaData: MetaData,
@@ -119,7 +119,7 @@ object GameLoopActor:
           case _ => Behaviors.same
       })
 
-  /** The messages that GameLoop can handle. */
+  /** The messages that [[GameLoop]] can handle. */
   object GameLoopCommands:
     trait Command
 
