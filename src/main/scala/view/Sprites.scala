@@ -7,7 +7,7 @@ import view.ViewportSpace.gridWidth
 
 object Sprites {
   val MainMenuBackground: String = "assets/background/mainmenu.png"
-
+  val GameBackground: String = "assets/background/day.png"
   def spriteName(entity: Entity): String = "assets/" + (entity match
     case s: Shooter[_] => s.bullet match
       case _: PeaBullet => "troops/peashooter.png"
