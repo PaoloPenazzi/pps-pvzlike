@@ -205,25 +205,25 @@ object ScalaGDX:
        *
        * @return the [[Drawable]]s that should be rendered each frame.
        */
-      def drawables: Seq[Drawable]
+      def drawables: Seq[Drawable] = Seq.empty
 
       /**
        *
        * @return the [[Writable]]s that should be rendered each frame.
        */
-      def writables: Seq[Writable]
+      def writables: Seq[Writable]  = Seq.empty
 
       /**
        *
        * @return the [[Actor]]s on the screen.
        */
-      def actors: Seq[Actor]
+      def actors: Seq[Actor] = Seq.empty
 
       /**
        *
        * @return what happens when the user touches the screen in a certain position.
        */
-      def onScreenTouch: Vector2 => Unit
+      def onScreenTouch: Vector2 => Unit = _ => {}
 
       /**
        *
