@@ -17,12 +17,12 @@ object Utilities:
     case Normal extends Sun(50)
     case Big extends Sun(100)
 
-  case class MetaData(sun: Int = 0, velocity: Speed = Speed.Normal):
+  case class MetaData(sun: Int = 0, speed: Speed = Speed.Normal):
     @targetName("sum")
-    def +(quantity: Int): MetaData = MetaData(quantity + sun, velocity)
+    def +(quantity: Int): MetaData = MetaData(quantity + sun, speed)
 
     @targetName("subtraction")
-    def -(quantity: Int): MetaData = MetaData(sun - quantity, velocity)
+    def -(quantity: Int): MetaData = MetaData(sun - quantity, speed)
 
     @targetName("change velocity")
     def >>>(newVelocity: Speed): MetaData = MetaData(sun, newVelocity)
