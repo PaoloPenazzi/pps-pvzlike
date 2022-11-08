@@ -260,32 +260,37 @@ object GameLoopActor:
 
     /** A specific object for collision management */
     object CollisionUtils:
-      def handleCollision(
-                          entities: Seq[GameEntity[Entity]],
-                          ctx: ActorContext[Command]
-                        ): Unit =
-        detectCollision(entities) filter (_._2.nonEmpty) foreach { e =>
-          if e._1.entity hitMultipleTimes
-          then e._2 foreach { r => sendCollisionMessage(e._1, r, ctx); sendCollisionMessage(r, e._1, ctx) }
+
+      trait Collision:
+        type A <: Entity
+        type B <: Entity
+        def entity: GameEntity[A]
+        def collidedEntities: Seq[GameEntity[B]]
+        def sendCollisionMessages(receiver: GameEntity[B], ctx: ActorContext[Command]): Unit =
+          entity.ref ! Collision(receiver.entity, ctx.self)
+          receiver.ref ! Collision(entity.entity, ctx.self)
+
+      case class BulletTroopCollision(bullet: GameEntity[Bullet], troopsCollided: Seq[GameEntity[Troop]]) extends Collision:
+        override type A = Bullet
+        override type B = Troop
+        override def entity: GameEntity[Bullet] = bullet
+        override def collidedEntities: Seq[GameEntity[Troop]] = troopsCollided
+
+      def handleCollision(entities: Seq[GameEntity[Entity]], ctx: ActorContext[Command]): Unit =
+        checkCollision(entities) filter (_.collidedEntities.nonEmpty) foreach { e =>
+          if e.entity.entity hitMultipleTimes
+          then e.collidedEntities foreach { r => e.sendCollisionMessages(r, ctx) }
           else {
-            sendCollisionMessage(e._1, e._2.head, ctx);
-            sendCollisionMessage(e._2.head, e._1, ctx)
+            e.sendCollisionMessages(e.collidedEntities.head, ctx)
           }
         }
 
-      def sendCollisionMessage[A <: Entity, E <: Entity](
-                                                          to: GameEntity[A],
-                                                          from: GameEntity[E],
-                                                          ctx: ActorContext[Command]
-                                                        ): Unit =
-        to.ref ! Collision(from.entity, ctx.self)
-
-      def detectCollision(entities: Seq[GameEntity[Entity]]): Seq[(GameEntity[Bullet], Seq[GameEntity[Troop]])] =
+      def checkCollision(entities: Seq[GameEntity[Entity]]): Seq[BulletTroopCollision] =
         import GameData.given
         for
           b <- entities.ofType[Bullet]
         yield
-          (b, for
+          BulletTroopCollision(b, for
             e <- entities.ofType[Troop]
             if b.entity checkCollisionWith e.entity
           yield e)

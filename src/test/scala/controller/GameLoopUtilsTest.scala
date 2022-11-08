@@ -39,18 +39,23 @@ class GameLoopUtilsTest extends AnyWordSpec with Matchers :
     "started" should {
       "detect collision" in {
         val entities = List(bullet, zombie, secondZombie)
-        detectCollision(entities) shouldBe List((bullet, List(zombie, secondZombie)))
+        checkCollision(entities) shouldBe List(BulletTroopCollision(bullet.asInstanceOf[GameEntity[Bullet]],
+          List(zombie.asInstanceOf[GameEntity[Troop]], secondZombie.asInstanceOf[GameEntity[Troop]])))
       }
 
       "detect multiple collision" in {
         val entities = List(secondBullet, zombie, secondZombie, thirdZombie)
-        detectCollision(entities) shouldBe List((secondBullet, List(zombie, secondZombie, thirdZombie)))
+        checkCollision(entities) shouldBe List(BulletTroopCollision(secondBullet.asInstanceOf[GameEntity[Bullet]],
+          List(zombie.asInstanceOf[GameEntity[Troop]],
+            secondZombie.asInstanceOf[GameEntity[Troop]], thirdZombie.asInstanceOf[GameEntity[Troop]])))
       }
 
       "send collision message" in {
         Behaviors.setup {
           (ctx: ActorContext[Command]) =>
-            sendCollisionMessage(bullet, zombie, ctx)
+            val collision: BulletTroopCollision = BulletTroopCollision(bullet.asInstanceOf[GameEntity[Bullet]], List(zombie.asInstanceOf[GameEntity[Troop]]))
+            collision.sendCollisionMessages(zombie.asInstanceOf[GameEntity[Troop]], ctx)
+            zombieActor.expectMessage(Collision(bullet.entity, ctx.self))
             bulletActor.expectMessage(Collision(zombie.entity, ctx.self))
             Behaviors.empty
         }
