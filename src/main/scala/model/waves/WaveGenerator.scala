@@ -37,6 +37,7 @@ object WaveGenerator:
    * @return The next [[Wave]].
    */
   def generateNextWave(waveNumber: Int): Wave =
+    require(waveNumber > 0)
     val enemies = prolog generateWave (waveNumber * 2 - 1)
     WaveImpl(waveNumber, enemies)
 
@@ -47,6 +48,7 @@ object WaveGenerator:
    * @return The next [[Wave]].
    */
   def generateNextBasicWave(waveNumber: Int): Wave =
+    require(waveNumber > 0)
     val newEnemies = createEnemyList(2 * waveNumber - 1)(List.empty[Zombie])
     WaveImpl(waveNumber, newEnemies)
 
