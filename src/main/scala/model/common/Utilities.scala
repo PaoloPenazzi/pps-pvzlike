@@ -44,7 +44,6 @@ object Utilities:
    * the faster the game speed will be.
    * */
   enum Speed(val speed: FiniteDuration):
-    case Slow extends Speed(FiniteDuration(32, "milliseconds"))
     case Normal extends Speed(FiniteDuration(16, "milliseconds"))
     case Fast extends Speed(FiniteDuration(8, "milliseconds"))
 

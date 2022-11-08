@@ -9,8 +9,6 @@ class MetaDataTest extends AnyFlatSpec with should.Matchers:
   "The metadata" should "change its speed" in {
     val meta = MetaData() >>> Speed.Fast
     meta.speed shouldBe Speed.Fast
-    val updateMeta = meta >>> Speed.Slow
-    updateMeta.speed shouldBe Speed.Slow
   }
 
   "The metadata" should "increase its sun value" in {
