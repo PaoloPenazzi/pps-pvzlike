@@ -66,7 +66,7 @@ object GameLoopActor:
               startTimer(timer, UpdateResources(), resourceTimer)
               Behaviors.same
 
-            case GameOver() => Game.endGame(stats); Behaviors.stopped
+            case EndReached() => Game.endGame(stats); Behaviors.stopped
 
 
             case PauseGame() => pauseBehavior()
@@ -134,7 +134,7 @@ object GameLoopActor:
 
     case class UpdateLoop() extends Command
 
-    case class GameOver() extends Command
+    case class EndReached() extends Command
 
     case class UpdateResources() extends Command
 
