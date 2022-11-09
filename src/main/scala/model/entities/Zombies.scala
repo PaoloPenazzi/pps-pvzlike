@@ -2,7 +2,8 @@ package model.entities
 
 import model.entities.ZombieDefaultValues.*
 import model.entities.TroopState.*
-import model.entities.WorldSpace.{LanesLength, NumOfLanes, Position}
+import model.entities.{Bullets, WorldSpace}
+import WorldSpace.{LanesLength, NumOfLanes, Position}
 
 import scala.language.implicitConversions
 import scala.concurrent.duration.FiniteDuration
@@ -29,7 +30,7 @@ trait Zombie(override val position: Position,
 
   private def isInRange(plant: Plant): Boolean = position.x - plant.position.x.toInt <= range
 
-  override def bullet: ZombieBullet = bullets(this)
+  override def bullet: ZombieBullet = bullets(this).asInstanceOf[ZombieBullet]
 
   /**
    * Change entitie's velocity
@@ -132,10 +133,10 @@ object ZombieDefaultValues:
   /**
    * Returns the [[ZombieBullet]] shoot by the [[Zombie]].
    */
-  val bullets: Zombie => ZombieBullet =
-    case basicZombie: BasicZombie => PawBullet(basicZombie.position)
-    case fastZombie: FastZombie => PawBullet(fastZombie.position)
-    case warriorZombie: WarriorZombie => SwordBullet(warriorZombie.position)
+  val bullets: Zombie => Bullet =
+    case basicZombie: BasicZombie => Bullets.ofType[PawBullet] withPosition basicZombie.position
+    case fastZombie: FastZombie => Bullets.ofType[PawBullet] withPosition fastZombie.position
+    case warriorZombie: WarriorZombie => Bullets.ofType[SwordBullet] withPosition warriorZombie.position
 
   /**
    * Return the [[BasicZombie]] default velocity

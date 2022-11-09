@@ -48,9 +48,9 @@ trait Bullet extends Entity with MovingAbility :
   protected def collideWith(entity: Entity): Boolean =
     entity.position.x <= position.x && position.x <= entity.position.x + entity.width
 
-  override type UpdatedEntity = Bullet
-
   override def velocity: Float = BulletDefaultValues.velocity(this)
+
+  override type UpdatedEntity = Bullet
 
   override def update(elapsedTime: FiniteDuration, interests: List[Entity]): Bullet =
     this withPosition newPositionAfter(elapsedTime)

@@ -3,7 +3,7 @@ package model
 import org.scalatest.*
 import org.scalatest.flatspec.*
 import org.scalatest.matchers.*
-import model.entities.{Bullets, CherryBullet, FastZombie, PawBullet, PeaBullet, Troops, WarriorZombie}
+import model.entities.{Bullets, CherryBullet, FastZombie, PawBullet, PeaBullet, Troops, WarriorZombie, ZombieBullet}
 import model.entities.WorldSpace.Position
 
 import scala.language.{implicitConversions, postfixOps}
@@ -11,7 +11,7 @@ import scala.concurrent.duration.FiniteDuration
 
 class BulletModelTest extends AnyFlatSpec with should.Matchers:
 
-  val bullet = Bullets.ofType[PawBullet]
+  val bullet: ZombieBullet = Bullets.ofType[PawBullet]
   val plant = Troops.shooterOf[PeaBullet]
   val cherryBullet = Bullets.ofType[CherryBullet]
   val fastZombie = Troops.ofType[FastZombie].withPosition(Position(1, 0))
