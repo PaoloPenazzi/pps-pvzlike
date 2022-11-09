@@ -127,24 +127,54 @@ case class SwordBullet(override val position: Position = defaultBulletPosition) 
   override def withPosition(pos: Position): Bullet = copy(position = pos)
 
 object Bullets:
+  /**
+   * A builder used to create [[Bullet]].
+   *
+   * @tparam T The type of the [[Bullet]].
+   */
   trait BulletBuilder[B <: Bullet]:
+    /**
+     * @return A [[Bullet]] of type [[B]]
+     */
     def build: B
 
+  /**
+   * Given instances to create a [[PeaBullet]].
+   */
   given BulletBuilder[PeaBullet] with
     override def build: PeaBullet = PeaBullet()
 
+  /**
+   * Given instances to create a [[SnowBullet]].
+   */
   given BulletBuilder[SnowBullet] with
     override def build: SnowBullet = SnowBullet()
 
+  /**
+   * Given instances to create a [[CherryBullet]].
+   */
   given BulletBuilder[CherryBullet] with
     override def build: CherryBullet = CherryBullet()
 
+  /**
+   * Given instances to create a [[PawBullet]].
+   */
   given BulletBuilder[PawBullet] with
     override def build: PawBullet = PawBullet()
 
+  /**
+   * Given instances to create a [[SwordBullet]].
+   */
   given BulletBuilder[SwordBullet] with
     override def build: SwordBullet = SwordBullet()
 
+  /**
+   * A DSL method to create every type of [[Bullet]].
+   *
+   * @param bulletBuilder The [[BulletBuilder]] of the type needed.
+   * @tparam B The [[Bullet]] type.
+   * @return The [[Bullet]] of the specified type.
+   */
   def ofType[B <: Bullet](using bulletBuilder: BulletBuilder[B]): B =
     bulletBuilder.build
 
