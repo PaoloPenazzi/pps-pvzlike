@@ -15,10 +15,10 @@ import ScalaGDX.ActorBehaviors.*
 import akka.actor.typed.ActorRef
 import com.badlogic.gdx.scenes.scene2d.ui.{Image, ImageButton}
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable
-import controller.{SendChangeGameSpeed, SendPauseGame, SendPlacePlant, SendResumeGame, ViewMessage}
 import model.common.Utilities.Speed.*
 import view.ScalaGDX.Screen.ScreenBehavior
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton.ImageButtonStyle
+import view.actors.{SendChangeGameSpeed, SendPauseGame, SendPlacePlant, SendResumeGame, ViewMessage}
 
 import scala.language.postfixOps
 import scala.language.implicitConversions

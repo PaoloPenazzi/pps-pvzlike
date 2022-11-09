@@ -5,7 +5,6 @@ import akka.actor.typed.{ActorRef, Behavior}
 import controller.actors.GameLoopActor.GameLoopCommands.*
 import controller.utils.CollisionUtils.handleCollision
 import controller.utils.GameLoopUtils.*
-import controller.{RenderEntities, RenderMetaData, ViewMessage}
 import model.GameData.GameEntity
 import model.GameData.GameSeq.given
 import model.Statistics.GameStatistics
@@ -13,6 +12,7 @@ import model.actors.{ModelMessage, TroopActor}
 import model.common.Utilities.{MetaData, Speed, Sun}
 import model.entities.{Bullet, Entity, Plant, Troop}
 import view.Game
+import view.actors.{RenderEntities, RenderMetaData, ViewMessage}
 
 import scala.language.{implicitConversions, postfixOps}
 

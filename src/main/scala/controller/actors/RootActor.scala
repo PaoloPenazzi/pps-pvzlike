@@ -2,10 +2,10 @@ package controller.actors
 
 import akka.actor.typed.Behavior
 import akka.actor.typed.scaladsl.Behaviors
-import controller.ViewActor
 import controller.actors.GameLoopActor.GameLoop
 import controller.actors.GameLoopActor.GameLoopCommands.StartGame
 import controller.actors.RootActor.RootCommands.{RootCommand, Start}
+import view.actors.ViewActor
 
 /** It's the actor responsible for launching the system.
  *

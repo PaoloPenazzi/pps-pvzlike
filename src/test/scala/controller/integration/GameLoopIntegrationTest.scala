@@ -5,7 +5,7 @@ import akka.actor.typed.{ActorRef, Behavior}
 import controller.actors.GameLoopActor
 import controller.actors.GameLoopActor.*
 import controller.actors.GameLoopActor.GameLoopCommands.*
-import controller.{RenderEntities, RenderMetaData, ViewMessage, actors}
+import controller.actors
 import model.GameData.{GameEntity, GameSeq}
 import model.actors.{Collision, ModelMessage, Update}
 import model.common.Utilities.*
@@ -14,6 +14,7 @@ import model.entities.WorldSpace.LanesLength
 import org.scalatest.BeforeAndAfter
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
+import view.actors.{RenderEntities, RenderMetaData, ViewMessage}
 
 import scala.language.implicitConversions
 

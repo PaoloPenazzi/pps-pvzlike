@@ -1,8 +1,9 @@
-package controller
+package view.actors
 
 import akka.actor.typed.scaladsl.Behaviors
 import akka.actor.typed.{ActorRef, Behavior}
 import controller.actors.GameLoopActor.GameLoopCommands.*
+import controller.*
 import model.actors.ModelMessage
 import model.common.Utilities.{MetaData, Speed}
 import model.entities.{Entity, Plant, Troop}
