@@ -5,9 +5,10 @@ import akka.actor.testkit.typed.scaladsl.{ActorTestKit, BehaviorTestKit, TestInb
 import akka.actor.typed.scaladsl.Behaviors
 import akka.actor.typed.{ActorRef, Behavior}
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application
-import controller.GameLoopActor.*
-import controller.GameLoopActor.GameLoopCommands.*
-import controller.{GameLoopActor, ViewMessage}
+import controller.actors.GameLoopActor
+import controller.actors.GameLoopActor.*
+import controller.actors.GameLoopActor.GameLoopCommands.*
+import controller.{ViewMessage, actors}
 import model.actors.ModelMessage
 import model.common.Utilities.Speed
 import model.entities.*
@@ -38,7 +39,7 @@ class GameLoopBehaviorTest extends AnyWordSpec with BeforeAndAfter with Matchers
 
   case class MockSystem():
     val viewActor: TestInbox[ViewMessage] = TestInbox[ViewMessage]()
-    val gameLoopActor: BehaviorTestKit[Command] = BehaviorTestKit(GameLoopActor(viewActor.ref))
+    val gameLoopActor: BehaviorTestKit[Command] = BehaviorTestKit(actors.GameLoopActor(viewActor.ref))
 
     def send(msg: Command): Unit = gameLoopActor run msg
 

@@ -1,15 +1,15 @@
 package model.actors
 
-import akka.actor.typed.{ActorRef, Behavior}
 import akka.actor.typed.scaladsl.Behaviors
-import controller.GameLoopActor.GameLoopCommands.{BulletSpawned, EntityDead, EntityUpdated, EndReached}
+import akka.actor.typed.{ActorRef, Behavior}
+import controller.actors.GameLoopActor.GameLoopCommands.{BulletSpawned, EndReached, EntityDead, EntityUpdated}
+import model.actors.BulletActor
 import model.entities.*
 import model.entities.TroopState.*
 import model.entities.WorldSpace.*
-import model.actors.BulletActor
 import view.Game
 
-import concurrent.duration.DurationInt
+import scala.concurrent.duration.DurationInt
 
 object TroopActor:
   private val ShootingTimerKey: String = "Shooting"

@@ -4,7 +4,10 @@ import akka.actor.testkit.typed.scaladsl.{BehaviorTestKit, TestInbox}
 import akka.actor.typed.scaladsl.{ActorContext, Behaviors}
 import akka.actor.typed.{ActorRef, Behavior}
 import akka.event.ActorWithLogClass
-import controller.GameLoopActor.GameLoopCommands.Command
+import controller.actors.GameLoopActor.*
+import controller.actors.GameLoopActor.GameLoopCommands.Command
+import controller.utils.CollisionUtils.*
+import controller.utils.GameLoopUtils.*
 import model.GameData.{GameEntity, GameSeq}
 import model.Statistics.GameStatistics
 import model.actors.{Collision, ModelMessage}
@@ -14,6 +17,7 @@ import model.entities.WorldSpace.LanesLength
 import org.scalatest.BeforeAndAfter
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
+
 import scala.language.implicitConversions
 
 class GameLoopUtilsTest extends AnyWordSpec with Matchers :
@@ -24,16 +28,12 @@ class GameLoopUtilsTest extends AnyWordSpec with Matchers :
   val secondZombieActor: TestInbox[ModelMessage] = TestInbox[ModelMessage]("secondZombie")
   val thirdZombieActor: TestInbox[ModelMessage] = TestInbox[ModelMessage]("thirdZombie")
   val plantActor: TestInbox[ModelMessage] = TestInbox[ModelMessage]("plant")
-  val bullet: GameEntity[Entity] = GameEntity(bulletActor.ref, Bullets.ofType[PeaBullet] withPosition (1, LanesLength))
-  val secondBullet: GameEntity[Entity] = GameEntity(secondBulletActor.ref, Bullets.ofType[CherryBullet] withPosition (1, LanesLength))
-  val zombie: GameEntity[Entity] = GameEntity(zombieActor.ref, Troops.ofType[BasicZombie] withPosition (1, LanesLength))
-  val secondZombie: GameEntity[Entity] = GameEntity(secondZombieActor.ref, Troops.ofType[BasicZombie] withPosition (1, LanesLength))
-  val thirdZombie: GameEntity[Entity] = GameEntity(thirdZombieActor.ref, Troops.ofType[BasicZombie] withPosition (2, LanesLength))
-  val shooter: GameEntity[Entity] = GameEntity(plantActor.ref, Troops.shooterOf[PeaBullet] withPosition (1, LanesLength / 2))
-
-  import GameLoopActor.*
-  import GameLoopActor.GameLoopUtils.*
-  import GameLoopActor.GameLoopUtils.CollisionUtils.*
+  val bullet: GameEntity[Entity] = GameEntity(bulletActor.ref, Bullets.ofType[PeaBullet] withPosition(1, LanesLength))
+  val secondBullet: GameEntity[Entity] = GameEntity(secondBulletActor.ref, Bullets.ofType[CherryBullet] withPosition(1, LanesLength))
+  val zombie: GameEntity[Entity] = GameEntity(zombieActor.ref, Troops.ofType[BasicZombie] withPosition(1, LanesLength))
+  val secondZombie: GameEntity[Entity] = GameEntity(secondZombieActor.ref, Troops.ofType[BasicZombie] withPosition(1, LanesLength))
+  val thirdZombie: GameEntity[Entity] = GameEntity(thirdZombieActor.ref, Troops.ofType[BasicZombie] withPosition(2, LanesLength))
+  val shooter: GameEntity[Entity] = GameEntity(plantActor.ref, Troops.shooterOf[PeaBullet] withPosition(1, LanesLength / 2))
 
   "The game loop" when {
     "started" should {
@@ -89,7 +89,7 @@ class GameLoopUtilsTest extends AnyWordSpec with Matchers :
       }
 
       "can't place two plant in the same place" in {
-        isCellFree(Troops.shooterOf[PeaBullet] withPosition (1, LanesLength / 2), List(shooter.asInstanceOf[GameEntity[Plant]])) shouldBe false
+        isCellFree(Troops.shooterOf[PeaBullet] withPosition(1, LanesLength / 2), List(shooter.asInstanceOf[GameEntity[Plant]])) shouldBe false
       }
 
       "can't place plant without enough money" in {

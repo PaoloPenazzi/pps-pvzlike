@@ -1,8 +1,8 @@
 package model.actors
 
-import akka.actor.typed.{ActorRef, Behavior}
 import akka.actor.typed.scaladsl.Behaviors
-import controller.GameLoopActor.GameLoopCommands.{EntityUpdated, Command, EntityDead}
+import akka.actor.typed.{ActorRef, Behavior}
+import controller.actors.GameLoopActor.GameLoopCommands.{Command, EntityDead, EntityUpdated}
 import model.entities.{Bullet, Zombie}
 
 object BulletActor:
@@ -10,7 +10,7 @@ object BulletActor:
     moving(bullet)
 
   def moving(bullet: Bullet): Behavior[ModelMessage] =
-    Behaviors.receive( (ctx,msg) => {
+    Behaviors.receive((ctx, msg) => {
       msg match
         case Update(timeElapsed, interests, replyTo) =>
           val updatedBullet = bullet.update(timeElapsed, interests)

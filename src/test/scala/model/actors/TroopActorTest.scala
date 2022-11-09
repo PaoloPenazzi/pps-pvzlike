@@ -5,22 +5,22 @@ import akka.actor.testkit.typed.Effect
 import akka.actor.testkit.typed.scaladsl.{ActorTestKit, BehaviorTestKit, ScalaTestWithActorTestKit, TestInbox}
 import akka.actor.typed.scaladsl.Behaviors
 import akka.testkit.{ImplicitSender, TestActors, TestKit}
-import controller.GameLoopActor.GameLoopCommands.{EntityDead, BulletSpawned, EntityUpdated, Command}
+import controller.actors.GameLoopActor.GameLoopCommands.{BulletSpawned, Command, EntityDead, EntityUpdated}
 import model.actors.{BulletActor, Shoot, Update}
 import model.entities.*
+import model.entities.WorldSpace.LanesLength
 import org.scalatest.BeforeAndAfterAll
 import org.scalatest.funsuite.AnyFunSuite
 import org.scalatest.matchers.must.Matchers.must
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.{AnyWordSpec, AnyWordSpecLike}
 
-import scala.language.implicitConversions
 import scala.concurrent.duration.{DurationInt, FiniteDuration, MILLISECONDS}
-import WorldSpace.LanesLength
+import scala.language.implicitConversions
 
 class TroopActorTest extends AnyWordSpec with BeforeAndAfterAll with Matchers :
 
-  val plant: Troop = Troops.shooterOf[PeaBullet] withPosition (1, 10)
+  val plant: Troop = Troops.shooterOf[PeaBullet] withPosition(1, 10)
   val zombie: Troop = BasicZombie((1, LanesLength + 2))
   val plantActor: BehaviorTestKit[ModelMessage] = BehaviorTestKit(TroopActor(plant))
   val zombieActor: BehaviorTestKit[ModelMessage] = BehaviorTestKit(TroopActor(zombie))
@@ -63,7 +63,7 @@ class TroopActorTest extends AnyWordSpec with BeforeAndAfterAll with Matchers :
     "colliding with a bullet" should {
       "update himself" in {
         val inbox = TestInbox[Command]()
-        plantActor run Collision(PeaBullet(1,1), inbox.ref)
+        plantActor run Collision(PeaBullet(1, 1), inbox.ref)
         assert(inbox.hasMessages)
         val message = inbox.receiveMessage()
         assert(message.isInstanceOf[EntityUpdated[Entity]])

@@ -1,17 +1,17 @@
 package model.actors
 
 import akka.actor.testkit.typed.scaladsl.{BehaviorTestKit, TestInbox}
-import controller.GameLoopActor.GameLoopCommands.{Command, EntityDead, EntityUpdated}
+import controller.actors.GameLoopActor.GameLoopCommands.{Command, EntityDead, EntityUpdated}
+import model.entities.*
 import org.scalatest.BeforeAndAfterAll
+import org.scalatest.matchers.must.Matchers.must
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
-import org.scalatest.matchers.must.Matchers.must
-import model.entities.{Bullet, Bullets, Entity, PeaBullet, Plant, Troops}
 
 import scala.concurrent.duration.{FiniteDuration, MILLISECONDS}
 import scala.language.implicitConversions
 
-class BulletActorTest extends AnyWordSpec with BeforeAndAfterAll with Matchers:
+class BulletActorTest extends AnyWordSpec with BeforeAndAfterAll with Matchers :
 
   val bullet: Bullet = Bullets.ofType[PeaBullet]
   val bulletActor: BehaviorTestKit[ModelMessage] = BehaviorTestKit(BulletActor(bullet))
@@ -37,11 +37,11 @@ class BulletActorTest extends AnyWordSpec with BeforeAndAfterAll with Matchers:
     }
     "collision" should {
       "Disappear" in {
-          val inbox = TestInbox[Command]()
-          bulletActor run Collision(peaShooter, inbox.ref)
-          assert(inbox.hasMessages)
-          val message = inbox.receiveMessage()
-          assert(message.isInstanceOf[EntityDead[Entity]])
+        val inbox = TestInbox[Command]()
+        bulletActor run Collision(peaShooter, inbox.ref)
+        assert(inbox.hasMessages)
+        val message = inbox.receiveMessage()
+        assert(message.isInstanceOf[EntityDead[Entity]])
       }
     }
   }
