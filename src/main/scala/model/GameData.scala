@@ -2,6 +2,7 @@ package model
 
 import akka.actor.typed.ActorRef
 import model.GameData.GameSelector.GameSelectorBuilder
+import model.GameData.GameSeq.{GameSeq, GameSeqImpl}
 import model.actors.ModelMessage
 import model.entities.*
 
@@ -9,7 +10,7 @@ import scala.annotation.targetName
 
 /** Represents the type of data handled by the [[controller.GameLoopActor.GameLoop]]. */
 object GameData:
-  given Conversion[Seq[GameEntity[Entity]], GameSeq] = GameSeq(_)
+  given Conversion[Seq[GameEntity[Entity]], GameSeq] = GameSeqImpl(_)
 
   /** Defines a view over the model entities, designed for the [[controller.GameLoopActor.GameLoop]].
    *
@@ -19,17 +20,20 @@ object GameData:
    */
   case class GameEntity[E <: Entity](ref: ActorRef[ModelMessage], entity: E)
 
+  object GameSeq:
+    trait GameSeq:
+      def seq: Seq[GameEntity[Entity]]
+      def of[A <: Entity : GameSelectorBuilder]: Seq[GameEntity[A]] =
+        seq.collect(summon[GameSelectorBuilder[A]].by)
+
+      @targetName("delete")
+      def :-(ref: ActorRef[ModelMessage]): Seq[GameEntity[Entity]] = seq filter { _.ref != ref }
 
 
-  case class GameSeq(seq: Seq[GameEntity[Entity]]):
-    def of[A <: Entity : GameSelectorBuilder]: Seq[GameEntity[A]] =
-      seq.collect(summon[GameSelectorBuilder[A]].by)
+      def updateWith(entity: GameEntity[Entity]): Seq[GameEntity[Entity]] =
+        seq collect { case x if x.ref == entity.ref => entity case x => x }
 
-    @targetName("delete")
-    def :-(ref: ActorRef[ModelMessage]): Seq[GameEntity[Entity]] = seq filter { _.ref != ref }
-    
-    def updateWith(entity: GameEntity[Entity]): Seq[GameEntity[Entity]] =
-      seq collect { case x if x.ref == entity.ref => entity case x => x }
+    case class GameSeqImpl(seq: Seq[GameEntity[Entity]]) extends GameSeq
 
   object GameSelector:
     trait GameSelectorBuilder[E <: Entity]:

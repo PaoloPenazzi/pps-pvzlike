@@ -3,15 +3,17 @@ package model
 import akka.actor.testkit.typed.scaladsl.{BehaviorTestKit, TestInbox}
 import akka.actor.typed.ActorRef
 import controller.{GameLoopActor, ViewMessage}
+import model.GameData.GameSeq.{GameSeq, GameSeqImpl}
 import model.GameData.{GameEntity, GameSeq}
 import model.actors.ModelMessage
 import model.entities.*
 import model.entities.WorldSpace.{LanesLength, Position}
-import model.entities.{BasicZombie, Bullet, Entity, PeaBullet, Plant, Troops, Zombie, Bullets}
+import model.entities.{BasicZombie, Bullet, Bullets, Entity, PeaBullet, Plant, Troops, Zombie}
 import org.scalatest.BeforeAndAfter
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
+
 import scala.language.implicitConversions
 
 class GameDataTest extends AnyFlatSpec with Matchers :
@@ -24,7 +26,7 @@ class GameDataTest extends AnyFlatSpec with Matchers :
   val zombie: GameEntity[Entity] = GameEntity(zombieActor.ref, Troops.ofType[BasicZombie] withPosition(1, LanesLength))
   val shooter: GameEntity[Entity] = GameEntity(plantActor.ref, Troops.shooterOf[PeaBullet] withPosition(1, LanesLength / 2))
 
-  val seq: GameSeq = GameSeq(List(bullet, zombie, shooter))
+  val seq: GameSeq = GameSeqImpl(List(bullet, zombie, shooter))
 
   import GameData.*
 
