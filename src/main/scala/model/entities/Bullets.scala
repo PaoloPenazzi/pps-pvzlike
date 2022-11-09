@@ -138,33 +138,18 @@ object Bullets:
      */
     def build: B
 
-  /**
-   * Given instances to create a [[PeaBullet]].
-   */
   given BulletBuilder[PeaBullet] with
     override def build: PeaBullet = PeaBullet()
 
-  /**
-   * Given instances to create a [[SnowBullet]].
-   */
   given BulletBuilder[SnowBullet] with
     override def build: SnowBullet = SnowBullet()
 
-  /**
-   * Given instances to create a [[CherryBullet]].
-   */
   given BulletBuilder[CherryBullet] with
     override def build: CherryBullet = CherryBullet()
 
-  /**
-   * Given instances to create a [[PawBullet]].
-   */
   given BulletBuilder[PawBullet] with
     override def build: PawBullet = PawBullet()
-
-  /**
-   * Given instances to create a [[SwordBullet]].
-   */
+  
   given BulletBuilder[SwordBullet] with
     override def build: SwordBullet = SwordBullet()
 
