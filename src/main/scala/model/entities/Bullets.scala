@@ -163,7 +163,6 @@ object BulletDefaultValues:
     case _: SwordBullet => 60
     case _: PawBullet => 25
     case _: SnowBullet => 25
-    case _ => 0
 
   /**
    * Returns the velocity of the [[Bullet]].
@@ -173,4 +172,3 @@ object BulletDefaultValues:
     case _: SwordBullet => -0.1
     case _: PawBullet => -0.1
     case _: SnowBullet => 0.06
-    case _ => 0
