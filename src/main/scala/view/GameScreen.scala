@@ -89,7 +89,7 @@ class GameScreen(viewActor: ActorRef[ViewMessage]) extends ScreenBehavior with R
     style.up = TextureRegionDrawable(texture(NormalButton))
     style.checked = TextureRegionDrawable(texture(FastButton))
 
-    val button: ImageButton = ImageButtons.builder withStyle style withBounds(13, 6.5, 3, 2)
+    val button: ImageButton = ImageButtons.builder withStyle style withBounds(13.5, 7, 2, 1)
     button.addPulseOnTouch()
     button.onTouchUp(() =>
       val speed = if button.isChecked then Fast else Normal
