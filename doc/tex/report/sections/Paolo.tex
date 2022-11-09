@@ -65,12 +65,41 @@ di troop chiama utilizza il builder per restituire la nuova entità.
             troopBuilder.build
 \end{verbatim}
 
-Tutto rende più funzionale la creazione di una troop:
+Tutto ciò rende più funzionale la creazione di una troop:
 \begin{verbatim}
     val troop: Troop = Troops.ofType[BasicZombie]
 \end{verbatim}
 
 \subsubsection{TroopActor}
+Avendo adottato un'architettura ad attori, ogni proiettile, in fase di creazione, viene associato ad un attore che ne definisce il comportamento.
+Il TroopActor ha un solo Behaviour e non è mai proattivo: risponde solamente ai messaggi ricevuti dal GameLoop, rispettando
+il pattern \textbf{MVC}.
+Ad ogni iterazione del GameLoop il TroopActor riceve un messaggio di Update() a seguito del quale:
+\begin{enumerate}
+    \item Aggiorna la propria troop.
+    \item Se la troop ha raggiunto la fine della corsia notifica il GameLoop.
+    \item Manda la troop aggiornata al GameLoop.
+    \item Se c'è un nemico attaccabile, manda a se stesso un messaggio Shoot().
+    \item Ricrea il proprio Behaviour con la troop aggiornata.
+\end{enumerate}
+Nel caso ci sia un'entità da attaccare riceverà il messaggio Shoot() ,che si è precedentemente inviato, a seguito del quale:
+\begin{enumerate}
+    \item Crea il bullet della propria troop.
+    \item Crea un BulletActor che controlla il bullet.
+    \item Notifica il GameLoop dell'avvenuta creazione con il messaggio BulletSpawned().
+\end{enumerate}
+Nel caso la troop venga colpita da un bullet, il TroopActor viene notificato dal GameLoop con il messaggio Collision(),
+a seguito del quale:
+\begin{enumerate}
+    \item Se la troop viene uccisa, risponde con il messaggio EntityDead()
+    \item Se la troop non viene uccisa, risponde con il messaggio EntityUpdated()
+\end{enumerate}
+Il comportamento del TroopActor viene mostrato nel seguente diagramma:
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\linewidth]{images/troop-actor.png}
+    \label{Diagramma di sequenza del Troop Actor.}
+\end{figure}
 
 \subsubsection{Plant}
 

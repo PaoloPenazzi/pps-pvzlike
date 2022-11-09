@@ -2,10 +2,41 @@
 %! Date = 05/10/22
 
 \documentclass{article}
-\usepackage{geometry}
+\usepackage[utf8]{inputenc}
+\usepackage{pgfplots}
 \usepackage{verbatim}
+\pgfplotsset{width=0.8\textwidth,compat=1.16}
 \usepackage{graphicx}
-\geometry{legalpaper, portrait, margin=1in}
+\graphicspath{ {./images/} }
+\usepackage{float}
+\usepackage{listings}
+\usepackage{xcolor}
+
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+\definecolor{black}{rgb}{0,0,0}
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{backcolour},
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,
+    breaklines=true,
+    captionpos=b,
+    keepspaces=true,
+    numbers=left,
+    numbersep=5pt,
+    showspaces=false,
+    showstringspaces=false,
+    showtabs=false,
+    tabsize=2
+}
+
+\lstset{style=mystyle}
 
 \begin{document}
     \input{sections/0_Title.tex}
