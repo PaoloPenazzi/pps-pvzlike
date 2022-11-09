@@ -36,20 +36,6 @@ object Sprites {
     case _: PawBullet => "bullets/paw.png"
     case _: SwordBullet => "bullets/sword.png")
 
-  def width(entity: Entity): Float = entity.width * (gridWidth/LanesLength)
-
-  def height(entity: Entity): Float = entity match
-    case _: PeaBullet => 0.4
-    case _: PawBullet => 0.4
-    case _: SnowBullet => 0.4
-    case _: SwordBullet => 0.7
-    case _: Zombie => 1.4
-    case _ => 1
-
-  def yOffset(entity: Entity): Float = entity match
-    case _: Bullet => 0.6
-    case _ => 0
-
   def cardName(troop: Troop): String = troop match
     case s: Shooter[_] => s.bulletInstance match
       case _: PeaBullet => "assets/gameWindow/peashooter-card.png"
