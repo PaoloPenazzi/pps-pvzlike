@@ -7,23 +7,37 @@ import model.actors.ModelMessage
 import model.common.Utilities.MetaData
 import model.entities.{Entity, Plant, Troop}
 import view.View.Renderer
+import view.{Game, GameScreen}
 
 trait ViewMessage
 
-case class Render(entities: List[Entity], replyTo: ActorRef[Command], metaData: MetaData) extends ViewMessage
+case class RenderEntities(entities: List[Entity], replyTo: ActorRef[Command]) extends ViewMessage
+case class RenderMetaData(metaData: MetaData, replyTo: ActorRef[Command]) extends ViewMessage
+case class SendPlacePlant(troop: Troop) extends ViewMessage
 
 object ViewActor:
-  var gameLoopActor: Option[ActorRef[Command]] = None
+  def apply(renderer: Renderer, gameLoopActor: Option[ActorRef[Command]] = None): Behavior[ViewMessage] =
+      Behaviors.receive((_, msg) => {
+        msg match
+          case RenderEntities(entities, replyTo) =>
+            renderer.renderEntities(entities)
+            ViewActor(renderer, Some(replyTo))
 
-  def sendPlacePlant(troop: Troop): Unit =
-    gameLoopActor.foreach(_ ! PlacePlant(troop))
+          case RenderMetaData(metaData, replyTo) =>
+            renderer.renderMetadata(metaData)
+            ViewActor(renderer, Some(replyTo))
 
-  def apply(renderer: Renderer): Behavior[ViewMessage] =
-    Behaviors.receive((ctx, msg) => {
-      msg match
-        case Render(list, replyTo, metaData) =>
-          renderer.renderEntities(list)
-          renderer.renderMetadata(metaData)
-          gameLoopActor = Some(replyTo)
-          Behaviors.same
-    })
+          case SendPlacePlant(troop) =>
+            gameLoopActor.foreach(_ ! PlacePlant(troop))
+            Behaviors.same
+      })
+
+  def apply(): Behavior[ViewMessage] =
+    Behaviors.setup(ctx =>
+      val gameScreen = GameScreen(ctx.self)
+      Game.changeScreen(gameScreen)
+      ViewActor(gameScreen)
+    )
+
+
+

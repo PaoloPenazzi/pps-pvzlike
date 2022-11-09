@@ -71,7 +71,9 @@ object GameLoopActor:
 
             case UpdateResources() =>
               startTimer(timer, UpdateResources(), resourceTimer)
-              GameLoopActor(viewActor, entities, metaData + Sun.Normal.value, stats)
+              val updatedMetaData = metaData + Sun.Normal.value
+              viewActor ! RenderMetaData(updatedMetaData, ctx.self)
+              GameLoopActor(viewActor, entities, updatedMetaData, stats)
 
             case ChangeGameSpeed(velocity) => GameLoopActor(viewActor, entities, metaData >>> velocity, stats)
 
@@ -87,7 +89,7 @@ object GameLoopActor:
 
             case EntityUpdated(ref, entity) =>
               val newEntities = entities updateWith GameEntity(ref, entity)
-              viewActor ! Render(newEntities.map(_.entity).toList, ctx.self, metaData)
+              viewActor ! RenderEntities(newEntities.map(_.entity).toList, ctx.self)
               GameLoopActor(viewActor, newEntities, metaData, stats)
 
             case BulletSpawned(ref, bullet) => GameLoopActor(viewActor, entities :+ GameEntity(ref, bullet), metaData, stats)
@@ -98,6 +100,7 @@ object GameLoopActor:
                   val newGameSeq = entities :+ GameEntity(ctx.spawnAnonymous(TroopActor(troop)), troop)
                   val newMetaData = metaData - troop.asInstanceOf[Plant].cost
                   val newStats = updateEntityStats(stats, troop)
+                  viewActor ! RenderMetaData(newMetaData, ctx.self)
                   GameLoopActor(viewActor, newGameSeq, newMetaData, newStats)
                 case _ => GameLoopActor(viewActor, entities, metaData, stats)
 
