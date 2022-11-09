@@ -66,8 +66,7 @@ object GameLoopActor:
 
             case EndReached() => Game.endGame(stats); Behaviors.stopped
 
-
-            case PauseGame() => pauseBehavior()
+            case PauseGame() => pauseBehavior(metaData)
 
             case UpdateResources() =>
               startTimer(timer, UpdateResources(), metaData.speed.resourceSpeed)
@@ -75,7 +74,7 @@ object GameLoopActor:
               viewActor ! RenderMetaData(updatedMetaData, ctx.self)
               GameLoopActor(viewActor, entities, updatedMetaData, stats)
 
-            case ChangeGameSpeed(velocity) => GameLoopActor(viewActor, entities, metaData >>> velocity, stats)
+            case ChangeGameSpeed(speed) => GameLoopActor(viewActor, entities, metaData >>> speed, stats)
 
             case UpdateLoop() =>
               handleCollision(entities, ctx)
@@ -113,7 +112,7 @@ object GameLoopActor:
      *
      * @return a new updated GameLoop instance with a specific [[Behavior]].
      */
-    def pauseBehavior(): Behavior[Command] =
+    def pauseBehavior(metaData: MetaData): Behavior[Command] =
       Behaviors.withTimers(timer =>
         Behaviors.receive((_, msg) => {
           msg match
@@ -121,6 +120,8 @@ object GameLoopActor:
               startTimer(timer, UpdateLoop(), metaData.speed.gameSpeed)
               startTimer(timer, UpdateResources(), metaData.speed.resourceSpeed)
               GameLoopActor(viewActor, entities, metaData, stats)
+
+            case ChangeGameSpeed(speed) => pauseBehavior(metaData >>> speed)
 
             case _ => Behaviors.same
       }))
@@ -141,7 +142,7 @@ object GameLoopActor:
 
     case class UpdateResources() extends Command
 
-    case class ChangeGameSpeed(velocity: Speed) extends Command
+    case class ChangeGameSpeed(speed: Speed) extends Command
 
     case class EntityDead[E <: Entity](ref: ActorRef[ModelMessage], entity: Option[E]) extends Command
 
