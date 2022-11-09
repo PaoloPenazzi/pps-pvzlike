@@ -13,6 +13,7 @@ import concurrent.duration.DurationInt
 
 object TroopActor:
   private val ShootingTimerKey: String = "Shooting"
+
   def apply(troop: Troop): Behavior[ModelMessage] =
     standardBehaviour(troop)
 
@@ -46,14 +47,13 @@ object TroopActor:
                 entityUpdated.state match
                   case Dead =>
                     replyTo ! EntityDead(ctx.self, Some(troop))
-                    ctx.children collect {case a: ActorRef[ModelMessage] => a} foreach (ref => replyTo ! EntityDead(ref, None))
+                    ctx.children collect { case a: ActorRef[ModelMessage] => a } foreach (ref => replyTo ! EntityDead(ref, None))
                     Behaviors.stopped
                   case _ =>
                     replyTo ! EntityUpdated(ctx.self, entityUpdated)
                     standardBehaviour(entityUpdated)
               case _ => Behaviors.same
             }
-
           case _ => Behaviors.same
       })
     })
