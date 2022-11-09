@@ -151,7 +151,7 @@ object ScalaGDX:
       def addPulseOnTouch(): Actor =
         a.onTouchDown(_ =>
           a.clearActions()
-          a.setScale(1.2f)
+          a.setScale(1.05f)
         )
         a.onTouchUp(() => a.addAction(Actions.scaleTo(1f, 1f, 0.5f)))
         a
