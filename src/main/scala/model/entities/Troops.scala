@@ -5,8 +5,7 @@ import model.entities.WorldSpace.{Position, given}
 import TroopState.*
 import scala.language.implicitConversions
 
-/**
- * A troop is an [[Entity]] that is either a [[Zombie]] or a [[Plant]].
+/** A troop is an [[Entity]] that is either a [[Zombie]] or a [[Plant]].
  */
 trait Troop extends Entity with AttackingAbility :
   override type UpdatedEntity = Troop
@@ -41,12 +40,10 @@ trait Troop extends Entity with AttackingAbility :
    */
   def withLife(healthPoints: Int): Troop
 
-/**
- * An object containing method to generate troops.
+/** An object containing method to generate troops.
  */
 object Troops:
-  /**
-   * A builder used to create [[Troop]].
+  /** A builder used to create [[Troop]].
    *
    * @tparam T The type of the [[Troop]].
    */
@@ -77,8 +74,7 @@ object Troops:
   given TroopBuilder[Shooter[SnowBullet], SnowBullet] with
     override def build: Shooter[SnowBullet] = Shooter[SnowBullet](Bullets.ofType[SnowBullet])
 
-  /**
-   * A DSL method to create every type of [[Troop]], except the [[Shooter]] which have its own method (see [[shooterOf]]).
+  /** A DSL method to create every type of [[Troop]], except the [[Shooter]] which have its own method (see [[shooterOf]]).
    *
    * @param troopBuilder The [[TroopBuilder]] of the type needed.
    * @tparam T The [[Troop]] type.
@@ -87,8 +83,7 @@ object Troops:
   def ofType[T <: Troop](using troopBuilder: TroopBuilder[T, Bullet]): T =
     troopBuilder.build
 
-  /**
-   * A DSL method to create a [[Shooter]].
+  /** A DSL method to create a [[Shooter]].
    *
    * @param troopBuilder The [[TroopBuilder]] of the type needed.
    * @tparam B the [[Bullet]] type.
@@ -97,30 +92,25 @@ object Troops:
   def shooterOf[B <: Bullet](using troopBuilder: TroopBuilder[Shooter[B], B]): Shooter[B] =
     troopBuilder.build
 
-  def zombieOf[Z <: Zombie, B <: Bullet]  (using TroopBuilder[Z, B]): Z[B] =
-    troopBuilder.build
+
 
 /**
  * An Enumeration that models every possible [[Troop]] state.
  */
 enum TroopState:
-  /**
-   * The [[Troop]] is doing nothing, wait for something to happen.
+  /** The [[Troop]] is doing nothing, wait for something to happen.
    */
   case Idle
 
-  /**
-   * The [[Troop]] is moving.
+  /** The [[Troop]] is moving.
    */
   case Moving
 
-  /**
-   * The [[Troop]] is attacking another [[Troop]].
+  /** The [[Troop]] is attacking another [[Troop]].
    */
   case Attacking
 
-  /**
-   * The [[Troop]] is dead.
+  /** The [[Troop]] is dead.
    */
   case Dead
 

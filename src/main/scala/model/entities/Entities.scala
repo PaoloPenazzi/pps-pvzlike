@@ -6,15 +6,12 @@ import model.entities.WorldSpace.{CellLength, Position, given}
 import scala.language.implicitConversions
 import scala.concurrent.duration.FiniteDuration
 
-/**
- * Basic entity of the game.
+/** Basic entity of the game.
  */
 trait Entity:
-  /**
-   * The type that the [[update()]] method of an [[Entity]] should return.
+  /**  The type that the [[update()]] method of an [[Entity]] should return.
    */
   type UpdatedEntity <: Entity
-
 
   /**
    * @param pos The new position of the [[Entity]].
@@ -39,15 +36,13 @@ trait Entity:
    */
   def update(elapsedTime: FiniteDuration, interest: List[Entity]): UpdatedEntity
 
-  /**
-   * The predicate used to filter which [[Entity]] is interested to
+  /** The predicate used to filter which [[Entity]] is interested to
    *
    * @return True if it is interested to the [[Entity]], false otherwise.
    */
   def isInterestedIn: Entity => Boolean = _ => false
 
-/**
- * Add the ability to move to an [[Entity]].
+/** Add the ability to move to an [[Entity]].
  */
 trait MovingAbility extends Entity :
   /**
@@ -55,8 +50,7 @@ trait MovingAbility extends Entity :
    */
   def velocity: Float
 
-/**
- * Add the ability to attack to an [[Entity]].
+/** Add the ability to attack to an [[Entity]].
  */
 trait AttackingAbility extends Entity :
 
@@ -76,12 +70,10 @@ trait AttackingAbility extends Entity :
   def range: Int = EntityDefaultValues.ranges(this)
 
 
-/**
- * This object contains the default values for each type of [[Entity]].
+/** This object contains the default values for each type of [[Entity]].
  */
 object EntityDefaultValues:
-  /**
-   * Given an [[Entity]] with [[AttackingAbility]], it returns the fireRate of the entity.
+  /** Given an [[Entity]] with [[AttackingAbility]], it returns the fireRate of the entity.
    */
   val fireRates: AttackingAbility => Int =
     case _: Shooter[_] => 2
@@ -91,8 +83,7 @@ object EntityDefaultValues:
     case _: WarriorZombie => 4
     case _ => 0
 
-  /**
-   * Given an [[Entity]] with [[AttackingAbility]], it returns the range of the entity.
+  /** Given an [[Entity]] with [[AttackingAbility]], it returns the range of the entity.
    */
   val ranges: AttackingAbility => Int =
     case _: Shooter[_] => 80
@@ -102,8 +93,7 @@ object EntityDefaultValues:
     case _: WarriorZombie => 10
     case _ => 0
 
-  /**
-   * Given an [[Entity]] it returns its width.
+  /** Given an [[Entity]] it returns its width.
    */
   val width: Entity => Float =
     case _: CherryBullet => CellLength * 2

@@ -10,18 +10,14 @@ import scala.reflect.ClassTag
 import scala.concurrent.duration.FiniteDuration
 import scala.language.implicitConversions
 
-/**
- * A plant is a trait that models the common behaviour of different types of plants.
+/** A plant is a trait that models the common behaviour of different types of plants.
  */
 trait Plant extends Troop :
-
-  /**
-   * The type that the method [[bullet]] returns.
+  /** The type that the method [[bullet]] returns.
    */
   type BulletType <: Bullet
 
-  /**
-   * The price that the player has to pay to place the plant.
+  /** The price that the player has to pay to place the plant.
    *
    * @return the cost of the plant.
    */
@@ -43,15 +39,15 @@ trait Plant extends Troop :
       case Idle | Attacking => if interests.isEmpty then this withState Idle else this withState Attacking
       case _ => this
 
-  /**
-   * Check if an [[Entity]] is in range of sight or not.
+  /** Check if an [[Entity]] is in range of sight or not.
+   *
    * @param entity the entity to check.
    * @return true if the entity is in range, false otherwise.
    */
   protected def isInRange(entity: Entity): Boolean = entity.position.x < position.x + range
 
-  /**
-   * Check if an entity is behind. Behind means that the entity is more on the left than me.
+  /** Check if an entity is behind. Behind means that the entity is more on the left than me.
+   *
    * @param entity the entity to check.
    * @return true if the entity is not behind me, false otherwise
    */
@@ -59,8 +55,7 @@ trait Plant extends Troop :
 
   private def isInMyLane(entity: Entity): Boolean = entity.position.y == position.y
 
-/**
- * A Shooter is a [[Plant]] that attacks zombies.
+/** A Shooter is a [[Plant]] that attacks zombies.
  *
  * @param bulletInstance an instance of the bullet shoot.
  * @param position       the position in which the plant is placed.
@@ -88,9 +83,7 @@ case class Shooter[B <: Bullet](bulletInstance: B,
   override def withState(newState: TroopState): Troop = copy(state = newState)
 
 
-/**
- * The Wallnut is a [[Plant]] that can't attack any enemy but has a lot of life.
- * It's used to temporary block the wave.
+/** The Wallnut is a [[Plant]] that can't attack any enemy but has a lot of life. It's used to temporary block the wave.
  *
  * @param position the position in which the plant is placed.
  * @param life     the life that the plant currently has.
@@ -109,8 +102,7 @@ case class Wallnut(override val position: Position = (0, 0),
   override def isInterestedIn: Entity => Boolean =
     case _ => false
 
-/**
- * The CherryBomb is a [[Plant]] that when placed, explode after a short time.
+/** The CherryBomb is a [[Plant]] that when placed, explode after a short time.
  *
  * @param position the position in which the plant is placed.
  * @param life     the life that the plant currently has.
@@ -129,29 +121,26 @@ case class CherryBomb(override val position: Position = (0, 0),
   override def isInterestedIn: Entity => Boolean =
     case _ => true
 
-/**
- * This object contains the default values for each type of [[Plant]].
+/** This object contains the default values for each type of [[Plant]].
  */
 object PlantDefaultValues:
-  /**
-   * Every [[Plant]], when spawned, is in [[Idle]] state.
+  /** Every [[Plant]], when spawned, is in [[Idle]] state.
    */
   val defaultPlantState: TroopState = TroopState.Idle
-  /**
-   * The life of the [[CherryBomb]] when spawned.
+  
+  /** The life of the [[CherryBomb]] when spawned.
    */
   val cherryBombDefaultLife: Int = 10
-  /**
-   * The life of the [[Shooter]] when spawned.
+  
+  /** The life of the [[Shooter]] when spawned.
    */
   val shooterDefaultLife: Int = 100
-  /**
-   * The life of the [[Wallnut]] when spawned.
+  
+  /** The life of the [[Wallnut]] when spawned.
    */
   val wallnutDefaultLife: Int = 150
 
-  /**
-   * Returns the [[PlantBullet]] shoot by the [[Plant]].
+  /** Returns the [[PlantBullet]] shoot by the [[Plant]].
    */
   val bullets: Plant => PlantBullet =
     case s: Shooter[_] =>
@@ -160,8 +149,7 @@ object PlantDefaultValues:
       case _: SnowBullet => Bullets.ofType[SnowBullet]
     case c: CherryBomb => CherryBullet(c.position)
 
-  /**
-   * Returns the cost of the [[Plant]].
+  /** Returns the cost of the [[Plant]].
    */
   val costs: Plant => Int =
     case s: Shooter[_] =>
