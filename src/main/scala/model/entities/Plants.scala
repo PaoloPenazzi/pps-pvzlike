@@ -26,6 +26,9 @@ trait Plant extends Troop :
 
   override def bullet: BulletType = (PlantDefaultValues.bullets(this) withPosition pointOfShoot).asInstanceOf[BulletType]
 
+  /**
+   * @return the position from which the plant shoots.
+   */
   def pointOfShoot: Position = position
 
   override def isInterestedIn: Entity => Boolean =
