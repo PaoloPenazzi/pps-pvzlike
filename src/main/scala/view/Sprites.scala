@@ -12,6 +12,10 @@ object Sprites {
   val Sun: String = "assets/gameWindow/sun.png"
   val PauseButton: String = "assets/gameWindow/pause.png"
   val ResumeButton: String = "assets/gameWindow/resume.png"
+  val FastButton: String = "assets/gameWindow/fast.png"
+  val NormalButton: String = "assets/gameWindow/normal.png"
+  
+  
   def spriteName(entity: Entity): String = "assets/" + (entity match
     case s: Shooter[_] => s.bullet match
       case _: PeaBullet => "troops/peashooter.png"

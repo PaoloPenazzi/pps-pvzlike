@@ -3,19 +3,20 @@ package view
 import com.badlogic.gdx.scenes.scene2d.Actor
 import view.View.Renderer
 import view.ViewportSpace.*
-import view.Sprites.{GameBackground, PauseButton, ResumeButton, Sun, cardName, height, spriteName, width}
+import view.Sprites.{FastButton, GameBackground, NormalButton, PauseButton, ResumeButton, Sun, cardName, height, spriteName, width}
 import model.entities.{CherryBomb, Entity, PeaBullet, Shooter, SnowBullet, Troop, Troops, Wallnut}
 import model.common.Utilities.MetaData
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.utils.viewport.Viewport
 import ScalaGDX.{Drawable, ImageButtons, Writable, given}
 import ScalaGDX.Utils.texture
-import ScalaGDX.ImageButtons.given
+import ScalaGDX.ImageButtons.{builder, given}
 import ScalaGDX.ActorBehaviors.*
 import akka.actor.typed.ActorRef
 import com.badlogic.gdx.scenes.scene2d.ui.{Image, ImageButton}
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable
-import controller.{SendPauseGame, SendPlacePlant, SendResumeGame, ViewMessage}
+import controller.{SendChangeGameSpeed, SendPauseGame, SendPlacePlant, SendResumeGame, ViewMessage}
+import model.common.Utilities.Speed.*
 import view.ScalaGDX.Screen.ScreenBehavior
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton.ImageButtonStyle
 
@@ -43,7 +44,7 @@ class GameScreen(viewActor: ActorRef[ViewMessage]) extends ScreenBehavior with R
     Seq(Writable("=" + metaData.sun.toString, SunStringBoundaries))
 
   override def actors: Seq[Actor] =
-    cards() :+ pauseButton()
+    cards :+ pauseButton :+ speedUpButton
 
 
   override def onScreenTouch: Vector2 => Unit = pos =>
@@ -61,7 +62,7 @@ class GameScreen(viewActor: ActorRef[ViewMessage]) extends ScreenBehavior with R
 
   def renderMetadata(metaData: MetaData): Unit = this.metaData = metaData
 
-  private val cards = () =>
+  private def cards =
     val troops = Seq(Troops.shooterOf[PeaBullet], Troops.ofType[Wallnut], Troops.ofType[CherryBomb], Troops.shooterOf[SnowBullet])
     for
       (troop, x) <- troops zip (0 to troops.size).map(_ * CardWidth)
@@ -71,14 +72,27 @@ class GameScreen(viewActor: ActorRef[ViewMessage]) extends ScreenBehavior with R
       button.onTouchDown(_ => pendingPlant = Some(troop))
       button
 
-  private val pauseButton = () =>
-    val style: ImageButtonStyle = new ImageButtonStyle
-    style.up = new TextureRegionDrawable(texture(PauseButton))
-    style.checked = new TextureRegionDrawable(texture(ResumeButton))
+  private def pauseButton =
+    val style = ImageButtonStyle()
+    style.up = TextureRegionDrawable(texture(PauseButton))
+    style.checked = TextureRegionDrawable(texture(ResumeButton))
 
     val button: ImageButton = ImageButtons.builder withStyle style withBounds (13, 8, 3, 1)
     button.addPulseOnTouch()
     button.onTouchUp(() =>
       viewActor ! (if button.isChecked then SendPauseGame() else SendResumeGame())
+    )
+    button
+
+  private def speedUpButton =
+    val style = ImageButtonStyle()
+    style.up = TextureRegionDrawable(texture(NormalButton))
+    style.checked = TextureRegionDrawable(texture(FastButton))
+
+    val button: ImageButton = ImageButtons.builder withStyle style withBounds(13, 6.5, 3, 2)
+    button.addPulseOnTouch()
+    button.onTouchUp(() =>
+      val speed = if button.isChecked then Fast else Normal
+      viewActor ! SendChangeGameSpeed(speed)
     )
     button

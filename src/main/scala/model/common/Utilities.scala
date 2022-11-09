@@ -45,7 +45,7 @@ object Utilities:
    * */
   enum Speed(val speed: FiniteDuration):
     case Normal extends Speed(FiniteDuration(16, "milliseconds"))
-    case Fast extends Speed(FiniteDuration(8, "milliseconds"))
+    case Fast extends Speed(FiniteDuration(32, "milliseconds"))
 
   /**
    * Defines the concepts of resources in game. Modelled as [[Sun]]
