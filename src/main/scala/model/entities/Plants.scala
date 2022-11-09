@@ -15,6 +15,9 @@ import scala.language.implicitConversions
  */
 trait Plant extends Troop :
 
+  /**
+   * The type that the method [[bullet]] returns.
+   */
   type BulletType <: Bullet
 
   /**
@@ -24,12 +27,12 @@ trait Plant extends Troop :
    */
   def cost: Int = PlantDefaultValues.costs(this)
 
-  override def bullet: BulletType = (PlantDefaultValues.bullets(this) withPosition pointOfShoot).asInstanceOf[BulletType]
-
   /**
    * @return the position from which the plant shoots.
    */
   def pointOfShoot: Position = position
+
+  override def bullet: BulletType = (PlantDefaultValues.bullets(this) withPosition pointOfShoot).asInstanceOf[BulletType]
 
   override def isInterestedIn: Entity => Boolean =
     case enemy: Zombie => isInMyLane(enemy) && isInRange(enemy) && isNotBehindMe(enemy)
@@ -40,19 +43,29 @@ trait Plant extends Troop :
       case Idle | Attacking => if interests.isEmpty then this withState Idle else this withState Attacking
       case _ => this
 
+  /**
+   * Check if an [[Entity]] is in range of sight or not.
+   * @param entity the entity to check.
+   * @return true if the entity is in range, false otherwise.
+   */
   protected def isInRange(entity: Entity): Boolean = entity.position.x < position.x + range
 
+  /**
+   * Check if an entity is behind. Behind means that the entity is more on the left than me.
+   * @param entity the entity to check.
+   * @return true if the entity is not behind me, false otherwise
+   */
   protected def isNotBehindMe(entity: Entity): Boolean = entity.position.x > position.x
 
   private def isInMyLane(entity: Entity): Boolean = entity.position.y == position.y
 
 /**
- * A Shooter is a plant that attacks zombies.
+ * A Shooter is a [[Plant]] that attacks zombies.
  *
  * @param bulletInstance an instance of the bullet shoot.
- * @param position the position in which the plant is placed.
- * @param life the life that the plant currently has.
- * @param state the state of the plant.
+ * @param position       the position in which the plant is placed.
+ * @param life           the life that the plant currently has.
+ * @param state          the state of the plant.
  * @tparam B the bullet that the plant shoots.
  */
 case class Shooter[B <: Bullet](bulletInstance: B,
@@ -76,7 +89,7 @@ case class Shooter[B <: Bullet](bulletInstance: B,
 
 
 /**
- * The Wallnut is a plant that can't attack any enemy but has a lot of life.
+ * The Wallnut is a [[Plant]] that can't attack any enemy but has a lot of life.
  * It's used to temporary block the wave.
  *
  * @param position the position in which the plant is placed.
@@ -141,7 +154,8 @@ object PlantDefaultValues:
    * Returns the [[PlantBullet]] shoot by the [[Plant]].
    */
   val bullets: Plant => PlantBullet =
-    case s: Shooter[_] => s.bulletInstance match
+    case s: Shooter[_] =>
+    s.bulletInstance match
       case _: PeaBullet => Bullets.ofType[PeaBullet]
       case _: SnowBullet => Bullets.ofType[SnowBullet]
     case c: CherryBomb => CherryBullet(c.position)
@@ -150,7 +164,8 @@ object PlantDefaultValues:
    * Returns the cost of the [[Plant]].
    */
   val costs: Plant => Int =
-    case s: Shooter[_] => s.bullet match
+    case s: Shooter[_] =>
+    s.bullet match
       case _: PeaBullet => 100
       case _: SnowBullet => 175
     case _: Wallnut => 50
