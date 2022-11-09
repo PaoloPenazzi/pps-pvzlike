@@ -1,0 +1,7 @@
+\begin{lstlisting}[language=Scala, label=code:plant-shooter caption=Type class Shooter.]
+case class Shooter[B <: Bullet](bulletInstance: B,
+                                override val position: Position = (0, 0),
+                                override val life: Int = shooterDefaultLife,
+                                override val state: TroopState = defaultPlantState) extends Plant :
+  override type BulletType = B
+\end{lstlisting}
