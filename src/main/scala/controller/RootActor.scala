@@ -5,11 +5,20 @@ import akka.actor.typed.scaladsl.Behaviors
 import com.badlogic.gdx.ScreenAdapter
 import controller.GameLoopActor.*
 import controller.GameLoopActor.GameLoopCommands.StartGame
+import controller.RootActor.RootCommands
 import controller.RootActor.RootCommands.*
 import view.{Game, GameScreen}
 
+/** It's the actor responsible for launching the system.
+ *
+ * Sends [[StartGame]] messages to the [[GameLoop]].
+ * */
 object RootActor:
 
+  /** Creates the RootActor.
+   *
+   * @return the actual [[Behavior]] of the actor.
+   */
   def apply(): Behavior[RootCommand] =
     Behaviors.setup { _ => RootActor().standardBehavior() }
 
@@ -23,8 +32,8 @@ object RootActor:
           Behaviors.same
     })
 
-  import RootCommands.*
-
+  /** The messages that [[RootActor]] can handle. */
   object RootCommands:
     trait RootCommand
+
     case class Start(gameScreen: GameScreen) extends RootCommand

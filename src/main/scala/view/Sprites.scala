@@ -1,11 +1,15 @@
 package view
 
+import com.badlogic.gdx.graphics.Texture
 import model.entities.*
 import model.entities.WorldSpace.LanesLength
 import view.ViewportSpace.gridWidth
 
 object Sprites {
-  def spriteName(entity: Entity): String = entity match
+  val MainMenuBackground: String = "assets/background/mainmenu.png"
+  val GameBackground: String = "assets/background/day.png"
+  val NewGameButton: String = "assets/new_game_button.png"
+  def spriteName(entity: Entity): String = "assets/" + (entity match
     case s: Shooter[_] => s.bullet match
       case _: PeaBullet => "troops/peashooter.png"
       case _: SnowBullet => "troops/snowshooter.png"
@@ -23,7 +27,7 @@ object Sprites {
     case _: SnowBullet => "bullets/snowbullet.png"
     case _: CherryBullet => "bullets/explosion.png"
     case _: PawBullet => "bullets/paw.png"
-    case _: SwordBullet => "bullets/sword.png"
+    case _: SwordBullet => "bullets/sword.png")
 
   def width(entity: Entity): Float = entity.width * (gridWidth/LanesLength)
 
@@ -35,4 +39,11 @@ object Sprites {
     case _: CherryBullet => 1
     case _: Plant => 1
     case _: Zombie => 1.4
+
+  def cardName(troop: Troop): String = troop match
+    case s: Shooter[_] => s.bulletType match
+      case _: PeaBullet => "assets/gameWindow/peashooter-card.png"
+      case _: SnowBullet => "assets/gameWindow/snowshooter-card.png"
+    case _: Wallnut => "assets/gameWindow/wallnut-card.png"
+    case _: CherryBomb => "assets/gameWindow/cherrybomb-card.png"
 }

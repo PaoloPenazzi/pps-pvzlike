@@ -32,9 +32,9 @@ trait Zombie(override val position: Position,
   override def bullet: ZombieBullet = bullets(this)
 
   /**
-   *
-   * @param velocity
-   * @return
+   * Change entitie's velocity
+   * @param velocity the new velocity of zombie
+   * @return a new istance of zombie with new velocity
    */
   def withVelocity(velocity: Float): Troop
 
@@ -137,8 +137,17 @@ object ZombieDefaultValues:
     case fastZombie: FastZombie => PawBullet(fastZombie.position)
     case warriorZombie: WarriorZombie => SwordBullet(warriorZombie.position)
 
+  /**
+   * Return the [[BasicZombie]] default velocity
+   */
   val basicZombieDefaultVelocity: Float = -0.01
+  /**
+   * Return the [[FastZombie]] default velocity
+   */
   val fastZombieDefaultVelocity: Float = -0.02
+  /**
+   * Return the [[WarriorZombie]] default velocity
+   */
   val warriorZombieDefaultVelocity: Float = -0.008
 
   /**

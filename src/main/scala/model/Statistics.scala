@@ -26,7 +26,7 @@ object Statistics:
 
   case class GameStatistics(
                              entities: Seq[Entity] = List.empty,
-                             rounds: Int = 0
+                             rounds: Int = 1
                            ) extends GameStats with GameStatsOps with ZombieStatsOps with PlantStatsOps:
     override def played(entity: Entity): GameStatistics = GameStatistics(entities :+ entity, rounds)
     override def increaseRound(r: Int = 1): GameStatistics = GameStatistics(entities, rounds + r)

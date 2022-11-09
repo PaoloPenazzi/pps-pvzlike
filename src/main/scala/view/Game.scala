@@ -8,6 +8,7 @@ import controller.RootActor.RootCommands.{RootCommand, Start}
 import controller.GameLoopActor.GameLoopCommands.Command
 import ViewportSpace.*
 import model.Statistics.GameStatistics
+import ScalaGDX.Screen
 
 object Game extends com.badlogic.gdx.Game:
   val viewport: Viewport = FitViewport(ViewportWidth, ViewportHeight)
@@ -17,7 +18,7 @@ object Game extends com.badlogic.gdx.Game:
     Gdx.app.postRunnable(new Runnable():
       override def run(): Unit =
         val gameScreen = GameScreen()
-        setScreen(gameScreen)
+        setScreen(Screen(gameScreen))
         actorSystem = Some(ActorSystem(RootActor(), "launcher"))
         actorSystem.foreach(_ ! Start(gameScreen))
     )
@@ -26,8 +27,8 @@ object Game extends com.badlogic.gdx.Game:
     Gdx.app.postRunnable(new Runnable():
       override def run(): Unit =
         actorSystem.foreach(_.terminate())
-        setScreen(EndGameMenu(stats))
+        setScreen(Screen(GameOverScreen(stats)))
       )
 
   override def create(): Unit =
-    setScreen(MainMenuScreen())
+    setScreen(Screen(MainMenuScreen()))

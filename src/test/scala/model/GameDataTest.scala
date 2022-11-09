@@ -29,11 +29,11 @@ class GameDataTest extends AnyFlatSpec with Matchers :
   import GameData.*
 
   "a seq" should "make seq of bullet" in {
-    assertResult(seq.ofType[Bullet])(List(bullet))
+    assertResult(seq.of[Bullet])(List(bullet))
   }
 
   "a seq" should "make seq of troop" in {
-    assertResult(seq.ofType[Troop])(List(zombie, shooter))
+    assertResult(seq.of[Troop])(List(zombie, shooter))
   }
 
   "a seq" should "delete a dead element" in {

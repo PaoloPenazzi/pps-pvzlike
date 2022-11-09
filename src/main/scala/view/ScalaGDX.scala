@@ -2,10 +2,12 @@ package view
 
 import com.badlogic.gdx.{Gdx, ScreenAdapter}
 import com.badlogic.gdx.graphics.{GL20, Texture}
-import com.badlogic.gdx.graphics.g2d.{BitmapFont, SpriteBatch}
+import com.badlogic.gdx.graphics.g2d.{BitmapFont, BitmapFontCache, SpriteBatch, TextureRegion}
 import com.badlogic.gdx.math.{Rectangle, Vector2}
+import com.badlogic.gdx.scenes.scene2d.actions.Actions
+import com.badlogic.gdx.scenes.scene2d.ui.ImageButton
 import com.badlogic.gdx.scenes.scene2d.{Actor, EventListener, InputEvent, Stage}
-import com.badlogic.gdx.scenes.scene2d.utils.ClickListener
+import com.badlogic.gdx.scenes.scene2d.utils.{ClickListener, TextureRegionDrawable}
 import com.badlogic.gdx.utils.viewport.Viewport
 
 import scala.language.implicitConversions
@@ -18,6 +20,7 @@ import scala.language.implicitConversions
  *  - [[view.ScalaGDX.Clickable]] API on [[Actor]] and [[Stage]].
  */ 
 object ScalaGDX:
+  import Utils.*
   /**
    * Add simpler APIs to define reactive behavior that should arise from certain click events.
    */
@@ -59,21 +62,51 @@ object ScalaGDX:
 
 
   /**
-   * Memoize a function from A to B using a map.
-   *
-   * @param f a function that computes a value B from a key A
-   * @tparam A the key type
-   * @tparam B the value type
-   * @return a memoized version of f
+   * A libGDX ImageButton with a pulsing behavior attached to it.
    */
-  def memoized[A, B](f: A => B): A => B =
-      val cache = collection.mutable.Map.empty[A, B]
+  object PulsingImageButton:
+    def apply(texture: Texture, x: Float, y: Float, width: Float, height: Float): ImageButton =
+      val button = PulsingImageButton(texture)
+      button.setBounds(x, y, width, height)
+      button.setTransform(true)
+      button
 
-      a =>
-        cache.getOrElse(a, {
-          cache.update(a, f(a))
-          cache(a)
-        })
+    def apply(texture: Texture): ImageButton =
+      val button = ImageButton(TextureRegionDrawable(TextureRegion(texture)))
+      button.onTouchDown(_ =>
+        button.clearActions()
+        button.setScale(1.2f)
+      )
+      button.onTouchUp(() => button.addAction(Actions.scaleTo(1f, 1f, 0.5f)))
+      button
+
+
+  /**
+   * Some common mechanisms useful while working with libGDX.
+   */
+  object Utils:
+    /**
+     *
+     * @param path to the asset to use to generate a texture.
+     * @return a [[Texture]] loaded by libGDX from the provided asset.
+     */
+    def texture(path: String): Texture = new Texture(Gdx.files.classpath(path))
+    /**
+     * Memoize a function from A to B using a map.
+     *
+     * @param f a function that computes a value B from a key A.
+     * @tparam A the key type.
+     * @tparam B the value type.
+     * @return a memoized version of f.
+     */
+    def memoized[A, B](f: A => B): A => B =
+        val cache = collection.mutable.Map.empty[A, B]
+
+        a =>
+          cache.getOrElse(a, {
+            cache.update(a, f(a))
+            cache(a)
+          })
 
   /**
    * Can be written to screen.
@@ -93,11 +126,35 @@ object ScalaGDX:
 
     /**
      *
-     * @return the scale of this writing.
+     * @return the line height.
      */
-    def scale: Float
+    def height: Float
 
   /**
+   * Contains implementation of [[Writable]]
+   */
+  object Writable:
+    /**
+     *
+     * Basic implementation of [[Writable]]
+     */
+    case class BasicWritable(s: String, pos: Vector2, height: Float) extends Writable
+
+    /**
+     *
+     * @see [[Writable]]
+     */
+    def apply(s: String, pos: Vector2, height: Float): Writable = BasicWritable(s,pos,height)
+
+    /**
+     *
+     * @see [[Writable]] and [[Vector2]]
+     */
+    def apply(path: String, x: Float, y: Float, height: Float): Writable =
+      BasicWritable(path, Vector2(x, y), height)
+
+  /**
+   *
    * Can be drawn to screen.
    */
   trait Drawable:
@@ -113,8 +170,36 @@ object ScalaGDX:
      */
     def bounds: Rectangle
 
-  object Screen:
+  /**
+   * Contains implementation of [[Drawable]]
+   */
+  object Drawable:
+
     /**
+     *
+     * Basic implementation of [[Drawable]]
+     */
+    case class BasicDrawable(path: String, bounds: Rectangle) extends Drawable
+
+    /**
+     *
+     * @see [[Drawable]]
+     */
+    def apply(path: String, bounds: Rectangle): Drawable =
+      BasicDrawable(path, bounds)
+
+    /**
+     *
+     * @see [[Writable]] and [[Rectangle]]
+     */
+    def apply(path: String, x: Float, y: Float, width: Float, height: Float): Drawable =
+      BasicDrawable(path, Rectangle(x, y, width, height))
+
+
+  object Screen:
+    import ScalaGDX.{Writable, Drawable}
+    /**
+     *
      * Define screen behavior in a minimalistic way.
      */
     trait ScreenBehavior:
@@ -122,25 +207,25 @@ object ScalaGDX:
        *
        * @return the [[Drawable]]s that should be rendered each frame.
        */
-      def drawables: Seq[Drawable]
+      def drawables: Seq[Drawable] = Seq.empty
 
       /**
        *
        * @return the [[Writable]]s that should be rendered each frame.
        */
-      def writables: Seq[Writable]
+      def writables: Seq[Writable]  = Seq.empty
 
       /**
        *
        * @return the [[Actor]]s on the screen.
        */
-      def actors: Seq[Actor]
+      def actors: Seq[Actor] = Seq.empty
 
       /**
        *
        * @return what happens when the user touches the screen in a certain position.
        */
-      def onScreenTouch: Vector2 => Unit
+      def onScreenTouch: Vector2 => Unit = _ => {}
 
       /**
        *
@@ -149,31 +234,36 @@ object ScalaGDX:
       def viewport: Viewport
 
     /**
+     * The writables will be rendered in foreground with respect to the drawables.
+     * The rendering of both writables and drawables follows the Seq ordering. Last elements of the seq will be in foreground with respect to the first ones.
      *
      * @param behavior the screen logic
      * @return a simple screen that implements the screen logic.
-     * @note The drawables are rendered through a memoized approach.
-     *       The assumption is that the asset associated with the filepath will not change at runtime.
+     * @note The drawables are rendered through a memoized approach to reduce workload.
+     *       The assumption is that the asset associated with a given filepath will not change at runtime.
      */
     def apply(behavior: ScreenBehavior): ScreenAdapter = new ScreenAdapter :
       private val camera = behavior.viewport.getCamera
       private lazy val stage = new Stage(behavior.viewport)
       private lazy val batch: SpriteBatch = SpriteBatch()
-      private lazy val font: BitmapFont = BitmapFont(Gdx.files.internal("assets/gameWindow/font.fnt"), Gdx.files.internal("assets/gameWindow/font.png"), false)
+      private lazy val font: BitmapFont = BitmapFont(Gdx.files.internal("assets/gameWindow/font.fnt"))
+      font.setUseIntegerPositions(false)
 
       override def render(delta: Float): Unit =
         Gdx.gl.glClearColor(0, 0, 0, 1)
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
         batch.setProjectionMatrix(camera.combined)
-
         batch.begin()
+
+        behavior.drawables.foreach(d =>
+          batch.draw(memoizedTexture(d.path), d.bounds.x, d.bounds.y, d.bounds.width, d.bounds.height)
+        )
+
         behavior.writables.foreach(w =>
-          font.getData.setScale(w.scale)
+          scaleFont(w.height)
           font.draw(batch, w.s, w.pos.x, w.pos.y)
         )
-        behavior.drawables.foreach(d =>
-          batch.draw(texture(d.path), d.bounds.x, d.bounds.y, d.bounds.width, d.bounds.height)
-        )
+
         batch.end()
         stage.draw()
         stage.act(delta)
@@ -189,4 +279,7 @@ object ScalaGDX:
         camera.position.set(camera.viewportWidth / 2, camera.viewportHeight / 2, 0)
         camera.update()
 
-      private val texture: String => Texture = memoized(path => new Texture(Gdx.files.classpath(path)))
+      private def scaleFont(height: Float): Unit =
+        font.getData.setScale(height * 2 * font.getScaleY / font.getLineHeight)
+
+      private val memoizedTexture: String => Texture = memoized(texture)

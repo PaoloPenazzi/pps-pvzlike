@@ -8,6 +8,7 @@ object ViewportSpace:
   def ViewportHeight: Float = 9
   def HUDHeight: Float = 2
   def HUD: Rectangle = Rectangle(0, ViewportHeight - HUDHeight, ViewportWidth, HUDHeight)
+  def CardWidth: Float = 1.5
   def leftOffsetGrid: Float = 1.4
   def rightOffsetGrid: Float = 1.4
   def topOffsetGrid: Float = 1

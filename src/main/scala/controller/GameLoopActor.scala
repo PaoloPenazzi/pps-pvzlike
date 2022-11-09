@@ -12,7 +12,7 @@ import model.actors.*
 import model.common.Utilities.{MetaData, Speed, Sun}
 import model.entities.*
 import model.entities.WorldSpace.*
-import model.waves.{Generator, WaveGenerator}
+import model.waves.WaveGenerator
 import view.Game
 
 import scala.collection.immutable.Seq
@@ -22,11 +22,9 @@ import scala.language.{implicitConversions, postfixOps}
 
 /** It's the actor responsible of system's update and deals with the incoming input from the view.
  *
- * Send [[ModelMessage]] messages to the Model and [[ViewMessage]] messages to the View.
+ * Sends [[ModelMessage]] messages to the Model and [[ViewMessage]] messages to the View.
  * */
 object GameLoopActor:
-
-  val waveGenerator: WaveGenerator = Generator()
 
   def apply(
              viewActor: ActorRef[ViewMessage],
@@ -36,7 +34,7 @@ object GameLoopActor:
            ): Behavior[Command] =
     GameLoop(viewActor, entities, metaData, stats).standardBehavior()
 
-  /** The GameLoop Actor: update the whole game by exploiting the reactivity of an actor.
+  /** The GameLoop Actor: updates the whole game by exploiting the reactivity of an actor.
    * This actor sends a [[UpdateLoop]] message to itself with a determined delay
    * that depends on the a specific [[Speed]].
    *
@@ -45,7 +43,7 @@ object GameLoopActor:
    * @param metaData  the meta-data of the game.
    * @param stats     the statistic of the game.
    */
-  case class GameLoop(
+  private case class GameLoop(
                        viewActor: ActorRef[ViewMessage],
                        entities: Seq[GameEntity[Entity]],
                        metaData: MetaData,
@@ -61,12 +59,11 @@ object GameLoopActor:
         Behaviors.receive((ctx, msg) => {
           msg match
             case StartGame() =>
-              waveGenerator.resetWaves()
               startTimer(timer, UpdateLoop())
               startTimer(timer, UpdateResources(), resourceTimer)
               Behaviors.same
 
-            case GameOver() => Game.endGame(stats); Behaviors.stopped
+            case EndReached() => Game.endGame(stats); Behaviors.stopped
 
 
             case PauseGame() => pauseBehavior()
@@ -79,7 +76,7 @@ object GameLoopActor:
 
             case UpdateLoop() =>
               handleCollision(entities, ctx)
-              val newWave = if isWaveOver(entities) then createWave(ctx)
+              val newWave = if isWaveOver(entities) then createWave(ctx, stats.rounds)
               else List.empty
               val newStats = if isWaveOver(entities) then updateRoundStats(stats)
               else stats
@@ -96,7 +93,7 @@ object GameLoopActor:
 
             case PlacePlant(troop) =>
               troop.asInstanceOf[Plant] match
-                case plant if canPlacePlant(plant, entities.ofType[Plant], metaData) =>
+                case plant if canPlacePlant(plant, entities.of[Plant], metaData) =>
                   val newGameSeq = entities :+ GameEntity(ctx.spawnAnonymous(TroopActor(troop)), troop)
                   val newMetaData = metaData - troop.asInstanceOf[Plant].cost
                   val newStats = updateEntityStats(stats, troop)
@@ -122,7 +119,7 @@ object GameLoopActor:
           case _ => Behaviors.same
       })
 
-  /** The messages that GameLoop can handle. */
+  /** The messages that [[GameLoop]] can handle. */
   object GameLoopCommands:
     trait Command
 
@@ -134,7 +131,7 @@ object GameLoopActor:
 
     case class UpdateLoop() extends Command
 
-    case class GameOver() extends Command
+    case class EndReached() extends Command
 
     case class UpdateResources() extends Command
 
@@ -165,10 +162,11 @@ object GameLoopActor:
     /** Creates a new wave of [[Zombie]], for the next round.
      *
      * @param ctx the context where to spawn the zombies actors.
+     * @param round the number of rounds.
      * @return a new wave (sequence) of zombies.
      */
-    def createWave(ctx: ActorContext[Command]): Seq[GameEntity[Entity]] =
-      waveGenerator.generateNextWave.enemies.map(e => GameEntity(ctx.spawnAnonymous(TroopActor(e)), e))
+    def createWave(ctx: ActorContext[Command], round: Int): Seq[GameEntity[Entity]] =
+      WaveGenerator.generateNextWave(round).enemies.map(e => GameEntity(ctx.spawnAnonymous(TroopActor(e)), e))
 
     /** Checks if the [[entity]] dead was a [[Zombie]]
      * and, just in case it was, update the [[statistics]].
@@ -200,7 +198,7 @@ object GameLoopActor:
 
     /** Checks if a [[plant]] is placeable.
      *
-     * @param plant the plant to place.
+     * @param plant    the plant to place.
      * @param entities the entities in game.
      * @param metaData the meta-data's game.
      * @return [[true]] if the plant is placeable, [[false]] otherwise.
@@ -210,7 +208,7 @@ object GameLoopActor:
 
     /** Checks if a cell is free.
      *
-     * @param plant the plant to place.
+     * @param plant    the plant to place.
      * @param entities the entities in game.
      * @return [[true]] if the cell is free, [[false]] otherwise.
      */
@@ -219,7 +217,7 @@ object GameLoopActor:
 
     /** Checks if the user has enough sun/resources to place the plant.
      *
-     * @param plant the plant to place.
+     * @param plant    the plant to place.
      * @param metaData the meta-data's game.
      * @return [[true]] if the user has enough sun, [[false]] otherwise.
      */
@@ -251,8 +249,8 @@ object GameLoopActor:
 
     /** Sends [[Update]] messages to all entities in game.
      *
-     * @param ctx the [[ActorContext]] of the sender, who wants the replies.
-     * @param speed the game update's frequency.
+     * @param ctx       the [[ActorContext]] of the sender, who wants the replies.
+     * @param speed     the game update's frequency.
      * @param interests the interests for each [[Entity]] in game.
      */
     def updateAll(ctx: ActorContext[Command], speed: Speed, interests: Seq[(ActorRef[ModelMessage], Seq[Entity])]): Unit =
@@ -260,22 +258,12 @@ object GameLoopActor:
 
     /** A specific object for collision management */
     object CollisionUtils:
-
-      trait Collision:
-        type A <: Entity
-        type B <: Entity
-        def entity: GameEntity[A]
-        def collidedEntities: Seq[GameEntity[B]]
-        def sendCollisionMessages(receiver: GameEntity[B], ctx: ActorContext[Command]): Unit =
-          entity.ref ! Collision(receiver.entity, ctx.self)
-          receiver.ref ! Collision(entity.entity, ctx.self)
-
-      case class BulletTroopCollision(bullet: GameEntity[Bullet], troopsCollided: Seq[GameEntity[Troop]]) extends Collision:
-        override type A = Bullet
-        override type B = Troop
-        override def entity: GameEntity[Bullet] = bullet
-        override def collidedEntities: Seq[GameEntity[Troop]] = troopsCollided
-
+      /** Manages the whole collision's process:
+       * checks the [[Collision]] and, in case, sends [[Collision]] messages.
+       *
+       * @param entities the entities in game.
+       * @param ctx      the [[ActorContext]] that wants to receive the replies.
+       */
       def handleCollision(entities: Seq[GameEntity[Entity]], ctx: ActorContext[Command]): Unit =
         checkCollision(entities) filter (_.collidedEntities.nonEmpty) foreach { e =>
           if e.entity.entity hitMultipleTimes
@@ -285,12 +273,61 @@ object GameLoopActor:
           }
         }
 
+      /** Detects [[Collision]] between all entities in game.
+       *
+       * @param entities the entities in game
+       * @return
+       */
       def checkCollision(entities: Seq[GameEntity[Entity]]): Seq[BulletTroopCollision] =
         import GameData.given
         for
-          b <- entities.ofType[Bullet]
+          b <- entities.of[Bullet]
         yield
           BulletTroopCollision(b, for
-            e <- entities.ofType[Troop]
+            e <- entities.of[Troop]
             if b.entity checkCollisionWith e.entity
           yield e)
+
+      /** Defines a collision between two [[GameEntity]] */
+      trait Collision:
+        /** The type of the first [[GameEntity]] that has collided. */
+        type A <: Entity
+
+        /** The type of [[GameEntity]] that makes up
+         * the sequence of [[Entity]] that collided with another [[GameEntity]].
+         */
+        type B <: Entity
+
+        /**
+         *
+         * @return the [[GameEntity]] with [[A]] type.
+         */
+        def entity: GameEntity[A]
+
+        /**
+         *
+         * @return the [[GameEntity]]'s sequence with [[B]] type collided with [[entity]].
+         */
+        def collidedEntities: Seq[GameEntity[B]]
+
+        /** Send [[Collision]] messages to both [[entity]] and a [[GameEntity]] that has collided with him.
+         *
+         * @param receiver the [[GameEntity]] collided with [[entity]].
+         * @param ctx      the [[ActorContext]] that wants to receive the replies.
+         */
+        def sendCollisionMessages(receiver: GameEntity[B], ctx: ActorContext[Command]): Unit =
+          entity.ref ! Collision(receiver.entity, ctx.self)
+          receiver.ref ! Collision(entity.entity, ctx.self)
+
+      /** An implementation of a [[Collision]] between a [[Bullet]] and a [[Troop]].
+       *
+       * @param bullet         the [[GameEntity]] involved in the collision.
+       * @param troopsCollided the [[Seq]] of [[GameEntity]] involved in the collision.
+       */
+      case class BulletTroopCollision(bullet: GameEntity[Bullet], troopsCollided: Seq[GameEntity[Troop]]) extends Collision :
+        override type A = Bullet
+        override type B = Troop
+
+        override def entity: GameEntity[Bullet] = bullet
+
+        override def collidedEntities: Seq[GameEntity[Troop]] = troopsCollided
