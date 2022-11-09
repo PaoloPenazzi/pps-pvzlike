@@ -26,6 +26,7 @@ A questo punto la modifica di una troop può essere effettuata utilizzando la \t
 \input{code/troop-update.tex}
 
 Questa soluzione è stata poi adottata anche nei Bullet.
+
 Gli stessi principi mi hanno guidato nella creazione di un modo di creare le troop che fosse il più funzionale possibile.
 Ho quindi rivisitato il \textbf{pattern builder} per creare troop di qualsiasi tipo: ho creato un \texttt{trait TroopBuilder}
 con un unico metodo \textit{build} che ritorna una troop.
@@ -40,9 +41,15 @@ Tutto ciò rende più funzionale la creazione di una troop:
 
 \input{code/troop-creation.tex}
 
+L'idea di avere un builder per creare le entità del model è piaciuta al team, per questo ho implementato un secondo builder per creare \textit{Bullet}.
+Non entrerò nel dettaglio in quanto per implementarlo, ho seguito il modello del \textit{TroopBuilder}.
+
 \subsubsection{TroopActor}
 Avendo adottato un'architettura ad attori, ogni troop, in fase di creazione, viene associato ad un attore che ne definisce il comportamento.
 Il TroopActor ha un solo Behaviour e non è mai proattivo: risponde solamente ai messaggi ricevuti dal GameLoop, rispettando il pattern \textbf{MVC}.
+
+Il punto di forza di questo \textit{Troop Actor} è che modella il comportamento delle piante e degli zombie come se fossero equivalente.
+Questo conferma le scelte di design fatte, in particolare quella di creare un \textit{trait troop} comune sia alle piante che agli zombie.
 
 Ad ogni iterazione del GameLoop il TroopActor riceve un messaggio di \textit{Update()} a seguito del quale:
 \begin{enumerate}
@@ -96,7 +103,9 @@ Il diagramma delle piante è il seguente:
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.8\linewidth]{images/plants.png}
-    \label{Diagramma di sequenza del Troop Actor.}
+    \label{Diagramma delle classi delle piante.}
 \end{figure}
+
+A seguito del mio lavoro sulle piante ho anche implementato i bullet relativi e contribuito, in maniera significativa, alla modellazione di questi ultimi.
 
 \subsubsection{Wave}
