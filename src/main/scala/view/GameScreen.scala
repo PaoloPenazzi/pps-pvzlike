@@ -3,7 +3,7 @@ package view
 import com.badlogic.gdx.scenes.scene2d.Actor
 import view.View.EntityRenderer
 import view.ViewportSpace.*
-import view.Sprites.{GameBackground, cardName, height, spriteName, width}
+import view.Sprites.{GameBackground, Sun, cardName, height, spriteName, width}
 import model.entities.{CherryBomb, Entity, PeaBullet, Shooter, SnowBullet, Troop, Troops, Wallnut}
 import model.common.Utilities.MetaData
 import controller.ViewActor.sendPlacePlant
@@ -28,11 +28,13 @@ class GameScreen extends ScreenBehavior with EntityRenderer :
       given Ordering[Entity] = (e1, e2) => e2.position.y - e1.position.y
       entities.sorted.map(e => Drawable(spriteName(e), projectX(e.position.x), projectY(e.position.y), width(e), height(e)))
 
-    Drawable(GameBackground, -3, 0, 25, ViewportHeight - HUDHeight)
-      +: drawableEntities
+    Seq(
+      Drawable(Sun, SunBoundaries),
+      Drawable(GameBackground, BackgroundBoundaries)
+    ) ++ drawableEntities
 
   override def writables: Seq[Writable] =
-    Seq(Writable(metaData.sun.toString, 12f, 7.5f, 0.05f))
+    Seq(Writable("=" + metaData.sun.toString, SunStringBoundaries))
 
   override def actors: Seq[Actor] =
     val troops = Seq(Troops.shooterOf[PeaBullet], Troops.ofType[Wallnut], Troops.ofType[CherryBomb], Troops.shooterOf[SnowBullet])
@@ -50,7 +52,7 @@ class GameScreen extends ScreenBehavior with EntityRenderer :
       plantCoordinates <- plantCoordinates(pos)
     do
       sendPlacePlant(plant withPosition plantCoordinates)
-    if pos.y < HUD.y then
+    if pos.y < HUDBoundaries.y then
       pendingPlant = None
 
   override def viewport: Viewport = Game.viewport
