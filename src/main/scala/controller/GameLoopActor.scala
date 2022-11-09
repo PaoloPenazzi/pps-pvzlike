@@ -7,6 +7,7 @@ import controller.GameLoopActor.GameLoopUtils.*
 import controller.GameLoopActor.GameLoopUtils.CollisionUtils.*
 import model.GameData
 import model.GameData.{GameEntity, GameSeq}
+import model.GameData.GameSeq.given
 import model.Statistics.GameStatistics
 import model.actors.*
 import model.common.Utilities.{MetaData, Speed, Sun}
