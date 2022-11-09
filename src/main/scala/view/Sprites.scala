@@ -43,9 +43,12 @@ object Sprites {
     case _: PawBullet => 0.4
     case _: SnowBullet => 0.4
     case _: SwordBullet => 0.7
-    case _: CherryBullet => 1
-    case _: Plant => 1
     case _: Zombie => 1.4
+    case _ => 1
+
+  def yOffset(entity: Entity): Float = entity match
+    case _: Bullet => 0.6
+    case _ => 0
 
   def cardName(troop: Troop): String = troop match
     case s: Shooter[_] => s.bulletInstance match

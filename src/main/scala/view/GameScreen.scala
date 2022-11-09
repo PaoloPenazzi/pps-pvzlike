@@ -3,7 +3,7 @@ package view
 import com.badlogic.gdx.scenes.scene2d.Actor
 import view.View.Renderer
 import view.ViewportSpace.*
-import view.Sprites.{FastButton, GameBackground, NormalButton, PauseButton, ResumeButton, Sun, cardName, height, spriteName, width}
+import view.Sprites.{FastButton, GameBackground, NormalButton, PauseButton, ResumeButton, Sun, cardName, height, spriteName, width, yOffset}
 import model.entities.{CherryBomb, Entity, PeaBullet, Shooter, SnowBullet, Troop, Troops, Wallnut}
 import model.common.Utilities.MetaData
 import com.badlogic.gdx.math.Vector2
@@ -33,7 +33,7 @@ class GameScreen(viewActor: ActorRef[ViewMessage]) extends ScreenBehavior with R
     def drawableEntities: Seq[Drawable] =
       // We render entities of lower lanes in a more foreground position, to better represent an isometric point of view
       given Ordering[Entity] = (e1, e2) => e2.position.y - e1.position.y
-      entities.sorted.map(e => Drawable(spriteName(e), projectX(e.position.x), projectY(e.position.y), width(e), height(e)))
+      entities.sorted.map(e => Drawable(spriteName(e), projectX(e.position.x), projectY(e.position.y) + yOffset(e), width(e), height(e)))
 
     Seq(
       Drawable(Sun, SunBoundaries),
