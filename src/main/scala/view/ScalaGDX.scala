@@ -1,7 +1,7 @@
 package view
 
 import com.badlogic.gdx.{Gdx, ScreenAdapter}
-import com.badlogic.gdx.graphics.{GL20, Texture}
+import com.badlogic.gdx.graphics.{Color, GL20, Texture}
 import com.badlogic.gdx.graphics.g2d.{BitmapFont, BitmapFontCache, SpriteBatch, TextureRegion}
 import com.badlogic.gdx.math.{Rectangle, Vector2}
 import com.badlogic.gdx.scenes.scene2d.actions.Actions
@@ -144,14 +144,20 @@ object ScalaGDX:
      *
      * @see [[Writable]]
      */
-    def apply(s: String, pos: Vector2, height: Float): Writable = BasicWritable(s,pos,height)
+    def apply(s: String, pos: Vector2, height: Float): Writable = BasicWritable(s, pos, height)
 
     /**
      *
-     * @see [[Writable]] and [[Vector2]]
+     * @see [[Writable]]
      */
     def apply(path: String, x: Float, y: Float, height: Float): Writable =
       BasicWritable(path, Vector2(x, y), height)
+
+    /**
+     *
+     * @see [[Writable]]
+     */
+    def apply(s: String, rec: Rectangle): Writable = BasicWritable(s, Vector2(rec.x, rec.y + rec.height), rec.height)
 
   /**
    *
