@@ -1,13 +1,6 @@
 @startuml
 'https://plantuml.com/class-diagram
 
-enum TroopState{
-Idle
-Moving
-Attacking
-Dead
-}
-
 interface Troop <<trait>> {
 +life: Int
 +state: TroopState
@@ -22,7 +15,7 @@ interface Plant <<trait>> {
 +pointOfShoot(): Position
 }
 
-class Shooter
+class Shooter <<type class>>
 class Wallnut
 class CherryBomb
 

@@ -3,7 +3,7 @@ import model.entities.Entity
 import model.common.Utilities.MetaData
 
 object View {
-  trait EntityRenderer:
+  trait Renderer:
     def renderEntities(entities: List[Entity]): Unit
 
     /**

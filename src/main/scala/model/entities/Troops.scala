@@ -6,7 +6,7 @@ import TroopState.*
 import scala.language.implicitConversions
 
 /**
- * A troop is an [[Entity]] that is either a [[BasicZombie]] or a [[Plant]].
+ * A troop is an [[Entity]] that is either a [[Zombie]] or a [[Plant]].
  */
 trait Troop extends Entity with AttackingAbility :
   override type UpdatedEntity = Troop
@@ -41,6 +41,9 @@ trait Troop extends Entity with AttackingAbility :
    */
   def withLife(healthPoints: Int): Troop
 
+/**
+ * An object containing method to generate troops.
+ */
 object Troops:
   /**
    * A builder used to create [[Troop]].
@@ -53,15 +56,9 @@ object Troops:
      */
     def build: T
 
-  /**
-   * Given instances to create a [[BasicZombie]].
-   */
   given TroopBuilder[BasicZombie, Bullet] with
     override def build: BasicZombie = BasicZombie()
 
-  /**
-   * Given instances to create a [[FastZombie]].
-   */
   given TroopBuilder[FastZombie, Bullet] with
     override def build: FastZombie = FastZombie()
 
@@ -92,6 +89,7 @@ object Troops:
 
   /**
    * A DSL method to create a [[Shooter]].
+   *
    * @param troopBuilder The [[TroopBuilder]] of the type needed.
    * @tparam B the [[Bullet]] type.
    * @return The [[Shooter]] of the specified type.

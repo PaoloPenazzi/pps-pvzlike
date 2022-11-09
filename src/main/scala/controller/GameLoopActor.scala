@@ -7,6 +7,7 @@ import controller.GameLoopActor.GameLoopUtils.*
 import controller.GameLoopActor.GameLoopUtils.CollisionUtils.*
 import model.GameData
 import model.GameData.{GameEntity, GameSeq}
+import model.GameData.GameSeq.given
 import model.Statistics.GameStatistics
 import model.actors.*
 import model.common.Utilities.{MetaData, Speed, Sun}
@@ -61,7 +62,7 @@ object GameLoopActor:
             case StartGame() =>
               startTimer(timer, UpdateLoop())
               startTimer(timer, UpdateResources(), resourceTimer)
-              Behaviors.same
+              GameLoopActor(viewActor, createWave(ctx, stats.rounds), metaData, stats)
 
             case EndReached() => Game.endGame(stats); Behaviors.stopped
 
@@ -70,7 +71,9 @@ object GameLoopActor:
 
             case UpdateResources() =>
               startTimer(timer, UpdateResources(), resourceTimer)
-              GameLoopActor(viewActor, entities, metaData + Sun.Normal.value, stats)
+              val updatedMetaData = metaData + Sun.Normal.value
+              viewActor ! RenderMetaData(updatedMetaData, ctx.self)
+              GameLoopActor(viewActor, entities, updatedMetaData, stats)
 
             case ChangeGameSpeed(velocity) => GameLoopActor(viewActor, entities, metaData >>> velocity, stats)
 
@@ -78,15 +81,15 @@ object GameLoopActor:
               handleCollision(entities, ctx)
               val newWave = if isWaveOver(entities) then createWave(ctx, stats.rounds)
               else List.empty
-              val newStats = if isWaveOver(entities) then updateRoundStats(stats)
+              val newStats = if newWave.nonEmpty then updateRoundStats(stats)
               else stats
               updateAll(ctx, metaData.speed, detectInterest(entities))
               startTimer(timer, UpdateLoop())
               GameLoopActor(viewActor, newWave ++ entities, metaData, newStats)
 
             case EntityUpdated(ref, entity) =>
-              val newEntities = entities collect { case x if x.ref == ref => GameEntity(ref, entity) case x => x }
-              viewActor ! Render(newEntities.map(_.entity).toList, ctx.self, metaData)
+              val newEntities = entities updateWith GameEntity(ref, entity)
+              viewActor ! RenderEntities(newEntities.map(_.entity).toList, ctx.self)
               GameLoopActor(viewActor, newEntities, metaData, stats)
 
             case BulletSpawned(ref, bullet) => GameLoopActor(viewActor, entities :+ GameEntity(ref, bullet), metaData, stats)
@@ -97,6 +100,7 @@ object GameLoopActor:
                   val newGameSeq = entities :+ GameEntity(ctx.spawnAnonymous(TroopActor(troop)), troop)
                   val newMetaData = metaData - troop.asInstanceOf[Plant].cost
                   val newStats = updateEntityStats(stats, troop)
+                  viewActor ! RenderMetaData(newMetaData, ctx.self)
                   GameLoopActor(viewActor, newGameSeq, newMetaData, newStats)
                 case _ => GameLoopActor(viewActor, entities, metaData, stats)
 
