@@ -32,7 +32,8 @@ trait Bullet extends Entity with MovingAbility :
    * @param entity The entity with which the bullet has potentially collided
    * @return True if a collision happened, false otherwise.
    */
-  def checkCollisionWith(entity: Entity): Boolean = collideWith(entity) && isInMyLane(entity)
+  def isCollidingWith(entity: Entity): Boolean =
+    entity.position.x <= position.x && position.x <= entity.position.x + entity.width && isInMyLane(entity)
 
   /**
    * Apply the damage and the effect of the [[Bullet]] on the [[Troop]].
@@ -44,9 +45,6 @@ trait Bullet extends Entity with MovingAbility :
     troop withLife (troop.life - damage)
 
   private def isInMyLane(entity: Entity): Boolean = entity.position.y == position.y
-
-  protected def collideWith(entity: Entity): Boolean =
-    entity.position.x <= position.x && position.x <= entity.position.x + entity.width
 
   override def velocity: Float = BulletDefaultValues.velocity(this)
 
@@ -62,9 +60,9 @@ trait Bullet extends Entity with MovingAbility :
  * This trait models the common behaviour of the bullets shoot by the plants.
  */
 trait PlantBullet extends Bullet :
-  override def checkCollisionWith(entity: Entity): Boolean =
+  override def isCollidingWith(entity: Entity): Boolean =
     entity match
-      case _: Zombie => super.checkCollisionWith(entity)
+      case _: Zombie => super.isCollidingWith(entity)
       case _ => false
 
 /**
@@ -89,7 +87,7 @@ case class SnowBullet(override val position: Position = defaultBulletPosition) e
  * @param position The initial position of the [[Bullet]].
  */
 case class CherryBullet(override val position: Position = defaultBulletPosition) extends PlantBullet :
-  override def checkCollisionWith(entity: Entity): Boolean = isNearMyLane(entity) && collideWith(entity)
+  override def isCollidingWith(entity: Entity): Boolean = isNearMyLane(entity) && contactWith(entity)
 
   override def hitMultipleTimes: Boolean = true
 
@@ -97,7 +95,7 @@ case class CherryBullet(override val position: Position = defaultBulletPosition)
 
   override def withPosition(pos: Position): CherryBullet = copy(position = pos)
 
-  override def collideWith(entity: Entity): Boolean = (entity.position.x - position.x).abs <= 15
+  private def contactWith(entity: Entity): Boolean = (entity.position.x - position.x).abs <= 15
 
   private def isNearMyLane(entity: Entity): Boolean = (entity.position.y - position.y).abs < 2
 
@@ -105,9 +103,9 @@ case class CherryBullet(override val position: Position = defaultBulletPosition)
  * This trait models the common behaviour of the bullets shoot by the zombies.
  */
 trait ZombieBullet extends Bullet :
-  override def checkCollisionWith(entity: Entity): Boolean =
+  override def isCollidingWith(entity: Entity): Boolean =
     entity match
-      case _: Plant => super.checkCollisionWith(entity)
+      case _: Plant => super.isCollidingWith(entity)
       case _ => false
 
 /**
@@ -149,7 +147,7 @@ object Bullets:
 
   given BulletBuilder[PawBullet] with
     override def build: PawBullet = PawBullet()
-  
+
   given BulletBuilder[SwordBullet] with
     override def build: SwordBullet = SwordBullet()
 

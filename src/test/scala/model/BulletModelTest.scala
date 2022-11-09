@@ -27,14 +27,14 @@ class BulletModelTest extends AnyFlatSpec with should.Matchers:
     assertResult(true)(bullet shouldDisappearAfterHitting plant)
   }
   "A Bullet" should "collide with a Troop in his range" in {
-    assertResult(true)(bullet checkCollisionWith plant)
+    assertResult(true)(bullet isCollidingWith plant)
   }
   "A PawBullet" should "apply a correct damage" in {
     assertResult(plant.life - bullet.damage)((bullet applyDamageAndEffect plant).life)
   }
   "A CherryBullet" should "collide with more entities and in different lane" in {
-    assertResult(true)(cherryBullet collideWith fastZombie)
-    assertResult(true)(cherryBullet collideWith warriorZombie)
+    assertResult(true)(cherryBullet contactWith fastZombie)
+    assertResult(true)(cherryBullet contactWith warriorZombie)
   }
 
 
