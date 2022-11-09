@@ -114,14 +114,16 @@ object GameLoopActor:
      * @return a new updated GameLoop instance with a specific [[Behavior]].
      */
     def pauseBehavior(): Behavior[Command] =
-      Behaviors.receive((ctx, msg) => {
-        msg match
-          case ResumeGame() =>
-            ctx.self ! UpdateLoop()
-            GameLoopActor(viewActor, entities, metaData, stats)
+      Behaviors.withTimers(timer =>
+        Behaviors.receive((ctx, msg) => {
+          msg match
+            case ResumeGame() =>
+              startTimer(timer, UpdateLoop())
+              startTimer(timer, UpdateResources(), resourceTimer)
+              GameLoopActor(viewActor, entities, metaData, stats)
 
-          case _ => Behaviors.same
-      })
+            case _ => Behaviors.same
+      }))
 
   /** The messages that [[GameLoop]] can handle. */
   object GameLoopCommands:
