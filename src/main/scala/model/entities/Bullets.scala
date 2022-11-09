@@ -78,7 +78,8 @@ case class PeaBullet(override val position: Position = defaultBulletPosition) ex
 case class SnowBullet(override val position: Position = defaultBulletPosition) extends PlantBullet :
   override def applyDamageAndEffect(troop: Troop): Troop =
     troop match
-      case z: Zombie => super.applyDamageAndEffect(z withVelocity slowVelocities(z))
+      case z: Zombie =>
+        z withVelocity slowVelocities(z) withLife (z.life - damage)
 
   override def withPosition(pos: Position): SnowBullet = copy(position = pos)
 
@@ -161,6 +162,7 @@ object BulletDefaultValues:
     case _: PeaBullet => 25
     case _: SwordBullet => 60
     case _: PawBullet => 25
+    case _: SnowBullet => 25
     case _ => 0
 
   /**
