@@ -4,7 +4,7 @@
 
 \subsection{Francesco Foschini}
 Il mio compito all'interno del progetto, è stato quello di modellare la gerarchia di \texttt{Entity} del gioco.
-In particolare mi sono occupato della implementazione del model degli Zombie, dei proiettili e l'attore definisce il comportamento dei proiettili.
+In particolare mi sono occupato della implementazione del model degli Zombie, dei proiettili e l'attore che definisce il comportamento dei proiettili.
 Ho partecipato inoltre allo sviluppo del Troop Actor del Menù Screen e del GameScreen.
 
 \subsubsection{Bullet}
@@ -21,7 +21,7 @@ Attraverso il metodo checkCollision i PlantBullet possono collidere solamente co
 al contrario, gli ZombieBullet potranno colpire solamente le entità sottotipo di Plant.
 Mi sono successivamente concentrato nell'implementazione di due tipi di ZombieBullet: PawBullet (il bullet dei
 BasicZombie e FastZombie) e lo SwordBullet(il bullet dei WarriorZombie).
-Lo SwordBullet è un attacco molto più potente rispetto al PawBullet.
+Lo SwordBullet è un attacco più potente rispetto al PawBullet.
 
 Volendo seguire un approccio puramente funzionale, favorendo l'immutabilità delle entità, il metodo di
 aggiornamento della posizione di un bullet deve creare un nuovo bullet con la nuova posizione.
@@ -148,11 +148,26 @@ attraverso il meccanismo dei mixin il \texttt{trait Zombie} estende il \texttt{t
 
 Quando uno zombie è colpito da un CherryBullet potrebbe essere rallentato, per questo motivo si è deciso di
 mettere la velocità in ciascun costruttore per ciascun tipo di zombie implementato.
-In questo modo, seguendo un approccio funzionale, quando il CherryBullet collide con uno specifico Zombie
+In questo modo, seguendo un approccio funzionale e favorendo l'immutabilità delle istanze, quando il CherryBullet collide con uno specifico Zombie
 istanzierà nuovamente lo zombie con la velocità aggiornata.
 A tal proposito è stata implementata una val \texttt{slowVelocities} dentro all'object ZombieDefaultValues.
+
 E' infatti nell'object \texttt{ZombieDefaultValue} che sono definite tutte le caratteristiche principali per ogni
 tipo di Zombie implementato: stato iniziale e di default (\texttt{Moving}), vita iniziale,
 il tipo bullet sparato, la velocità di default, la velocità degli Zombie rallentati e un metodo per generare
 la posizione iniziale degli zombie.
 
+Come mostrato nel diagramma delle classi degli Zombie, ogni classe che rappresenta uno Zombie deve estendere dal \texttt{trait Zombie}
+
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=1\linewidth]{images/model-zombie.png}
+        \caption{Diagramma delle classi rappresentante gli \texttt{zombie}.}
+        \label{fig:class-zombie}
+    \end{figure}
+
+Nell'object \texttt{ZombieDefaultValues} sono definite le principali caratteristiche di ciascun Zombie: lo stato di default
+degli zombie \texttt{Moving}, la vita iniziale per ciascun tipo di \texttt{Zombie}, il tipo di \texttt{Bullet} che ogni tipo
+di \texttt{Zombie} ha a disposizione, le velocità di default e le velocità degli \texttt{Zombie} quando vengono rallentati.
+Il comportamento degli Zombie è incapsulato nel TroopActor.
+Il model degli Zombie è stato testato nella classe ZombieModelTest
