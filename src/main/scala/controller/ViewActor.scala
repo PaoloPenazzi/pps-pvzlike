@@ -2,7 +2,7 @@ package controller
 
 import akka.actor.typed.scaladsl.Behaviors
 import akka.actor.typed.{ActorRef, Behavior}
-import controller.GameLoopActor.GameLoopCommands.{Command, PlacePlant}
+import controller.GameLoopActor.GameLoopCommands.{Command, PauseGame, PlacePlant, ResumeGame}
 import model.actors.ModelMessage
 import model.common.Utilities.MetaData
 import model.entities.{Entity, Plant, Troop}
@@ -14,6 +14,8 @@ trait ViewMessage
 case class RenderEntities(entities: List[Entity], replyTo: ActorRef[Command]) extends ViewMessage
 case class RenderMetaData(metaData: MetaData, replyTo: ActorRef[Command]) extends ViewMessage
 case class SendPlacePlant(troop: Troop) extends ViewMessage
+case class SendPauseGame() extends ViewMessage
+case class SendResumeGame() extends ViewMessage
 
 object ViewActor:
   def apply(renderer: Renderer, gameLoopActor: Option[ActorRef[Command]] = None): Behavior[ViewMessage] =
@@ -29,6 +31,14 @@ object ViewActor:
 
           case SendPlacePlant(troop) =>
             gameLoopActor.foreach(_ ! PlacePlant(troop))
+            Behaviors.same
+
+          case SendPauseGame() =>
+            gameLoopActor.foreach(_ ! PauseGame())
+            Behaviors.same
+
+          case SendResumeGame() =>
+            gameLoopActor.foreach(_ ! ResumeGame())
             Behaviors.same
       })
 

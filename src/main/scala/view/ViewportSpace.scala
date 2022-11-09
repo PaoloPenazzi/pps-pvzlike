@@ -9,8 +9,8 @@ object ViewportSpace:
   def HUDHeight: Float = 2
   def HUDBoundaries: Rectangle = Rectangle(0, ViewportHeight - HUDHeight, ViewportWidth, HUDHeight)
   def CardWidth: Float = 1.5
-  def SunBoundaries: Rectangle = Rectangle(8.5, (HUDBoundaries.y + HUDHeight / 2) - 0.5f, 1, 1)
-  def SunStringBoundaries: Rectangle = Rectangle(9.7, 7.75, 0, 0.8)
+  def SunBoundaries: Rectangle = Rectangle(6.5, (HUDBoundaries.y + HUDHeight / 2) - 0.5f, 1, 1)
+  def SunStringBoundaries: Rectangle = Rectangle(7.7, 7.75, 0, 0.8)
   def BackgroundBoundaries: Rectangle = Rectangle(-3, 0, 25, ViewportHeight - HUDHeight)
   def leftOffsetGrid: Float = 1.4
   def rightOffsetGrid: Float = 1.4
