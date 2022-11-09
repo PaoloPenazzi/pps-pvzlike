@@ -24,8 +24,14 @@ object WaveGenerator:
    */
   def generateNextWave(waveNumber: Int): Wave =
     require(waveNumber > 0)
-    val enemies = prolog generateWave (waveNumber * 2 - 1)
+    val enemies = prolog generateWave powerOf(waveNumber)
     WaveImpl(waveNumber, enemies)
+
+  /** Defines the formula of the wave's power.
+   *
+   * @return the power of the wave.
+   */
+  def powerOf: Int => Int = _ * 3 - 2
 
   /** Generates the next wave using Scala. Only [[BasicZombie]] are spawned.
    *
@@ -34,7 +40,7 @@ object WaveGenerator:
    */
   def generateNextBasicWave(waveNumber: Int): Wave =
     require(waveNumber > 0)
-    val newEnemies = createEnemyList(2 * waveNumber - 1)(List.empty[Zombie])
+    val newEnemies = createEnemyList(powerOf(waveNumber))(List.empty[Zombie])
     WaveImpl(waveNumber, newEnemies)
 
   @tailrec
