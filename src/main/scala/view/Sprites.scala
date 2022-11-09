@@ -9,6 +9,7 @@ object Sprites {
   val MainMenuBackground: String = "assets/background/mainmenu.png"
   val GameBackground: String = "assets/background/day.png"
   val NewGameButton: String = "assets/new_game_button.png"
+  val Sun: String = "assets/gameWindow/sun.png"
   def spriteName(entity: Entity): String = "assets/" + (entity match
     case s: Shooter[_] => s.bullet match
       case _: PeaBullet => "troops/peashooter.png"
@@ -41,7 +42,7 @@ object Sprites {
     case _: Zombie => 1.4
 
   def cardName(troop: Troop): String = troop match
-    case s: Shooter[_] => s.bulletType match
+    case s: Shooter[_] => s.bulletInstance match
       case _: PeaBullet => "assets/gameWindow/peashooter-card.png"
       case _: SnowBullet => "assets/gameWindow/snowshooter-card.png"
     case _: Wallnut => "assets/gameWindow/wallnut-card.png"

@@ -46,22 +46,25 @@ trait Plant extends Troop :
 
   private def isInMyLane(entity: Entity): Boolean = entity.position.y == position.y
 
-
 /**
- * The Peashooter is a plant that attacks zombies.
+ * A Shooter is a plant that attacks zombies.
  *
+ * @param bulletInstance an instance of the bullet shoot.
  * @param position the position in which the plant is placed.
- * @param life     the life that the plant currently has.
- * @param state    the state of the plant.
+ * @param life the life that the plant currently has.
+ * @param state the state of the plant.
+ * @tparam B the bullet that the plant shoots.
  */
-
-case class Shooter[B <: Bullet](bulletType: B,
+case class Shooter[B <: Bullet](bulletInstance: B,
                                 override val position: Position = (0, 0),
                                 override val life: Int = shooterDefaultLife,
                                 override val state: TroopState = defaultPlantState) extends Plant :
-  type BulletType = B
+  override type BulletType = B
 
-  override def bullet: BulletType = super.bullet
+  override def update(elapsedTime: FiniteDuration, interests: List[Entity]): Troop =
+    state match
+      case Idle | Attacking => if interests.isEmpty then this withState Idle else this withState Attacking
+      case _ => this
 
   override def pointOfShoot: Position = (position.y, position.x.toInt + width)
 
@@ -70,11 +73,6 @@ case class Shooter[B <: Bullet](bulletType: B,
   override def withLife(healthPoints: Int): Troop = copy(life = healthPoints)
 
   override def withState(newState: TroopState): Troop = copy(state = newState)
-
-  override def update(elapsedTime: FiniteDuration, interests: List[Entity]): Troop =
-    state match
-      case Idle | Attacking => if interests.isEmpty then this withState Idle else this withState Attacking
-      case _ => this
 
 
 /**
@@ -143,7 +141,7 @@ object PlantDefaultValues:
    * Returns the [[PlantBullet]] shoot by the [[Plant]].
    */
   val bullets: Plant => PlantBullet =
-    case s: Shooter[_] => s.bulletType match
+    case s: Shooter[_] => s.bulletInstance match
       case _: PeaBullet => Bullets.ofType[PeaBullet]
       case _: SnowBullet => Bullets.ofType[SnowBullet]
     case c: CherryBomb => CherryBullet(c.position)

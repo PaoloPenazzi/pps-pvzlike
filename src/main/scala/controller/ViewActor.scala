@@ -6,7 +6,7 @@ import controller.GameLoopActor.GameLoopCommands.{Command, PlacePlant}
 import model.actors.ModelMessage
 import model.common.Utilities.MetaData
 import model.entities.{Entity, Plant, Troop}
-import view.View.EntityRenderer
+import view.View.Renderer
 
 trait ViewMessage
 
@@ -18,7 +18,7 @@ object ViewActor:
   def sendPlacePlant(troop: Troop): Unit =
     gameLoopActor.foreach(_ ! PlacePlant(troop))
 
-  def apply(renderer: EntityRenderer): Behavior[ViewMessage] =
+  def apply(renderer: Renderer): Behavior[ViewMessage] =
     Behaviors.receive((ctx, msg) => {
       msg match
         case Render(list, replyTo, metaData) =>
