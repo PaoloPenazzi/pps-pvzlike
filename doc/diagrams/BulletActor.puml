@@ -1,0 +1,20 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+title Bullet Actor
+control GameLoop
+control BulletActor
+skinparam sequenceMessageAlign center
+== Base interaction==
+loop
+GameLoop -> BulletActor: Update()
+BulletActor -> GameLoop: EntityUpdated()
+|||
+end
+==After a Collision==
+GameLoop -> BulletActor: Collision()
+alt bullet should disappear after hitting
+BulletActor -> GameLoop: EntityDead()
+|||
+end
+@enduml

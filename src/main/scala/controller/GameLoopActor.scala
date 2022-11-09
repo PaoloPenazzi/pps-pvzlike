@@ -289,7 +289,7 @@ object GameLoopActor:
         yield
           BulletTroopCollision(b, for
             e <- entities.of[Troop]
-            if b.entity checkCollisionWith e.entity
+            if b.entity isCollidingWith e.entity
           yield e)
 
       /** Defines a collision between two [[GameEntity]] */

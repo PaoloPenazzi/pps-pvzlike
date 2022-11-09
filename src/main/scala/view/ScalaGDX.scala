@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.g2d.{BitmapFont, BitmapFontCache, SpriteBatch, 
 import com.badlogic.gdx.math.{Rectangle, Vector2}
 import com.badlogic.gdx.scenes.scene2d.actions.Actions
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton
+import com.badlogic.gdx.scenes.scene2d.ui.ImageButton.ImageButtonStyle
 import com.badlogic.gdx.scenes.scene2d.{Actor, EventListener, InputEvent, Stage}
 import com.badlogic.gdx.scenes.scene2d.utils.{ClickListener, TextureRegionDrawable}
 import com.badlogic.gdx.utils.viewport.Viewport
@@ -62,27 +63,54 @@ object ScalaGDX:
 
 
   /**
-   * A libGDX ImageButton with a pulsing behavior attached to it.
+   * Utils related to [[ImageButton]]s.
+   * A given conversion is available to make usage of [[view.ScalaGDX.ImageButtons.ImageButtonBuilder]] more fluent, eliminating the need to call build method.
    */
-  object PulsingImageButton:
-    def apply(texture: Texture, x: Float, y: Float, width: Float, height: Float): ImageButton =
-      val button = PulsingImageButton(texture)
-      button.setBounds(x, y, width, height)
-      button.setTransform(true)
-      button
+  object ImageButtons:
+    /**
+     * A builder for [[ImageButton]]s.
+     */
+    case class ImageButtonBuilder private[ImageButtons] (texture: Option[Texture] = None, style: Option[ImageButtonStyle] = None, bounds: Rectangle = Rectangle(0,0,0,0)):
+      /**
+       *  Define the texture the button should use
+       */
+      def withTexture(t: Texture): ImageButtonBuilder = copy(texture=Some(t))
 
-    def apply(texture: Texture): ImageButton =
-      val button = ImageButton(TextureRegionDrawable(TextureRegion(texture)))
-      button.onTouchDown(_ =>
-        button.clearActions()
-        button.setScale(1.2f)
-      )
-      button.onTouchUp(() => button.addAction(Actions.scaleTo(1f, 1f, 0.5f)))
-      button
+      /**
+       *  Define the style the button should use
+       */
+      def withStyle(s: ImageButtonStyle): ImageButtonBuilder = copy(style=Some(s))
+
+      /**
+       *  Define bounds for the button
+       */
+      def withBounds(x: Float, y: Float, width: Float, height: Float): ImageButtonBuilder = copy(bounds=Rectangle(x, y, width, height))
+
+      /**
+       * Build the image button. You need to provide a texture or a style before calling this.
+       *
+       * @throws NoSuchElementException if this is called without first providing a texture or a style
+       * @return the image button
+       */
+      def build: ImageButton =
+        val button =
+          if style.isDefined
+          then ImageButton(style.get)
+          else ImageButton(TextureRegionDrawable(texture.get))
+        button.setBounds(bounds.x, bounds.y, bounds.width, bounds.height)
+        button.setTransform(true)
+        button
+
+    /**
+      * @return an [[ImageButtonBuilder]].
+     */
+    def builder: ImageButtonBuilder = ImageButtonBuilder()
+
+    given Conversion[ImageButtonBuilder, ImageButton] = _.build
 
 
   /**
-   * Some common mechanisms useful while working with libGDX.
+   * Some common mechanisms, useful while working with libGDX.
    */
   object Utils:
     /**
@@ -91,6 +119,7 @@ object ScalaGDX:
      * @return a [[Texture]] loaded by libGDX from the provided asset.
      */
     def texture(path: String): Texture = new Texture(Gdx.files.classpath(path))
+
     /**
      * Memoize a function from A to B using a map.
      *
@@ -107,6 +136,26 @@ object ScalaGDX:
             cache.update(a, f(a))
             cache(a)
           })
+
+  /**
+   * Contains extension methods for actors, adding various types of behavior
+   */
+  object ActorBehaviors:
+    extension (a: Actor)
+
+      /**
+       *  Add the following behavior to this:
+       *  - immediate scale up on touch down
+       *  - a subsequent transition back to normal after touch up
+       */
+      def addPulseOnTouch(): Actor =
+        a.onTouchDown(_ =>
+          a.clearActions()
+          a.setScale(1.2f)
+        )
+        a.onTouchUp(() => a.addAction(Actions.scaleTo(1f, 1f, 0.5f)))
+        a
+
 
   /**
    * Can be written to screen.

@@ -13,9 +13,10 @@ import scala.concurrent.duration.FiniteDuration
 
 class PlantModelTest extends AnyFlatSpec with should.Matchers:
   val testingLane = 1
-  val otherLane = 2
+  val otherLane = 3
   val peashooter: Troop = Troops.shooterOf[PeaBullet] withPosition (testingLane, 10)
   val wallnut: Troop = Troops.ofType[Wallnut] withPosition (testingLane, 10)
+  val cherryBomb: Troop = Troops.ofType[CherryBomb] withPosition (testingLane, 10)
   val zombieInTheSameLane: Troop = Troops.ofType[BasicZombie] withPosition (testingLane, 50)
   val zombieOutOfRange: Troop = Troops.ofType[BasicZombie] withPosition (testingLane, 100)
   val dummyPlant: Troop = Troops.shooterOf[PeaBullet] withPosition (otherLane, 50)
@@ -45,4 +46,11 @@ class PlantModelTest extends AnyFlatSpec with should.Matchers:
   }
   "A Wallnut" should "die if reaches 0 or less HP" in {
     (wallnut withLife 20 collideWith dummyBullet).state shouldBe Dead
+  }
+  "A CherryBomb" should "be interested all entities" in {
+    val newDummyZombie = dummyZombie withPosition (testingLane + 1, 50)
+    List(newDummyZombie) filter cherryBomb.isInterestedIn shouldBe List(newDummyZombie)
+  }
+  "A CherryBomb" should "be interested in herself" in {
+    List(cherryBomb) filter cherryBomb.isInterestedIn shouldBe List(cherryBomb)
   }
