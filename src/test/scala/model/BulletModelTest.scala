@@ -14,8 +14,8 @@ class BulletModelTest extends AnyFlatSpec with should.Matchers:
   val bullet: ZombieBullet = Bullets.ofType[PawBullet]
   val plant = Troops.shooterOf[PeaBullet]
   val cherryBullet = Bullets.ofType[CherryBullet]
-  val fastZombie = Troops.ofType[FastZombie].withPosition(Position(1, 0))
-  val warriorZombie = Troops.ofType[WarriorZombie].withPosition(Position(0, 1))
+  val fastZombie = Troops.ofType[FastZombie]  withPosition Position(1, 0)
+  val warriorZombie = Troops.ofType[WarriorZombie] withPosition Position(0, 1)
 
   "A Bullet" should "update his position" in {
     val elapsedTime = FiniteDuration(32, "milliseconds")

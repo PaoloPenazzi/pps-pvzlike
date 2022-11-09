@@ -3,50 +3,52 @@
 
 \subsection{Francesco Foschini}
 Il mio compito all'interno del progetto, è stato quello di modellare la gerarchia di \texttt{Entity} del gioco.
-In particolare mi sono occupato della implementazione del model degli Zombie, dei proiettili e l'attore che definisce il comportamento dei proiettili.
-Ho partecipato inoltre allo sviluppo del Troop Actor del Menù Screen e del GameScreen.
+In particolare mi sono occupato della implementazione del model degli zombie, dei proiettili e l'attore che definisce il comportamento dei proiettili.
+Ho partecipato inoltre allo sviluppo del \texttt{Troop Actor} del \texttt{Menù Screen} e del \texttt{Game Screen}.
 
 \subsubsection{Bullet}
-I proiettili rappresentano all'interno del gioco l'attacco delle piante e degli zombie che viene sparato dalle torri
+I proiettili rappresentano all'interno del gioco l'attacco delle \texttt{Plant} e degli \texttt{Zombie} che viene sparato
 per infliggere danni. Grazie alla buona gerarchia di caratteristiche definite in \texttt{Entity}, è stato possibile grazie  ai \textbf{mixin}
-dotare il trait \texttt{Bullet} dell'abilità di movimento (\texttt{Movement Ability}).
-Il trait Bullet rappresenta quindi l'entità base "sparata" da una Troop.
-Tutti i bullet presentano un comportamento comune: possiedono una posizione, una velocità, una dimensione ed un danno.
+dotare il trait \texttt{Bullet} dell'abilità di movimento \texttt{Movement Ability}.
+Il trait \texttt{Bullet} rappresenta quindi l'entità base "sparata" da una \texttt{Troop}.
+Tutti i \texttt{Bullet} presentano un comportamento comune: hanno una posizione, una velocità, una dimensione ed un danno.
 
 
-Successivamente a una prima versione dei Bullet ho pensato di rifattorizzare i Bullet individuando due diversi sottotipi: \texttt{ZombieBullet} e \texttt{PlantBullet}.
-Il primo è un trait che modella l'attacco base degli zombie mentre il secondo si riferisce all'attacco delle piante.
-Attraverso il metodo checkCollision i PlantBullet possono collidere solamente contro le entità di tipo Zombie mentre,
-al contrario, gli ZombieBullet potranno colpire solamente le entità sottotipo di Plant.
-Mi sono successivamente concentrato nell'implementazione di due tipi di ZombieBullet: PawBullet (il bullet dei
-BasicZombie e FastZombie) e lo SwordBullet(il bullet dei WarriorZombie).
-Lo SwordBullet è un attacco più potente rispetto al PawBullet.
+Successivamente all'implementazione di una prima versione, ho pensato di rifattorizzarli individuando due diversi sottotipi: \texttt{ZombieBullet} e \texttt{PlantBullet}.
+Il primo è un trait che modella il colpo base degli \texttt{Zombie} mentre il secondo si riferisce all'attacco base delle \texttt{Plant}.
+
+Attraverso il metodo \texttt{checkCollision} i \texttt{PlantBullet} possono collidere solamente contro le entità di tipo \texttt{Zombie} mentre,
+al contrario, gli \texttt{ZombieBullet} potranno colpire solamente le entità sottotipo di \texttt{Plant}.
+
+Mi sono successivamente concentrato nell'implementazione di due tipi di \texttt{ZombieBullet}: \texttt{PawBullet} (il bullet dei
+\texttt{BasicZombie} e \texttt{FastZombie}) e lo \texttt{SwordBullet} (il bullet dei \texttt{WarriorZombie}).
+Lo \texttt{SwordBullet} è un attacco più potente rispetto al \texttt{PawBullet}.
 
 Volendo seguire un approccio puramente funzionale, favorendo l'immutabilità delle entità, il metodo di
-aggiornamento della posizione di un bullet deve creare un nuovo bullet con la nuova posizione.
-Questo comportamento è comune a tutti i tipi di bullet: l'aggiornamento di ognuno di questi deve
-tornare il tipo di bullet corretto. A tal proposito è stato utilizzato il metodo di scala  \texttt{copy()}.
-\textit{copy} può essere utilizzato solo nelle \texttt{case class}, quindi tutte le classi che estendono
-\texttt{Bullet} lo utilizzano per restituire un nuovo Bullet con la posizione aggiornata.
-Attraverso questa strategia l'aggiornamento della posizione dei bullet può essere effettua utilizzando la \textbf{infix notation}:
+aggiornamento della posizione di un \texttt{Bullet} deve crearne uno nuovo la nuova posizione aggiornata.
+Questo comportamento è comune a tutti i tipi di \texttt{Bullet}. l'aggiornamento deve, inoltre,
+tornare il tipo di \texttt{Bullet} corretto. A tal proposito è stato utilizzato il metodo di scala  \textbf{copy()} che può essere utilizzato solo nelle \texttt{case class}. Tutte le classi che estendono
+\texttt{Bullet}, quindi, lo utilizzano per restituire un nuovo \texttt{Bullet} con la posizione aggiornata.
+Attraverso questa strategia l'aggiornamento della posizione dei \texttt{Bullet} può essere effettua utilizzando la \textbf{infix notation}.
 
-\input{report/code/bullet-creation.tex}
+\input{code/bullet-update.tex}
 
-La stessa soluzione è stata poi adottata anche nelle Troop.
 
-La velocità e il danno di ogni tipo di bullet è definito nell'oggetto BulletDefaultValues.
 
-Per la creazione di ogni tipo di Bullet abbiamo pensato di utilizzare il \textbf{pattern builder}.
+La stessa soluzione è stata poi adottata anche nelle \texttt{Troop}.
+
+La velocità e il danno di ogni tipo di bullet è definito nell'oggetto \texttt{BulletDefaultValues}.
+
+Per la creazione di ogni tipo di \texttt{Bullet} abbiamo pensato di utilizzare il \textbf{pattern builder}.
 Dentro all'object \texttt{Bullets} è stato creato un \texttt{trait BulletBuilder}
 con un unico metodo \textit{build} che ritorna un sottotipo di \texttt{Bullet}.
 Utilizzando le \textbf{given conversion} sono state definite un'istanza di builder per la creazione di una istanza
-di ogni possibile tipo di \texttt{Bullet}.
-E' stato, infine, definito un metodo \textit{ofType} che che dato un tipo
-di \texttt{Bullet} chiama il builder corretto per restituire la nuova entità.
+di ogni possibile sottotipo di \texttt{Bullet}.
+E' stato, infine, definito un metodo \textit{ofType} che, dato un tipo
+di \texttt{Bullet}, chiama il builder corretto per restituire la nuova entità.
 
 \input{code/bullet-builder.tex}
 
-Tutto ciò rende più funzionale l'istanziamento di un nuovo Bullet.
 Viene mostrato di seguito come istanziare un PawBullet:
 
 \input{code/bullet-creation.tex}
@@ -58,24 +60,24 @@ Viene mostrato di seguito come istanziare un PawBullet:
     \label{fig:class-bullet}
 \end{figure}
 
-Il model del Bullet è stato testato nella classe BulletModelTest
+Il model del \texttt{Bullet} è stato testato nella classe \texttt{BulletModelTest}
 
 \subsubsection{BulletActor}
 Avendo pensato il sistema adottando un'architettura ad attori, abbiamo pensato di incapsulare il comportamento
-di ogni proiettile a un \texttt{BulletActor}. Quindi, in fase di creazione, ogni \texttt{Bullet} sarà associato ad un
+di ogni proiettile dentro un \texttt{BulletActor}. Quindi, in fase di creazione, ogni \texttt{Bullet} sarà associato ad un
 \texttt{BulletActor} che ne definirà il comportamento.
-Il BulletActor ha un solo Behaviour chiamato \texttt{moving}: risponde ai messaggi ricevuti dal GameLoop
-Come il TroopActor, ad ogni iterazione del GameLoop il BulletActor riceve un messaggio di \texttt{Update()} a seguito del quale:
+Il \texttt{BulletActor} ha un solo Behaviour chiamato \texttt{moving}: risponde ai messaggi ricevuti dal \texttt{GameLoop}
+Come il \texttt{TroopActor}, ad ogni iterazione del \texttt{GameLoop} il \texttt{BulletActor} riceve un messaggio di \texttt{Update()} a seguito del quale:
 \begin{enumerate}
     \item Aggiorna il proprio \texttt{Bullet}.
-    \item Manda il suo \texttt{Bullet} aggiornato al GameLoop.
+    \item Manda il suo \texttt{Bullet} aggiornato al \texttt{GameLoop}.
     \item Ricrea il proprio Behaviour con il \texttt{Bullet} aggiornato.
 \end{enumerate}
 Quando il \texttt{Bullet} collide con un'altra entità riceve un messaggio \texttt{Collision()} a seguito del quale:
 \begin{enumerate}
-    \item Crea il bullet della propria troop.
-    \item Crea un BulletActor che controlla il bullet.
-    \item Notifica il GameLoop dell'avvenuta creazione con il messaggio BulletSpawned().
+    \item Crea il \texttt{Bullet} della propria \texttt{Troop}.
+    \item Crea un \texttt{BulletActor} che controlla il \texttt{Bullet}.
+    \item Notifica il \texttt{GameLoop} dell'avvenuta creazione con il messaggio \texttt{BulletSpawned()}.
 
     Il comportamento del \texttt{BulletActor} viene mostrato nel seguente diagramma:
     \begin{figure}[H]
@@ -84,36 +86,34 @@ Quando il \texttt{Bullet} collide con un'altra entità riceve un messaggio \text
         \label{Diagramma di sequenza del Troop Actor.}
     \end{figure}
 
-    Il BulletActor è stato testato nella classe BulletActorTest utilizzando il framework AkkaTest
+    Il \texttt{BulletActor} è stato testato nella classe \texttt{BulletActorTest} utilizzando il framework \textbf{AkkaTest}
 
     \subsubsection{Zombie}
-    Gli Zombie rappresentano una delle entità fondamentali del gioco. In particolare, rappresentano i nemici che l'utente
+    Gli \texttt{Zombie} rappresentano una delle entità fondamentali del gioco. In particolare, rappresentano i nemici che l'utente
     deve cercare di eliminare attraverso il piazzamento delle piante nel campo di gioco.
-    Tutti gli zombie sono in grado di muoversi "orrizzontalmente" nelle lane del campo di gioco con una certa velocità: pertanto
+    Tutti gli \texttt{Zombie} sono in grado di muoversi "orrizzontalmente" nelle lane del campo di gioco con una certa velocità: pertanto
     attraverso il meccanismo dei mixin il \texttt{trait Zombie} estende il \texttt{trait Troop} a cui aggiunge poi l' abilità \texttt{MovingAbility}.
 
-    Quando uno zombie è colpito da un CherryBullet potrebbe essere rallentato, per questo motivo si è deciso di
-    mettere la velocità in ciascun costruttore per ciascun tipo di zombie implementato.
-    In questo modo, seguendo un approccio funzionale e favorendo l'immutabilità delle istanze, quando il CherryBullet collide con uno specifico Zombie
-    istanzierà nuovamente lo zombie con la velocità aggiornata.
-    A tal proposito è stata implementata una val \texttt{slowVelocities} dentro all'object ZombieDefaultValues.
+    Quando uno \texttt{Zombie} è colpito da un \texttt{CherryBullet} potrebbe essere rallentato, per questo motivo si è deciso di
+    mettere la velocità in ciascun costruttore per ciascun tipo di \texttt{Zombie} implementato.
+    In questo modo, seguendo un approccio funzionale e favorendo l'immutabilità delle istanze, quando il \texttt{CherryBullet} collide con uno specifico \texttt{Zombie}
+    istanzierà nuovamente lo \texttt{Zombie} con la velocità aggiornata.
+    A tal proposito è stata implementata una val \texttt{slowVelocities} dentro all'object \texttt{ZombieDefaultValues}.
 
     E' infatti nell'object \texttt{ZombieDefaultValue} che sono definite tutte le caratteristiche principali per ogni
-    tipo di Zombie implementato: stato iniziale e di default (\texttt{Moving}), vita iniziale,
-    il tipo bullet sparato, la velocità di default, la velocità degli Zombie rallentati e un metodo per generare
-    la posizione iniziale degli zombie.
+    tipo di \texttt{Zombie} implementato: stato iniziale e di default (\texttt{Moving}), vita iniziale,
+    il tipo \texttt{Bullet} sparato, la velocità di default, la velocità degli \texttt{Zombie} rallentati e un metodo per generare
+    la posizione iniziale degli \texttt{Zombie}.
 
-    Come mostrato nel diagramma delle classi degli Zombie, ogni classe che rappresenta uno Zombie deve estendere dal \texttt{trait Zombie}
+    Come mostrato nel diagramma delle classi degli \texttt{Zombie}, ogni classe che rappresenta uno \texttt{Zombie} deve estendere dal \texttt{trait Zombie}
 
     \begin{figure}[H]
         \centering
         \includegraphics[width=1\linewidth]{images/model-zombie.png}
-        \caption{Diagramma delle classi rappresentante gli \texttt{zombie}.}
+        \caption{Diagramma delle classi rappresentante gli \texttt{Zombie}.}
         \label{fig:class-zombie}
     \end{figure}
 
-    Nell'object \texttt{ZombieDefaultValues} sono definite le principali caratteristiche di ciascun Zombie: lo stato di default
-    degli zombie \texttt{Moving}, la vita iniziale per ciascun tipo di \texttt{Zombie}, il tipo di \texttt{Bullet} che ogni tipo
-    di \texttt{Zombie} ha a disposizione, le velocità di default e le velocità degli \texttt{Zombie} quando vengono rallentati.
-    Il comportamento degli Zombie è incapsulato nel TroopActor.
-    Il model degli Zombie è stato testato nella classe ZombieModelTest
+    Nell'object \texttt{ZombieDefaultValues} sono definite le principali caratteristiche di ciascun tipo di \texttt{Zombie}: lo stato di default \texttt{Moving}, la vita iniziale, il tipo di \texttt{Bullet} a disposizione, le velocità di default e le velocità quando vengono rallentati.
+    Il comportamento degli \texttt{Zombie} è incapsulato nel \texttt{TroopActor}.
+    Il model degli \texttt{Zombie} è stato testato nella classe \texttt{ZombieModelTest}
