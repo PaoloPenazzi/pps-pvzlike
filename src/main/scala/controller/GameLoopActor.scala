@@ -7,7 +7,6 @@ import controller.GameLoopActor.GameLoopUtils.*
 import controller.GameLoopActor.GameLoopUtils.CollisionUtils.*
 import model.GameData
 import model.GameData.{GameEntity, GameSeq}
-import model.GameData.GameSeq.given
 import model.Statistics.GameStatistics
 import model.actors.*
 import model.common.Utilities.{MetaData, Speed, Sun}
@@ -15,6 +14,7 @@ import model.entities.*
 import model.entities.WorldSpace.*
 import model.waves.WaveGenerator
 import view.Game
+import GameSeq.given
 
 import scala.collection.immutable.Seq
 import scala.collection.mutable
@@ -61,7 +61,7 @@ object GameLoopActor:
           msg match
             case StartGame() =>
               startTimer(timer, UpdateLoop())
-              startTimer(timer, UpdateResources(), resourceTimer)
+              startTimer(timer, UpdateResources(), metaData.speed.resourceSpeed)
               GameLoopActor(viewActor, createWave(ctx, stats.rounds), metaData, stats)
 
             case EndReached() => Game.endGame(stats); Behaviors.stopped
@@ -70,7 +70,7 @@ object GameLoopActor:
             case PauseGame() => pauseBehavior()
 
             case UpdateResources() =>
-              startTimer(timer, UpdateResources(), resourceTimer)
+              startTimer(timer, UpdateResources(), metaData.speed.resourceSpeed)
               val updatedMetaData = metaData + Sun.Normal.value
               viewActor ! RenderMetaData(updatedMetaData, ctx.self)
               GameLoopActor(viewActor, entities, updatedMetaData, stats)
@@ -115,11 +115,11 @@ object GameLoopActor:
      */
     def pauseBehavior(): Behavior[Command] =
       Behaviors.withTimers(timer =>
-        Behaviors.receive((ctx, msg) => {
+        Behaviors.receive((_, msg) => {
           msg match
             case ResumeGame() =>
-              startTimer(timer, UpdateLoop())
-              startTimer(timer, UpdateResources(), resourceTimer)
+              startTimer(timer, UpdateLoop(), metaData.speed.gameSpeed)
+              startTimer(timer, UpdateResources(), metaData.speed.resourceSpeed)
               GameLoopActor(viewActor, entities, metaData, stats)
 
             case _ => Behaviors.same
@@ -153,7 +153,6 @@ object GameLoopActor:
 
   /** An utility object for the GameLoop. */
   object GameLoopUtils:
-    val resourceTimer: FiniteDuration = FiniteDuration(3, "seconds")
 
     /** Starts a [[TimerScheduler]] and after [[time]] duration will send itself
      * a specific [[msg]].
@@ -162,7 +161,7 @@ object GameLoopActor:
      * @param msg   the message to send.
      * @param time  the duration of the timer.
      */
-    def startTimer(timer: TimerScheduler[Command], msg: Command, time: FiniteDuration = Speed.Normal.speed): Unit =
+    def startTimer(timer: TimerScheduler[Command], msg: Command, time: FiniteDuration = Speed.Normal.gameSpeed): Unit =
       timer.startSingleTimer(msg, time)
 
     /** Creates a new wave of [[Zombie]], for the next round.
@@ -260,7 +259,7 @@ object GameLoopActor:
      * @param interests the interests for each [[Entity]] in game.
      */
     def updateAll(ctx: ActorContext[Command], speed: Speed, interests: Seq[(ActorRef[ModelMessage], Seq[Entity])]): Unit =
-      interests foreach (e => e._1 ! Update(speed.speed, e._2.toList, ctx.self))
+      interests foreach (e => e._1 ! Update(speed.gameSpeed, e._2.toList, ctx.self))
 
     /** A specific object for collision management */
     object CollisionUtils:

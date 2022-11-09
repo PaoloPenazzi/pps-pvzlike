@@ -30,7 +30,7 @@ class GameLoopBehaviorTest extends AnyWordSpec with BeforeAndAfter with Matchers
 
   def resourcesTime: FiniteDuration = FiniteDuration(3, "seconds")
 
-  def updateTime: FiniteDuration = Speed.Normal.speed
+  def updateTime: FiniteDuration = Speed.Normal.gameSpeed
 
   before {
     mockSystem = MockSystem()

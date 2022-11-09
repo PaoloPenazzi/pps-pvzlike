@@ -39,13 +39,10 @@ object Utilities:
     @targetName("change speed")
     def >>>(newSpeed: Speed): MetaData = MetaData(sun, newSpeed)
 
-  /** Defines the concepts of game's speed.
-   * The higher the value of [[speed]],
-   * the faster the game speed will be.
-   * */
-  enum Speed(val speed: FiniteDuration):
-    case Normal extends Speed(FiniteDuration(16, "milliseconds"))
-    case Fast extends Speed(FiniteDuration(32, "milliseconds"))
+  /** Defines the concepts of game and resources' speed. */
+  enum Speed(val gameSpeed: FiniteDuration)(val resourceSpeed: FiniteDuration):
+    case Normal extends Speed(FiniteDuration(16, "milliseconds"))(FiniteDuration(3, "seconds"))
+    case Fast extends Speed(FiniteDuration(48, "milliseconds"))(FiniteDuration(1, "seconds"))
 
   /**
    * Defines the concepts of resources in game. Modelled as [[Sun]]

@@ -46,10 +46,10 @@ class GameLoopIntegrationTest extends AnyWordSpec with BeforeAndAfter with Match
           val mockSystem = MockSystem()
           mockSystem.gameLoopActor run UpdateLoop()
           mockSystem.seedActor.receiveMessage()
-          mockSystem.seedActor expectMessage Update(Speed.Normal.speed, List(), mockSystem.gameLoopActor.ref)
+          mockSystem.seedActor expectMessage Update(Speed.Normal.gameSpeed, List(), mockSystem.gameLoopActor.ref)
           mockSystem.zombieActor.receiveMessage()
-          mockSystem.zombieActor expectMessage Update(Speed.Normal.speed, List(), mockSystem.gameLoopActor.ref)
-          mockSystem.plantActor expectMessage Update(Speed.Normal.speed, List(mockSystem.zombie._2), mockSystem.gameLoopActor.ref)
+          mockSystem.zombieActor expectMessage Update(Speed.Normal.gameSpeed, List(), mockSystem.gameLoopActor.ref)
+          mockSystem.plantActor expectMessage Update(Speed.Normal.gameSpeed, List(mockSystem.zombie._2), mockSystem.gameLoopActor.ref)
         }
       }
 
