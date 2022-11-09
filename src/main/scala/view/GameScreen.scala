@@ -1,7 +1,7 @@
 package view
 
 import com.badlogic.gdx.scenes.scene2d.Actor
-import view.View.EntityRenderer
+import view.View.Renderer
 import view.ViewportSpace.*
 import view.Sprites.{GameBackground, Sun, cardName, height, spriteName, width}
 import model.entities.{CherryBomb, Entity, PeaBullet, Shooter, SnowBullet, Troop, Troops, Wallnut}
@@ -17,7 +17,7 @@ import view.ScalaGDX.Screen.ScreenBehavior
 import scala.language.implicitConversions
 
 
-class GameScreen extends ScreenBehavior with EntityRenderer :
+class GameScreen extends ScreenBehavior with Renderer :
   private var pendingPlant: Option[Troop] = None
   private var entities: List[Entity] = List.empty
   private var metaData: MetaData = MetaData()

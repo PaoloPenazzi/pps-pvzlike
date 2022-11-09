@@ -9,6 +9,7 @@ import controller.GameLoopActor.GameLoopCommands.Command
 import ViewportSpace.*
 import model.Statistics.GameStatistics
 import ScalaGDX.Screen
+import view.View.Renderer
 
 
 object Game extends com.badlogic.gdx.Game:
@@ -37,8 +38,8 @@ object Game extends com.badlogic.gdx.Game:
     super.dispose()
     terminateActorSystem()
 
-  private def spawnActorSystem(renderer: EntityRenderer): Unit =
-    actorSystem.foreach(_.terminate())
   private def terminateActorSystem(): Unit =
+    actorSystem.foreach(_.terminate())
+  private def spawnActorSystem(renderer: Renderer): Unit =
     actorSystem = Some(ActorSystem(RootActor(), "launcher"))
-    actorSystem.foreach(_ ! Start(gameScreen))
+    actorSystem.foreach(_ ! Start(renderer))
