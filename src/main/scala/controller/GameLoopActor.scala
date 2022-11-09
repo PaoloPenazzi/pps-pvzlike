@@ -62,7 +62,7 @@ object GameLoopActor:
             case StartGame() =>
               startTimer(timer, UpdateLoop())
               startTimer(timer, UpdateResources(), resourceTimer)
-              Behaviors.same
+              GameLoopActor(viewActor, createWave(ctx, stats.rounds), metaData, stats)
 
             case EndReached() => Game.endGame(stats); Behaviors.stopped
 
@@ -79,7 +79,7 @@ object GameLoopActor:
               handleCollision(entities, ctx)
               val newWave = if isWaveOver(entities) then createWave(ctx, stats.rounds)
               else List.empty
-              val newStats = if isWaveOver(entities) then updateRoundStats(stats)
+              val newStats = if newWave.nonEmpty then updateRoundStats(stats)
               else stats
               updateAll(ctx, metaData.speed, detectInterest(entities))
               startTimer(timer, UpdateLoop())
