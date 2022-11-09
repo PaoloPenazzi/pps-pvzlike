@@ -24,10 +24,15 @@ class GameOverScreen(stats: GameStatistics) extends ScreenBehavior:
       Writable("Reached wave: " + stats.rounds, ViewportWidth / 4, 4, 0.5)
     )
   override def actors: Seq[Actor] =
-    val width = ViewportWidth/2
-    val newGameButton: Actor = ImageButtons.builder withTexture texture(NewGameButton) withBounds (ViewportWidth/2 - width/2, 0.2, width, HUDHeight*2)
-    newGameButton.addPulseOnTouch()
-    newGameButton onTouchUp Game.startNewGame
-    Seq(newGameButton)
+    val fadeIn = FadeWidget(true, 1)
+    val fadeOut = FadeWidget(false, 1)
+    val width = ViewportWidth / 2
+    val button: Actor = ImageButtons.builder withTexture texture(NewGameButton) withBounds(ViewportWidth / 2 - width / 2, 0.2, width, HUDHeight * 2)
+    button.addPulseOnTouch()
+    button.onTouchUp(() =>
+      fadeOut.play(() =>
+        Game.startNewGame()))
+    Seq(button, fadeIn, fadeOut)
 
   override def viewport: Viewport = Game.viewport
+

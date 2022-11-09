@@ -44,9 +44,8 @@ class GameScreen(viewActor: ActorRef[ViewMessage]) extends ScreenBehavior with R
     Seq(Writable("=" + metaData.sun.toString, SunStringBoundaries))
 
   override def actors: Seq[Actor] =
-    cards :+ pauseButton :+ speedUpButton
-
-
+    cards :+ pauseButton :+ speedUpButton :+ fadeIn
+  
   override def onScreenTouch: Vector2 => Unit = pos =>
     for
       plant <- pendingPlant
@@ -96,3 +95,6 @@ class GameScreen(viewActor: ActorRef[ViewMessage]) extends ScreenBehavior with R
       viewActor ! SendChangeGameSpeed(speed)
     )
     button
+
+  private def fadeIn =
+    FadeWidget(true, 1)
