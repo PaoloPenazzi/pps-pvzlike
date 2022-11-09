@@ -1,41 +1,34 @@
 @startuml
 'https://plantuml.com/class-diagram
 
-
-interface Entity <<trait>> {
-+UpdatedEntity <<type>>
-+position: Position
-+update(): UpdatedEntity
-+width(): Int
-+isInterestedIn(): Entity => Boolean
-}
-
-interface AttackingAbility <<trait>> {
-+bullet(): Bullet
-+canAttack(entity): Boolean
-+fireRate(): Int
-+range(): Int
+enum TroopState{
+Idle
+Moving
+Attacking
+Dead
 }
 
 interface Troop <<trait>> {
 +life: Int
 +state: TroopState
-+collideWith(): Troop
-+pointOfShoot(): Position
-+withState(state): Troop
-+withLife(life): Troop
-+withPosition(pos): Troop
++collideWith(bullet: Bullet): Troop
++withState(newState: TroopState): Troop
++withLife(healthPoints: Int): Troop
 }
 
-abstract class Plant
-class Peashooter
-class Wallnut
+interface Plant <<trait>> {
++BulletType <: Bullet
++cost(): Int
++pointOfShoot(): Position
+}
 
-Entity <|-down- AttackingAbility
-Entity <|-down- Troop
-AttackingAbility <|-down- Troop
+class Shooter
+class Wallnut
+class CherryBomb
+
 Troop <|-down- Plant
-Plant <|-down- Peashooter
+Plant <|-down- Shooter
 Plant <|-down- Wallnut
+Plant <|-down- CherryBomb
 
 @enduml
