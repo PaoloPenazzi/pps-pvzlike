@@ -23,10 +23,10 @@ di cui avevo bisogno.
 Purtroppo il metodo \textit{copy} è disponibile sono nelle \texttt{case class}, quindi tutte le classi che estendono
 \texttt{Troop} lo devono implementare.
 Dopo l'introduzione di questi metodi la modifica delle troop può essere effettua utilizzando la \textbf{infix notation}:
-\begin{verbatim}
+\begin{lstlisting}
     val troop: Troop
     troop withLife 50 withPosition (0,0)
-\end{verbatim}
+\end{lstlisting}
 Questa soluzione è stata poi adottata anche nei Bullet.
 Gli stessi principi mi hanno guidato nella creazione di un modo di creare le troop che fosse il più funzionale possibile.
 Ho quindi rivisitato il \textbf{pattern builder} per creare troop di qualsiasi tipo: ho creato un \texttt{trait TroopBuilder}
@@ -35,7 +35,7 @@ Utilizzando le \textbf{given conversion} ho definito un istanza di builder per o
 della creazione di quest'ultima.
 Per rendere il builder più coerente con il linguaggio del progetto ho definito un metodo \textit{ofType} che che dato un tipo
 di troop chiama utilizza il builder per restituire la nuova entità.
-\begin{verbatim}
+\begin{lstlisting}[language=Scala]
     object Troops:
         /**
         * A builder used to create [[Troop]].
@@ -63,15 +63,58 @@ di troop chiama utilizza il builder per restituire la nuova entità.
         */
         def ofType[T <: Troop](using troopBuilder: TroopBuilder[T, Bullet]): T =
             troopBuilder.build
-\end{verbatim}
+\end{lstlisting}
 
-Tutto rende più funzionale la creazione di una troop:
-\begin{verbatim}
+Tutto ciò rende più funzionale la creazione di una troop:
+\begin{lstlisting}[language=Scala]
     val troop: Troop = Troops.ofType[BasicZombie]
-\end{verbatim}
+\end{lstlisting}
 
 \subsubsection{TroopActor}
+Avendo adottato un'architettura ad attori, ogni proiettile, in fase di creazione, viene associato ad un attore che ne definisce il comportamento.
+Il TroopActor ha un solo Behaviour e non è mai proattivo: risponde solamente ai messaggi ricevuti dal GameLoop, rispettando
+il pattern \textbf{MVC}.
+Ad ogni iterazione del GameLoop il TroopActor riceve un messaggio di Update() a seguito del quale:
+\begin{enumerate}
+    \item Aggiorna la propria troop.
+    \item Se la troop ha raggiunto la fine della corsia notifica il GameLoop.
+    \item Manda la troop aggiornata al GameLoop.
+    \item Se c'è un nemico attaccabile, manda a se stesso un messaggio Shoot().
+    \item Ricrea il proprio Behaviour con la troop aggiornata.
+\end{enumerate}
+Nel caso ci sia un'entità da attaccare riceverà il messaggio Shoot() ,che si è precedentemente inviato, a seguito del quale:
+\begin{enumerate}
+    \item Crea il bullet della propria troop.
+    \item Crea un BulletActor che controlla il bullet.
+    \item Notifica il GameLoop dell'avvenuta creazione con il messaggio BulletSpawned().
+\end{enumerate}
+Nel caso la troop venga colpita da un bullet, il TroopActor viene notificato dal GameLoop con il messaggio Collision(),
+a seguito del quale:
+\begin{enumerate}
+    \item Se la troop viene uccisa, risponde con il messaggio EntityDead()
+    \item Se la troop non viene uccisa, risponde con il messaggio EntityUpdated()
+\end{enumerate}
+Il comportamento del TroopActor viene mostrato nel seguente diagramma:
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\linewidth]{images/troop-actor.png}
+    \label{Diagramma di sequenza del Troop Actor.}
+\end{figure}
 
 \subsubsection{Plant}
+Un'altra parte fondamentale del mio lavoro è stata la modellazione delle piante: sono partito definendo un \texttt{trait Plant} che estende \textit{Troop} e modella il comportamento comune tra le varie piante. Questo trait \textit{Plant} verrà poi esteso dai vari tipi concreti di piante.
+
+Ho cercato di migliorare questo design, provando a renderlo il più riusabile possibile: per fare ciò ho tentato vari approcci, dall'utilizzo di classi astratte alla delegazione, ognuno dei quali presentava vantaggi e svantaggi. La scelta finale è ricaduta sull'utilizzo di una \texttt{type class} che modella tutte le piante che sparano. La motivazione alla base di questa scelta è che nel gioco esistono molte piante che sparano, ognuna delle quali può essere identificata dal bullet che utilizza.
+La classe \textit{Shooter} sarà quindi una type class generica sul tipo di bullet che spara. Questa implementazione è stata possibile dall'utilizzo, nel \textit{trait Plant}, di un \textbf{abstract type} \textit{BulletType <: Bullet} per definire il tipo di ritorno del metodo \textit{bullet}.
+
+\begin{lstlisting}[language=Scala]
+case class Shooter[B <: Bullet](bulletInstance: B,
+                                override val position: Position = (0, 0),
+                                override val life: Int = shooterDefaultLife,
+                                override val state: TroopState = defaultPlantState) extends Plant :
+  override type BulletType = B
+\end{lstlisting}
+
+
 
 \subsubsection{Wave}

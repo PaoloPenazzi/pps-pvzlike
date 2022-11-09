@@ -22,7 +22,10 @@ trait Bullet extends Entity with MovingAbility :
    * @return True if the [[Bullet]] should disappear, false otherwise.
    */
   def shouldDisappearAfterHitting(entity: Entity): Boolean = true
-  
+
+  /**
+   * @return true if the bullet can hit multiple times, false otherwise.
+   */
   def hitMultipleTimes: Boolean = false
 
   /**
@@ -31,7 +34,13 @@ trait Bullet extends Entity with MovingAbility :
    */
   def checkCollisionWith(entity: Entity): Boolean = collideWith(entity) && isInMyLane(entity)
 
-  def applyDamage(troop: Troop): Troop =
+  /**
+   * Apply the damage and the effect of the [[Bullet]] on the [[Troop]].
+   *
+   * @param troop the troop hit by the bullet.
+   * @return the troop updated.
+   */
+  def applyDamageAndEffect(troop: Troop): Troop =
     troop withLife (troop.life - damage)
 
   private def isInMyLane(entity: Entity): Boolean = entity.position.y == position.y
@@ -67,9 +76,11 @@ case class PeaBullet(override val position: Position = defaultBulletPosition) ex
   override def withPosition(pos: Position): PeaBullet = copy(position = pos)
 
 case class SnowBullet(override val position: Position = defaultBulletPosition) extends PlantBullet :
-  override def applyDamage(troop: Troop): Troop =
+  override def applyDamageAndEffect(troop: Troop): Troop =
     troop match
-      case z: Zombie => super.applyDamage(z.withVelocity(slowVelocities(z)))
+      case z: Zombie =>
+        z withVelocity slowVelocities(z) withLife (z.life - damage)
+
   override def withPosition(pos: Position): SnowBullet = copy(position = pos)
 
 /**
@@ -151,7 +162,7 @@ object BulletDefaultValues:
     case _: PeaBullet => 25
     case _: SwordBullet => 60
     case _: PawBullet => 25
-    case _ => 0
+    case _: SnowBullet => 25
 
   /**
    * Returns the velocity of the [[Bullet]].
@@ -161,4 +172,3 @@ object BulletDefaultValues:
     case _: SwordBullet => -0.1
     case _: PawBullet => -0.1
     case _: SnowBullet => 0.06
-    case _ => 0

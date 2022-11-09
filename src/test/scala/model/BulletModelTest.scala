@@ -30,7 +30,7 @@ class BulletModelTest extends AnyFlatSpec with should.Matchers:
     assertResult(true)(bullet checkCollisionWith plant)
   }
   "A PawBullet" should "apply a correct damage" in {
-    assertResult(plant.life - bullet.damage)((bullet applyDamage plant).life)
+    assertResult(plant.life - bullet.damage)((bullet applyDamageAndEffect plant).life)
   }
   "A CherryBullet" should "collide with more entities and in different lane" in {
     assertResult(true)(cherryBullet collideWith fastZombie)

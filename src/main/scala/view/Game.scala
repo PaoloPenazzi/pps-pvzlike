@@ -27,7 +27,7 @@ object Game extends com.badlogic.gdx.Game:
     Gdx.app.postRunnable(new Runnable():
       override def run(): Unit =
         actorSystem.foreach(_.terminate())
-        setScreen(EndGameMenu(stats))
+        setScreen(Screen(GameOverScreen(stats)))
       )
 
   override def create(): Unit =

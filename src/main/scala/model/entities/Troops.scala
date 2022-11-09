@@ -16,7 +16,7 @@ trait Troop extends Entity with AttackingAbility :
    * @return The Entity updated after the collision.
    */
   def collideWith(bullet: Bullet): Troop =
-    val troop = bullet applyDamage this
+    val troop = bullet applyDamageAndEffect this
     if troop.life <= 0 then troop withState Dead else troop
 
   /**

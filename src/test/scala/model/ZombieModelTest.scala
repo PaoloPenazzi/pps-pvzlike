@@ -1,6 +1,6 @@
 package model
 
-import model.entities.{BasicZombie, Bullet, FastZombie, PeaBullet, Shooter, Troop, Troops, WarriorZombie, Bullets}
+import model.entities.{BasicZombie, Bullet, Bullets, FastZombie, PeaBullet, Shooter, SnowBullet, Troop, Troops, WarriorZombie}
 import org.scalatest.*
 import org.scalatest.flatspec.*
 import org.scalatest.matchers.*
@@ -19,7 +19,7 @@ class ZombieModelTest extends AnyFlatSpec with should.Matchers:
   private val plantInRange: Troop = Troops.shooterOf[PeaBullet] withPosition (testingLane, 75)
   private val dummyPlant: Troop = Troops.shooterOf[PeaBullet] withPosition (otherLane, 50)
   private val dummyZombie: Troop = Troops.ofType[BasicZombie] withPosition (otherLane, 50)
-  private val dummyBullet: Bullet = Bullets.ofType[PeaBullet]
+  private val dummyBullet: Bullet = Bullets.ofType[SnowBullet] withPosition (testingLane, 80)
 
 
   "A BasicZombie" should "be in Moving state if it can't attack any plant" in {

@@ -2,13 +2,14 @@ package view
 
 import com.badlogic.gdx.{Gdx, ScreenAdapter}
 import com.badlogic.gdx.graphics.{GL20, Texture}
-import com.badlogic.gdx.graphics.g2d.{BitmapFont, SpriteBatch, TextureRegion}
+import com.badlogic.gdx.graphics.g2d.{BitmapFont, BitmapFontCache, SpriteBatch, TextureRegion}
 import com.badlogic.gdx.math.{Rectangle, Vector2}
 import com.badlogic.gdx.scenes.scene2d.actions.Actions
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton
 import com.badlogic.gdx.scenes.scene2d.{Actor, EventListener, InputEvent, Stage}
 import com.badlogic.gdx.scenes.scene2d.utils.{ClickListener, TextureRegionDrawable}
 import com.badlogic.gdx.utils.viewport.Viewport
+
 import scala.language.implicitConversions
 
 /**
@@ -19,6 +20,7 @@ import scala.language.implicitConversions
  *  - [[view.ScalaGDX.Clickable]] API on [[Actor]] and [[Stage]].
  */ 
 object ScalaGDX:
+  import Utils.*
   /**
    * Add simpler APIs to define reactive behavior that should arise from certain click events.
    */
@@ -124,9 +126,9 @@ object ScalaGDX:
 
     /**
      *
-     * @return the scale of this writing.
+     * @return the line height.
      */
-    def scale: Float
+    def height: Float
 
   /**
    * Contains implementation of [[Writable]]
@@ -136,20 +138,20 @@ object ScalaGDX:
      *
      * Basic implementation of [[Writable]]
      */
-    case class BasicWritable(s: String, pos: Vector2, scale: Float) extends Writable
+    case class BasicWritable(s: String, pos: Vector2, height: Float) extends Writable
 
     /**
      *
      * @see [[Writable]]
      */
-    def apply(s: String, pos: Vector2, scale: Float): Writable = BasicWritable(s,pos,scale)
+    def apply(s: String, pos: Vector2, height: Float): Writable = BasicWritable(s,pos,height)
 
     /**
      *
      * @see [[Writable]] and [[Vector2]]
      */
-    def apply(path: String, x: Float, y: Float, scale: Float): Writable =
-      BasicWritable(path, Vector2(x, y), scale)
+    def apply(path: String, x: Float, y: Float, height: Float): Writable =
+      BasicWritable(path, Vector2(x, y), height)
 
   /**
    *
@@ -244,22 +246,24 @@ object ScalaGDX:
       private val camera = behavior.viewport.getCamera
       private lazy val stage = new Stage(behavior.viewport)
       private lazy val batch: SpriteBatch = SpriteBatch()
-      private lazy val font: BitmapFont = BitmapFont(Gdx.files.internal("assets/gameWindow/font.fnt"), Gdx.files.internal("assets/gameWindow/font.png"), false)
+      private lazy val font: BitmapFont = BitmapFont(Gdx.files.internal("assets/gameWindow/font.fnt"))
+      font.setUseIntegerPositions(false)
 
       override def render(delta: Float): Unit =
         Gdx.gl.glClearColor(0, 0, 0, 1)
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
         batch.setProjectionMatrix(camera.combined)
-
         batch.begin()
 
         behavior.drawables.foreach(d =>
           batch.draw(memoizedTexture(d.path), d.bounds.x, d.bounds.y, d.bounds.width, d.bounds.height)
         )
+
         behavior.writables.foreach(w =>
-          font.getData.setScale(w.scale)
+          scaleFont(w.height)
           font.draw(batch, w.s, w.pos.x, w.pos.y)
         )
+
         batch.end()
         stage.draw()
         stage.act(delta)
@@ -275,5 +279,7 @@ object ScalaGDX:
         camera.position.set(camera.viewportWidth / 2, camera.viewportHeight / 2, 0)
         camera.update()
 
-      import Utils.*
+      private def scaleFont(height: Float): Unit =
+        font.getData.setScale(height * 2 * font.getScaleY / font.getLineHeight)
+
       private val memoizedTexture: String => Texture = memoized(texture)
