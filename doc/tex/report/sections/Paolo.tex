@@ -84,13 +84,13 @@ Il comportamento del TroopActor viene mostrato nel seguente diagramma:
 \end{figure}
 
 \subsubsection{Plant}
-Un'altra parte fondamentale del mio lavoro è stata la modellazione dei vari tipi di piante: sono partito definendo un \texttt{trait Plant} che estende \textit{Troop} e modella il comportamento comune tra le varie piante.
-Ho poi creato i vari tipi di piante creando delle classi che estendono \textit{Plant}.
+Un'altra parte fondamentale del mio lavoro è stata la creazione dei vari tipi di piante: sono partito definendo un \texttt{trait Plant} che estende \textit{Troop} e modella il comportamento comune tra le varie piante.
+Ho poi creato vari tipi di piante creando delle classi che estendono \textit{Plant}.
 
-A questo punto mi sono accorto che tutte le piante che sparano hanno lo stesso comportamente, l'unica cosa che cambia è il bullet che sparano.
-Ogni tipo di pianta può essere quindi identificata dal rispettivo bullet.
+Durante l'implementazione di queste classi, ho notato che tutte le piante che sparano hanno lo stesso comportamente, l'unica cosa che cambia è il bullet che sparano.
+Ogni tipo di pianta che spara può essere quindi identificata dal rispettivo bullet.
 
-Ho cercato di migliorare il design, provando a renderlo il più riusabile possibile: per fare ciò ho tentato vari approcci, dall'utilizzo di classi astratte alla delegazione, ognuno dei quali presentava vantaggi e svantaggi.
+Ho cercato di migliorare la mia implementazione, provando a renderla il più riusabile possibile per non ripetere codice: ho tentato vari approcci, dall'utilizzo di classi astratte alla delegazione, ognuno dei quali presentava vantaggi e svantaggi.
 La scelta finale è ricaduta sull'utilizzo di una \textbf{type class} che modella le piante che sparano.
 
 Ho creato la classe \textit{Shooter} che è una type class generica sul tipo di bullet che spara.
