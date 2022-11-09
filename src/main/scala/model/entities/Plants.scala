@@ -55,7 +55,7 @@ trait Plant extends Troop :
  * @param state    the state of the plant.
  */
 
-case class Shooter[B <: Bullet](bulletType: B,
+case class Shooter[B <: Bullet](bulletInstance: B,
                                 override val position: Position = (0, 0),
                                 override val life: Int = shooterDefaultLife,
                                 override val state: TroopState = defaultPlantState) extends Plant :
@@ -143,7 +143,7 @@ object PlantDefaultValues:
    * Returns the [[PlantBullet]] shoot by the [[Plant]].
    */
   val bullets: Plant => PlantBullet =
-    case s: Shooter[_] => s.bulletType match
+    case s: Shooter[_] => s.bulletInstance match
       case _: PeaBullet => Bullets.ofType[PeaBullet]
       case _: SnowBullet => Bullets.ofType[SnowBullet]
     case c: CherryBomb => CherryBullet(c.position)

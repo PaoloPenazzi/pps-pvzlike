@@ -41,7 +41,7 @@ object Sprites {
     case _: Zombie => 1.4
 
   def cardName(troop: Troop): String = troop match
-    case s: Shooter[_] => s.bulletType match
+    case s: Shooter[_] => s.bulletInstance match
       case _: PeaBullet => "assets/gameWindow/peashooter-card.png"
       case _: SnowBullet => "assets/gameWindow/snowshooter-card.png"
     case _: Wallnut => "assets/gameWindow/wallnut-card.png"
