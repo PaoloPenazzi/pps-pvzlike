@@ -85,7 +85,7 @@ object GameLoopActor:
               GameLoopActor(viewActor, newWave ++ entities, metaData, newStats)
 
             case EntityUpdated(ref, entity) =>
-              val newEntities = entities collect { case x if x.ref == ref => GameEntity(ref, entity) case x => x }
+              val newEntities = entities updateWith GameEntity(ref, entity)
               viewActor ! Render(newEntities.map(_.entity).toList, ctx.self, metaData)
               GameLoopActor(viewActor, newEntities, metaData, stats)
 

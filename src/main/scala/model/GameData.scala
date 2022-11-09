@@ -7,21 +7,29 @@ import model.entities.*
 
 import scala.annotation.targetName
 
+/** Represents the type of data handled by the [[controller.GameLoopActor.GameLoop]]. */
 object GameData:
-
   given Conversion[Seq[GameEntity[Entity]], GameSeq] = GameSeq(_)
 
+  /** Defines a view over the model entities, designed for the [[controller.GameLoopActor.GameLoop]].
+   *
+   * @param ref the [[ActorRef]] of the [[entity]]'s actor.
+   * @param entity the model subject.
+   * @tparam E the type of [[entity]].
+   */
   case class GameEntity[E <: Entity](ref: ActorRef[ModelMessage], entity: E)
 
+
+
   case class GameSeq(seq: Seq[GameEntity[Entity]]):
-    def of[A <: Entity](using select: GameSelectorBuilder[A]): Seq[GameEntity[A]] =
-      seq.collect(select.by)
+    def of[A <: Entity : GameSelectorBuilder]: Seq[GameEntity[A]] =
+      seq.collect(summon[GameSelectorBuilder[A]].by)
 
     @targetName("delete")
-    def :-(ref: ActorRef[ModelMessage]): Seq[GameEntity[Entity]] =
-      seq filter {
-        _.ref != ref
-      }
+    def :-(ref: ActorRef[ModelMessage]): Seq[GameEntity[Entity]] = seq filter { _.ref != ref }
+    
+    def updateWith(entity: GameEntity[Entity]): Seq[GameEntity[Entity]] =
+      seq collect { case x if x.ref == entity.ref => entity case x => x }
 
   object GameSelector:
     trait GameSelectorBuilder[E <: Entity]:
