@@ -79,10 +79,10 @@ object GameLoopActor:
 
             case UpdateLoop() =>
               handleCollision(entities, ctx)
-              val newWave = if isWaveOver(entities) then createWave(ctx, stats.rounds)
-              else List.empty
-              val newStats = if newWave.nonEmpty then updateRoundStats(stats)
+              val newStats = if isWaveOver(entities) then updateRoundStats(stats)
               else stats
+              val newWave = if isWaveOver(entities) then createWave(ctx, newStats.rounds)
+              else List.empty
               updateAll(ctx, metaData.speed, detectInterest(entities))
               startTimer(timer, UpdateLoop())
               GameLoopActor(viewActor, newWave ++ entities, metaData, newStats)
