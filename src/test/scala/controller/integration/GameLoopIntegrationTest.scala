@@ -1,18 +1,19 @@
 package controller.integration
 
 import akka.actor.testkit.typed.scaladsl.{BehaviorTestKit, TestInbox}
-import akka.actor.typed.ActorRef
+import akka.actor.typed.{ActorRef, Behavior}
 import model.entities.*
 import model.common.Utilities.*
-import controller.{GameLoopActor, Render, ViewMessage}
+import controller.{GameLoopActor, RenderEntities, RenderMetaData, ViewMessage}
 import controller.GameLoopActor.*
-import controller.GameLoopActor.GameLoopCommands.{Command, EntityUpdated, StartGame, UpdateLoop}
+import controller.GameLoopActor.GameLoopCommands.{Command, EntityUpdated, StartGame, UpdateLoop, UpdateResources}
 import model.GameData.{GameEntity, GameSeq}
 import model.actors.{Collision, ModelMessage, Update}
 import model.entities.WorldSpace.LanesLength
 import org.scalatest.BeforeAndAfter
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
+
 import scala.language.implicitConversions
 
 class GameLoopIntegrationTest extends AnyWordSpec with BeforeAndAfter with Matchers :
@@ -56,8 +57,15 @@ class GameLoopIntegrationTest extends AnyWordSpec with BeforeAndAfter with Match
         "an entity is updated" in {
           val mockSystem = MockSystem()
           mockSystem.gameLoopActor run EntityUpdated(mockSystem.seedActor.ref, mockSystem.bullet._2)
-          mockSystem.viewActor expectMessage Render(mockSystem.entities.map(_._2).toList, mockSystem.gameLoopActor.ref, MetaData())
+          mockSystem.viewActor expectMessage RenderEntities(mockSystem.entities.map(_._2).toList, mockSystem.gameLoopActor.ref)
+        }
+        "a resource is updated" in {
+          val mockSystem = MockSystem()
+          mockSystem.gameLoopActor run UpdateResources()
+          mockSystem.viewActor expectMessage RenderMetaData(MetaData(50), mockSystem.gameLoopActor.ref)
         }
       }
+
+
       }
     }

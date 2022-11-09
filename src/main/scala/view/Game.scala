@@ -9,6 +9,7 @@ import controller.GameLoopActor.GameLoopCommands.Command
 import ViewportSpace.*
 import model.Statistics.GameStatistics
 import ScalaGDX.Screen
+import view.ScalaGDX.Screen.ScreenBehavior
 import view.View.Renderer
 
 
@@ -17,12 +18,13 @@ object Game extends com.badlogic.gdx.Game:
   var actorSystem: Option[ActorSystem[RootCommand]] = None
 
   def startNewGame(): Unit =
+    actorSystem = Some(ActorSystem(RootActor(), "launcher"))
+    actorSystem.foreach(_ ! Start())
+
+  def changeScreen(behavior: ScreenBehavior): Unit =
     Gdx.app.postRunnable(new Runnable():
       override def run(): Unit =
-        val gameScreen = GameScreen()
-        setScreen(Screen(gameScreen))
-        spawnActorSystem(gameScreen)
-    )
+        setScreen(Screen(behavior)))
 
   def endGame(stats: GameStatistics): Unit =
     Gdx.app.postRunnable(new Runnable():
@@ -40,6 +42,3 @@ object Game extends com.badlogic.gdx.Game:
 
   private def terminateActorSystem(): Unit =
     actorSystem.foreach(_.terminate())
-  private def spawnActorSystem(renderer: Renderer): Unit =
-    actorSystem = Some(ActorSystem(RootActor(), "launcher"))
-    actorSystem.foreach(_ ! Start(renderer))

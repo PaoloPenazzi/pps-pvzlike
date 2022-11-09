@@ -6,18 +6,19 @@ import view.ViewportSpace.*
 import view.Sprites.{GameBackground, Sun, cardName, height, spriteName, width}
 import model.entities.{CherryBomb, Entity, PeaBullet, Shooter, SnowBullet, Troop, Troops, Wallnut}
 import model.common.Utilities.MetaData
-import controller.ViewActor.sendPlacePlant
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.utils.viewport.Viewport
 import view.ScalaGDX.{Drawable, Writable}
 import ScalaGDX.{PulsingImageButton, given}
 import ScalaGDX.Utils.texture
+import akka.actor.typed.ActorRef
+import controller.{SendPlacePlant, ViewMessage}
 import view.ScalaGDX.Screen.ScreenBehavior
 
 import scala.language.implicitConversions
 
 
-class GameScreen extends ScreenBehavior with Renderer :
+class GameScreen(viewActor: ActorRef[ViewMessage]) extends ScreenBehavior with Renderer :
   private var pendingPlant: Option[Troop] = None
   private var entities: List[Entity] = List.empty
   private var metaData: MetaData = MetaData()
@@ -51,7 +52,7 @@ class GameScreen extends ScreenBehavior with Renderer :
       plant <- pendingPlant
       plantCoordinates <- plantCoordinates(pos)
     do
-      sendPlacePlant(plant withPosition plantCoordinates)
+      viewActor ! SendPlacePlant(plant withPosition plantCoordinates)
     if pos.y < HUDBoundaries.y then
       pendingPlant = None
 
