@@ -30,16 +30,21 @@ class GameDataTest extends AnyFlatSpec with Matchers :
 
   import GameData.*
 
-  "a seq" should "make seq of bullet" in {
+  "A seq" should "makes seq of bullet" in {
     assertResult(seq.of[Bullet])(List(bullet))
   }
 
-  "a seq" should "make seq of troop" in {
+  "A seq" should "makes seq of troop" in {
     assertResult(seq.of[Troop])(List(zombie, shooter))
   }
 
-  "a seq" should "delete a dead element" in {
+  "A seq" should "deletes a dead element" in {
     assertResult(seq :- bullet.ref)(List(zombie, shooter))
+  }
+
+  "A seq" should "updates its elements" in {
+    val newBullet: GameEntity[Entity] = GameEntity(seedActor.ref, Bullets.ofType[PeaBullet] withPosition(2, LanesLength))
+    assertResult(seq updateWith newBullet)(List(newBullet, zombie, shooter))
   }
 
 
