@@ -10,6 +10,7 @@ import ViewportSpace.*
 import model.Statistics.GameStatistics
 import ScalaGDX.Screen
 
+
 object Game extends com.badlogic.gdx.Game:
   val viewport: Viewport = FitViewport(ViewportWidth, ViewportHeight)
   var actorSystem: Option[ActorSystem[RootCommand]] = None
@@ -19,16 +20,25 @@ object Game extends com.badlogic.gdx.Game:
       override def run(): Unit =
         val gameScreen = GameScreen()
         setScreen(Screen(gameScreen))
-        actorSystem = Some(ActorSystem(RootActor(), "launcher"))
-        actorSystem.foreach(_ ! Start(gameScreen))
+        spawnActorSystem(gameScreen)
     )
 
   def endGame(stats: GameStatistics): Unit =
     Gdx.app.postRunnable(new Runnable():
       override def run(): Unit =
-        actorSystem.foreach(_.terminate())
+        terminateActorSystem()
         setScreen(Screen(GameOverScreen(stats)))
       )
 
   override def create(): Unit =
     setScreen(Screen(MainMenuScreen()))
+
+  override def dispose(): Unit =
+    super.dispose()
+    terminateActorSystem()
+
+  private def spawnActorSystem(renderer: EntityRenderer): Unit =
+    actorSystem.foreach(_.terminate())
+  private def terminateActorSystem(): Unit =
+    actorSystem = Some(ActorSystem(RootActor(), "launcher"))
+    actorSystem.foreach(_ ! Start(gameScreen))
