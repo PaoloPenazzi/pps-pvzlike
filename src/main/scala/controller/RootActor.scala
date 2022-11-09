@@ -7,6 +7,7 @@ import controller.GameLoopActor.*
 import controller.GameLoopActor.GameLoopCommands.StartGame
 import controller.RootActor.RootCommands
 import controller.RootActor.RootCommands.*
+import view.View.Renderer
 import view.{Game, GameScreen}
 
 /** It's the actor responsible for launching the system.
@@ -36,4 +37,4 @@ object RootActor:
   object RootCommands:
     trait RootCommand
 
-    case class Start(gameScreen: GameScreen) extends RootCommand
+    case class Start(renderer: Renderer) extends RootCommand
