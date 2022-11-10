@@ -141,7 +141,7 @@ object ZombieDefaultValues:
   /**
    * Return the [[BasicZombie]] default velocity
    */
-  val basicZombieDefaultVelocity: Float = -0.01
+  val basicZombieDefaultVelocity: Float = -0.012
   /**
    * Return the [[FastZombie]] default velocity
    */
@@ -149,7 +149,7 @@ object ZombieDefaultValues:
   /**
    * Return the [[WarriorZombie]] default velocity
    */
-  val warriorZombieDefaultVelocity: Float = -0.008
+  val warriorZombieDefaultVelocity: Float = -0.01
 
   /**
    * Returns the velocity of [[Zombie]] when slowed.
