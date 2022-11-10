@@ -7,6 +7,7 @@ import controller.actors.GameLoopActor.*
 import controller.actors.GameLoopActor.GameLoopCommands.*
 import controller.actors
 import model.GameData.{GameEntity, GameSeq}
+import model.Statistics.GameStatistics
 import model.actors.{Collision, ModelMessage, Update}
 import model.common.Utilities.*
 import model.entities.*
@@ -14,7 +15,7 @@ import model.entities.WorldSpace.LanesLength
 import org.scalatest.BeforeAndAfter
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
-import view.actors.{RenderEntities, RenderMetaData, ViewMessage}
+import view.actors.{GameOver, RenderEntities, RenderMetaData, ViewMessage}
 
 import scala.language.implicitConversions
 
@@ -66,6 +67,12 @@ class GameLoopIntegrationTest extends AnyWordSpec with BeforeAndAfter with Match
           mockSystem.gameLoopActor run UpdateResources()
           mockSystem.viewActor expectMessage RenderMetaData(MetaData(50), mockSystem.gameLoopActor.ref)
         }
+        "a zombie reached the end" in {
+          val mockSystem = MockSystem()
+          mockSystem.gameLoopActor run EndReached()
+          mockSystem.viewActor expectMessage GameOver(GameStatistics())
+        }
+
       }
 
 
