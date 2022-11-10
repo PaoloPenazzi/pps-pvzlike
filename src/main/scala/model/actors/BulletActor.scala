@@ -5,10 +5,18 @@ import akka.actor.typed.{ActorRef, Behavior}
 import controller.actors.GameLoopActor.GameLoopCommands.{Command, EntityDead, EntityUpdated}
 import model.entities.{Bullet, Zombie}
 
+/** It's the the actor that defines the behavior of the bullet.
+ *
+ * Sends [[ModelMessage]] messages to the GameLoopActor.
+ * */
 object BulletActor:
   def apply(bullet: Bullet): Behavior[ModelMessage] =
     moving(bullet)
 
+  /** Provides the normal behavior of the BulletActor.
+   *
+   * @return a new updated BulletActor instance with the same [[Behavior]].
+   */
   def moving(bullet: Bullet): Behavior[ModelMessage] =
     Behaviors.receive((ctx, msg) => {
       msg match

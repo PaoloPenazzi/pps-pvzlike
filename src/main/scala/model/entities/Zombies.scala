@@ -55,6 +55,7 @@ trait Zombie(override val position: Position,
  * @param position the position in which BasicZombie is placed.
  * @param life     the life that BasicZombie currently has.
  * @param state    the state of BasicZombie.
+ * @param velocity the velocity of BasicZombie                
  */
 case class BasicZombie(override val position: Position = generateZombieSpawnPosition,
                        override val life: Int = basicZombieDefaultLife,
@@ -75,6 +76,7 @@ case class BasicZombie(override val position: Position = generateZombieSpawnPosi
  * @param position the position in which the zombie is placed.
  * @param life     the life that the zombie currently has.
  * @param state    the state of the zombie.
+ * @param velocity the velocity of FastZombie                 
  */
 case class FastZombie(override val position: Position = generateZombieSpawnPosition,
                       override val life: Int = fastZombieDefaultLife,
@@ -95,6 +97,7 @@ case class FastZombie(override val position: Position = generateZombieSpawnPosit
  * @param position the position in which the zombie is placed.
  * @param life     the life that the zombie currently has.
  * @param state    the state of the zombie.
+ * @param velocity the velocity of BasicZombie                 
  */
 case class WarriorZombie(override val position: Position = generateZombieSpawnPosition,
                          override val life: Int = warriorZombieDefaultLife,
