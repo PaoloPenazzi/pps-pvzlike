@@ -1,0 +1,15 @@
+\begin{lstlisting}[language=Scala, label=code:prolog-solution, caption=Oggetto di utility per deserializzare le soluzioni TuProlog.]    
+  /** Contains useful method for deserializing TuProlog solutions. */
+  object PrologSolution:
+    given Conversion[SolveInfo, List[Zombie]] =
+        e => waveFromTerm(e.getTerm("L"))
+
+    private def waveFromTerm(term: Term): List[Zombie] =
+      term.toString.replaceAll("\\[|\\]", "")
+        .split(",")
+        .foldRight(List.empty[Int])((e, acc) 
+            => acc :+ e.toInt)
+        .map(powerToZombie(_))
+\end{lstlisting}
+
+
