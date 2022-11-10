@@ -21,9 +21,7 @@ object ImageButtons:
     def withBounds(x: Float, y: Float, width: Float, height: Float): ImageButtonBuilder = copy(bounds = Rectangle(x, y, width, height))
 
     /**
-     * Build the image button. You need to provide a texture or a style before calling this.
-     *
-     * @throws NoSuchElementException if this is called without first providing a texture or a style
+     * Build the image button.
      * @return the image button
      */
     def build: ImageButton =
@@ -35,7 +33,7 @@ object ImageButtons:
       button
 
   /**
-   * @return an [[ImageButtonBuilder]].
+   * @return an [[ImageButtonBuilder]] using the given source.
    */
   def withSource(source: Texture|ImageButtonStyle): ImageButtonBuilder = ImageButtonBuilder(source)
 
