@@ -46,8 +46,6 @@ jobs:
           root_file: backlog.tex
           args: '-output-format=pdf -file-line-error -synctex=1 -halt-on-error -interaction=nonstopmode -shell-escape'
           working_directory: backlog/process
-      - name: Rename jar file
-        run: mv pps-pvzlike/*.jar pps-pvzlike/pps-pvzlike.jar
       - name: Rename report file
         run: mv doc/tex/report/*.pdf doc/tex/report/pps-pvzlike-report.pdf
       - name: Rename backlog file
