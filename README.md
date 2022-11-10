@@ -15,7 +15,7 @@ In the game, players try to prevent zombies from reaching the end of a path by p
 This project is developed for academic purposes for the course `Paradigmi di Programmazione e Sviluppo` of the master's degree `Ingegneria e Scienze Informatiche` of `University of Bologna` under the academic year 2021/2022.
 
 ## Requirements
-The following dependencies are required to play 'pps-pvzlike':
+The following dependencies are required to play `pps-pvzlike`:
 - Sbt version 1.7.1 or newer
 - Scala version 3.2.0 or newer
 - Java version 11 or newer
@@ -44,6 +44,8 @@ You can execute tests with the command:
 ```
 $ sbt test
 ```
+## Report
+You can download the updated report on the developed project [here](https://github.com/PaoloPenazzi/pps-pvzlike/releases/tag/0.4.0). 
 
 ## Authors
 - Alpi Davide ([DavideAlpiGit](https://github.com/DavideAlpiGit))
