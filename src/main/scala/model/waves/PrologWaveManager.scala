@@ -76,8 +76,10 @@ object PrologWaveManager:
       term.toString.replaceAll("\\[|\\]", "")
         .split(",")
         .foldRight(List.empty[Int])((e, acc) => acc :+ e.toInt)
-        .map(e => e match
-          case 1 => BasicZombie()
-          case 2 => FastZombie()
-          case 3 => WarriorZombie())
+        .map(powerToZombie(_))
+
+    private val powerToZombie: Int => Zombie = _ match
+      case 1 => BasicZombie()
+      case 2 => FastZombie()
+      case 3 => WarriorZombie()
 
