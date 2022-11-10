@@ -26,8 +26,9 @@ interface Troop <<trait>> {
 interface Bullet <<trait>> {
 + damage: Int
 + hitMultipleTimes: Boolean
++ applyDamageAndEffect(troop: Troop): Troop
 + shouldDisappearAfterHitting(entity: Entity): Boolean
-+ checkCollisionWith(entity: Entity): Boolean
++ isCollidingWith(entity: Entity): Boolean
 }
 
 Entity <|-down- MovingAbility

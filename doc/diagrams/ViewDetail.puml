@@ -1,0 +1,16 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+package view{
+    abstract ViewActor{
+      +RenderEntities()
+      +RenderMetaData()
+      +SendPlacePlant()
+      +SendPauseGame()
+      +SendResumeGame()
+      +SendChangeGameSpeed()
+      +GameOver()
+    }
+}
+
+@enduml

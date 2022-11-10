@@ -2,42 +2,16 @@
 'https://plantuml.com/class-diagram
 
 package model{
-    abstract TroopActor{
-      +Update()
-      +Collision()
-      +Shoot()
-    }
-    abstract BulletActor{
-      +Update()
-      +Collision()
-    }
+    abstract TroopActor
+    abstract BulletActor
 }
 
 package view{
-    abstract ViewActor{
-      +Render()
-      +SendPlacePlant()
-      +SendPauseGame()
-      +SendResumeGame()
-      +SendChangeGameSpeed()
-    }
-    class View
+    abstract ViewActor
 }
 
 package controller{
-    abstract GameLoopActor{
-      +Update()
-      +StartGame()
-      +GameOver()
-      +UpdateResources()
-      +PauseGame()
-      +ResumeGame()
-      +ChangeGameSpeed()
-      +EntityUpdated()
-      +BulletSpawned()
-      +PlacePlant()
-      +EntityDead()
-    }
+    abstract GameLoopActor
 }
 
 GameLoopActor <-down-> TroopActor
@@ -46,7 +20,6 @@ GameLoopActor <-left-> BulletActor
 GameLoopActor <-up-> ViewActor
 GameLoopActor --> GameLoopActor
 TroopActor --> TroopActor
-View -right-> ViewActor
 
 
 
