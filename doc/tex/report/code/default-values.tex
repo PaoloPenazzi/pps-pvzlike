@@ -1,0 +1,11 @@
+\begin{lstlisting}[language=Scala, label=default-values, caption=Plant default values.]
+      val shooterDefaultLife: Int = 100
+      val wallnutDefaultLife: Int = 150
+
+      val bullets: Plant => PlantBullet =
+        case s: Shooter[_] =>
+        s.bulletInstance match
+          case _: PeaBullet => Bullets.ofType[PeaBullet]
+          case _: SnowBullet => Bullets.ofType[SnowBullet]
+        case c: CherryBomb => CherryBullet(c.position)
+\end{lstlisting}
