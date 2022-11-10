@@ -2,10 +2,10 @@ package controller.integration
 
 import akka.actor.testkit.typed.scaladsl.{BehaviorTestKit, TestInbox}
 import akka.actor.typed.{ActorRef, Behavior}
+import controller.actors
 import controller.actors.GameLoopActor
 import controller.actors.GameLoopActor.*
 import controller.actors.GameLoopActor.GameLoopCommands.*
-import controller.actors
 import model.GameData.{GameEntity, GameSeq}
 import model.Statistics.GameStatistics
 import model.actors.{Collision, ModelMessage, Update}
@@ -34,7 +34,6 @@ class GameLoopIntegrationTest extends AnyWordSpec with BeforeAndAfter with Match
 
   "GameController" when {
     "communicate correctly" should {
-
       "interact with actors" when {
         "updating" in {
           val mockSystem = MockSystem()
@@ -72,9 +71,6 @@ class GameLoopIntegrationTest extends AnyWordSpec with BeforeAndAfter with Match
           mockSystem.gameLoopActor run EndReached()
           mockSystem.viewActor expectMessage GameOver(GameStatistics())
         }
-
       }
-
-
     }
   }
