@@ -1,25 +1,26 @@
 package view
 
 import com.badlogic.gdx.scenes.scene2d.Actor
-import view.ViewportSpace.*
-import view.Sprites.{FastButton, GameBackground, NormalButton, PauseButton, ResumeButton, Sun, cardName, spriteName}
+import ViewportSpace.*
+import Sprites.{FastButton, GameBackground, NormalButton, PauseButton, ResumeButton, Sun, cardName, spriteName}
 import model.entities.{CherryBomb, Entity, PeaBullet, Shooter, SnowBullet, Troop, Troops, Wallnut}
 import model.common.Utilities.MetaData
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.utils.viewport.Viewport
-import ScalaGDX.{Drawable, ImageButtons, Writable, given}
-import ScalaGDX.Utils.texture
-import ScalaGDX.ImageButtons.{builder, given}
-import ScalaGDX.ActorBehaviors.*
 import akka.actor.typed.ActorRef
 import com.badlogic.gdx.scenes.scene2d.ui.{Image, ImageButton}
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable
 import model.common.Utilities.Speed.*
-import view.ScalaGDX.Screen.ScreenBehavior
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton.ImageButtonStyle
 import model.Statistics.GameStatistics
-import view.actors.{SendChangeGameSpeed, SendPauseGame, SendPlacePlant, SendResumeGame, ViewMessage}
-
+import actors.{SendChangeGameSpeed, SendPauseGame, SendPlacePlant, SendResumeGame, ViewMessage}
+import scalagdx.{Drawable, Writable}
+import scalagdx.Utils.texture
+import scalagdx.ActorBehaviors.*
+import scalagdx.Screen.ScreenBehavior
+import scalagdx.Clickable.given
+import scalagdx.ImageButtons
+import scalagdx.ImageButtons.given
 import scala.language.postfixOps
 import scala.language.implicitConversions
 

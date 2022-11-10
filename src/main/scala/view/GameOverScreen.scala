@@ -6,12 +6,14 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle
 import com.badlogic.gdx.utils.viewport.Viewport
 import model.Statistics.GameStatistics
-import view.ScalaGDX.{ImageButtons, Writable, given}
-import view.ScalaGDX.Screen.ScreenBehavior
-import view.ScalaGDX.Utils.texture
-import view.ScalaGDX.ActorBehaviors.*
-import view.Sprites.{MainMenuBackground, NewGameButton}
-import view.ViewportSpace.{HUDHeight, ViewportHeight, ViewportWidth}
+import scalagdx.Writable
+import scalagdx.Screen.ScreenBehavior
+import scalagdx.Utils.texture
+import scalagdx.ActorBehaviors.*
+import Sprites.{MainMenuBackground, NewGameButton}
+import ViewportSpace.{HUDHeight, ViewportHeight, ViewportWidth}
+import scalagdx.Clickable.given
+import scalagdx.ImageButtons
 
 import scala.language.implicitConversions
 

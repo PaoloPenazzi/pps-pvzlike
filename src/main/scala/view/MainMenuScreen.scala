@@ -3,10 +3,10 @@ package view
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.scenes.scene2d.Actor
 import com.badlogic.gdx.utils.viewport.Viewport
-import view.Sprites.MainMenuBackground
-import view.ScalaGDX.Screen.ScreenBehavior
-import view.ScalaGDX.Drawable
-import view.ViewportSpace.{ViewportHeight, ViewportWidth}
+import Sprites.MainMenuBackground
+import scalagdx.Screen.ScreenBehavior
+import scalagdx.Drawable
+import ViewportSpace.{ViewportHeight, ViewportWidth}
 
 
 class MainMenuScreen extends ScreenBehavior:

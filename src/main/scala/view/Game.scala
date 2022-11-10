@@ -7,9 +7,10 @@ import controller.actors.GameLoopActor.GameLoopCommands.Command
 import controller.actors.RootActor
 import controller.actors.RootActor.RootCommands.{RootCommand, Start}
 import model.Statistics.GameStatistics
-import view.ScalaGDX.Screen
-import view.ScalaGDX.Screen.ScreenBehavior
-import view.ViewportSpace.*
+import scalagdx.Screen
+import scalagdx.Screen.ScreenBehavior
+import ViewportSpace.{ViewportWidth, ViewportHeight}
+
 
 
 object Game extends com.badlogic.gdx.Game :
