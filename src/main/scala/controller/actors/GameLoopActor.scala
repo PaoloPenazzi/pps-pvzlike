@@ -112,7 +112,7 @@ object GameLoopActor:
         Behaviors.receive((_, msg) => {
           msg match
             case ResumeGame() =>
-              startTimer(timer, UpdateLoop(), metaData.speed.gameSpeed)
+              startTimer(timer, UpdateLoop())
               startTimer(timer, UpdateResources(), metaData.speed.resourceSpeed)
               GameLoopActor(viewActor, entities, metaData, stats)
 
