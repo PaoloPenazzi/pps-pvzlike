@@ -11,20 +11,32 @@ import scalagdx.Screen.*
 import ViewportSpace.{ViewportWidth, ViewportHeight}
 
 
-
+/**
+ * Handles view screen change and game startup / shut down.
+ * Acts as the LWJGL3 entry point of the application.
+ */
 object Game extends com.badlogic.gdx.Game :
   val viewport: Viewport = FitViewport(ViewportWidth, ViewportHeight)
-  var actorSystem: Option[ActorSystem[RootCommand]] = None
+  private var actorSystem: Option[ActorSystem[RootCommand]] = None
 
+  /**
+   * Spawns the game actor system.
+   */
   def startNewGame(): Unit =
     actorSystem = Some(ActorSystem(RootActor(), "launcher"))
     actorSystem.foreach(_ ! Start())
 
+  /**
+   * Change screen to one using the given behavior.
+   */
   def changeScreen(behavior: ScreenBehavior): Unit =
     Gdx.app.postRunnable(() =>
         setScreen(BasicScreen(behavior))
     )
 
+  /**
+   * Shuts down the game actor system and change screen to a post-game recap with given [[GameStatistics]].
+   */
   def endGame(stats: GameStatistics): Unit =
     Gdx.app.postRunnable(() =>
         terminateActorSystem()
