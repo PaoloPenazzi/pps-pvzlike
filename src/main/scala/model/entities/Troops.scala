@@ -92,8 +92,6 @@ object Troops:
   def shooterOf[B <: Bullet](using troopBuilder: TroopBuilder[Shooter[B], B]): Shooter[B] =
     troopBuilder.build
 
-
-
 /**
  * An Enumeration that models every possible [[Troop]] state.
  */
