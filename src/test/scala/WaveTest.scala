@@ -12,7 +12,7 @@ class WaveTest extends AnyFlatSpec with should.Matchers:
   }
 
   "Wave generator" should "create a fanciful wave of zombies with max 9 zombies" in {
-    WaveGenerator.generateNextWave(5).enemies.size shouldBe  <=(9)
+    WaveGenerator.generateNextWave(5).enemies.size shouldBe <= (13)
   }
 
   "Wave generator" should "throw an exception if the round is less then 0" in {

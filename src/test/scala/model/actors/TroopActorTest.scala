@@ -37,7 +37,7 @@ class TroopActorTest extends AnyWordSpec with BeforeAndAfterAll with Matchers :
     "updated" should {
       "attack the zombie" in {
         val inbox = TestInbox[Command]()
-        plantActor run Update(FiniteDuration(32, MILLISECONDS), List(zombie), inbox.ref)
+        plantActor run Update(FiniteDuration(16, MILLISECONDS), List(zombie), inbox.ref)
         plantActor expectEffect Effect.TimerScheduled("Shooting",
           Shoot(inbox.ref),
           plant.fireRate.seconds,
@@ -45,7 +45,7 @@ class TroopActorTest extends AnyWordSpec with BeforeAndAfterAll with Matchers :
       }
       "update his position" in {
         val inbox = TestInbox[Command]()
-        plantActor run Update(FiniteDuration(32, MILLISECONDS), List(zombie), inbox.ref)
+        plantActor run Update(FiniteDuration(16, MILLISECONDS), List(zombie), inbox.ref)
         assert(inbox.hasMessages)
         val message = inbox.receiveMessage()
         assert(message.isInstanceOf[EntityUpdated[Entity]])
@@ -85,7 +85,7 @@ class TroopActorTest extends AnyWordSpec with BeforeAndAfterAll with Matchers :
     "is updated" should {
       "attack the plant" in {
         val inbox = TestInbox[Command]()
-        zombieActor run Update(FiniteDuration(32, MILLISECONDS), List(plant), inbox.ref)
+        zombieActor run Update(FiniteDuration(16, MILLISECONDS), List(plant), inbox.ref)
         zombieActor expectEffect Effect.TimerScheduled("Shooting",
           Shoot(inbox.ref),
           zombie.fireRate.seconds,
@@ -93,7 +93,7 @@ class TroopActorTest extends AnyWordSpec with BeforeAndAfterAll with Matchers :
       }
       "update his position" in {
         val inbox = TestInbox[Command]()
-        zombieActor run Update(FiniteDuration(32, MILLISECONDS), List(plant), inbox.ref)
+        zombieActor run Update(FiniteDuration(16, MILLISECONDS), List(plant), inbox.ref)
         assert(inbox.hasMessages)
         val message = inbox.receiveMessage()
         assert(message.isInstanceOf[EntityUpdated[Entity]])
