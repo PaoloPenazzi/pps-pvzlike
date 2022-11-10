@@ -66,11 +66,11 @@ object Statistics:
    * @param rounds   the number of rounds survived.
    */
   case class GameStatistics(entities: Seq[Entity] = List.empty, rounds: Int = 1) extends GameStats
-    with GameStatsOps with ZombieStatsOps with PlantStatsOps :
+    with GameStatsOps with ZombieStatsOps with PlantStatsOps:
 
-    override def played(entity: Entity): GameStatistics = GameStatistics(entities :+ entity, rounds)
+    override def played(entity: Entity): GameStatistics = copy(entities = entities :+ entity)
 
-    override def increaseRound(r: Int = 1): GameStatistics = GameStatistics(entities, rounds + r)
+    override def increaseRound(r: Int = 1): GameStatistics = copy(rounds = rounds + r)
 
 
 
