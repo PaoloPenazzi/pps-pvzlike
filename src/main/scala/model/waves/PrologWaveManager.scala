@@ -16,7 +16,7 @@ object PrologWaveManager:
   object PrologEngine:
 
     /** Defines an Engine, designed for our purposes. */
-    trait Engine {
+    trait Engine:
       /**
        * Solve a [[Term]]
        *
@@ -31,13 +31,12 @@ object PrologWaveManager:
        * @return A [[List]] of different types of [[Zombie]].
        */
       def generateWave(power: Int): List[Zombie]
-    }
 
     /** Implementations of [[Engine]].
      *
      * @param theory the theory that the [[Engine]] uses to solve the input query.
      */
-    case class PrologEngine(theory: Theory) extends Engine {
+    case class PrologEngine(theory: Theory) extends Engine :
       val engine: Prolog = new Prolog
       engine.setTheory(theory)
 
@@ -49,7 +48,6 @@ object PrologWaveManager:
 
       override def solve: Term => LazyList[SolveInfo] = term =>
         LazyList.continually(engine solve term)
-    }
 
   /**
    * Contains useful operator for building [[Theory]].
