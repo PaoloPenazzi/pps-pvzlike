@@ -1,29 +1,30 @@
+\newpage
 \section{Architettura}
 
 \subsection{Pattern Architetturale}
 Il pattern architetturale scelto per questo progetto è il celebre \textbf{MVC}.
 Questa scelta ha portato ad una divisione netta dei compiti tra i vari componenti. In fase di design il pattern si
 è rivelato importante perchè ci ha permesso di dividere in maniera ottimale il flusso di lavoro e i task che ognuno dei
-componenti doveva portare a termine. Questa scelta, unita al \textit{Modello ad Attori}, ha aiutato
+componenti doveva portare a termine. Questa scelta, unita al \textit{modello ad attori}, ha aiutato
 lo sviluppo permettendoci di astrarre alcuni concetti e rendere il più indipendenti possibili i vari componenti del software.
 
 \subsection{Modello ad Attori}
 La presenza di un elevato numero di entità all’interno dell’applicazione ha portato alla luce
 l’esigenza di gestire, già a livello architetturale, la possibilità di sfruttare a pieno la potenza
-della cpu rendendo quindi il programma concorrente. In particolare, per astrarre dalla gestione
+della cpu, rendendo quindi il programma concorrente. \\
+In particolare, per astrarre dalla gestione
 di problematiche tipiche di sistemi concorrenti (mutua eclusione e corse critiche) si è deciso di
-adottare un approccio basato su attori. Dal momento che ogni attore incapsula al suo interno
+adottare un approccio basato su attori.\\
+Dal momento che ogni attore incapsula al suo interno
 un flusso di controllo basato su \textit{event loop} e che le interazioni avvengono esclusivamente
-attraverso scambio di messaggi, non è necessario gestire meccanismi di sincronizzazione.
+attraverso scambio di messaggi, non è necessario gestire meccanismi di sincronizzazione. \\
 Inoltre, abbiamo ritenuto il modello ad attori particolarmente adeguato per la realizzazione
-dell’applicazione in quanto essi incapsulano un \textbf{comportamento}, il quale ben si adatta a
-descrivere l’effettivo comportamento delle entità all’interno del modello. Tale scelta ci ha
-quindi garantito un livello di astrazione ed un’espressività che ha positivamente influenzato
-anche le fasi successive di design ed implementazione. Per tali motivi si è deciso quindi di adottare il framework
+dell’applicazione in quanto essi incapsulano il \textbf{comportamento}, delle entità all’interno del modello. \\
+Per tali motivi si è deciso quindi di adottare il framework
 \textit{Akka} per sviluppare in maniera semplificata il sistema ad attori.
 
 \subsubsection{Vantaggi del Modello ad Attori}
-Di seguito si analizzano i vantaggi attraverso l'utilizzo di Akka:
+Di seguito si analizzano i vantaggi dell'utilizzo di Akka:
 \begin{itemize}
     \item Chiarezza del comportamento del sistema fin da subito.
     \item Espressività del codice relativo al comportamento delle entità di gioco.
@@ -56,15 +57,13 @@ come essi stessi attori. Ognuno di essi gestisce messaggi di tipo diverso:
     \centering
     \includegraphics[width=\linewidth]{images/actor-architecture}
     \label{Diagramma delle classi dell'architettura complessiva.}
+    \caption{Architettura finale dell'actor system.}
 \end{figure}
-La figura 1 mostra l'architettura finale del sistema.
-E' stato utilizzato il formalismo UML per modellare gli attori;
+
+È stato utilizzato il formalismo UML per modellare gli attori,
 tuttavia, sono state adottate alcune convenzioni per facilitarne la compresione.
-In figura, gli attori sono rappresentati
-come classi astratte (come denotato dalla lettera A in prossimità del nome) per rappresentare graficamente al meglio che
-quelli sono Attori: i metodi di quest corrispondono ai loro comportamenti.
+Per rappresentare al meglio il comportamento degli attori abbiamo elencato i messaggi che possono ricevere come metodi.
 Inoltre, le frecce rappresentato le interazione ad alto livello che avvengono tra i vari componenti.
-Nononstante l'immagine  suggerisca la violazione del pattern MVC, le frecce rappresentano in realtà il flusso dei messaggi.
+Nonostante l'immagine  suggerisca la violazione del pattern MVC, le frecce rappresentano in realtà il flusso dei messaggi.
 Per fare un esempio, gli attori del Model non inizieranno mai una relazione con il Controller,
 bensì si limitano a rispondere ai messaggi che quest'ultimo spedisce.
-

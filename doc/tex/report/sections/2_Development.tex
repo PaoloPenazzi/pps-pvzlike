@@ -1,3 +1,4 @@
+\newpage
 \section{Processo di sviluppo}
 \label{sec:development}
 Il processo di sviluppo adottato dal team è ispirato a Scrum: sarà basato su \textbf{sprint} e \textbf{obiettivi}
@@ -10,7 +11,7 @@ Di seguito, si discutono gli elementi fondamentali del processo di sviluppo adot
 I meeting sono un fattore fondamentale per il processo di sviluppo e avvengono con cadenza quasi giornaliera
 e con durate differenti in base all'importanza dello stesso. Vista la distanza tra i membri del
 team (due in Svezia e due in Italia) la maggior parte degli incontri è avvenuto a distanza,
-utilizzando *Microsoft Teams* come piattaforma principale.
+utilizzando \textit{Microsoft Teams} come piattaforma principale.
 
 \subsection{Modalità di divisione in itinere dei task}
 
@@ -33,7 +34,7 @@ Prima della proposta del progetto, è avvenuto un incontro all'interno del quale
 \begin{itemize}
     \item \textbf{Ruoli}: colui che ha proposto il progetto è stato eletto committente, mentre è stato scelto product owner il membro con più esperienza in Scrum.
     \item \textbf{Specifiche}: sono stati decisi gli obiettivi funzionali, facendo attenzione alla loro fattibilità.
-    \item \textbf{Primo Sprint}: è stata decisa l'organizzazione del primo sprint, definendo l'obiettivo finale e suddividendo dei *task* tra i componenti del gruppo.
+    \item \textbf{Primo Sprint}: è stata decisa l'organizzazione del primo sprint, definendo l'obiettivo finale e suddividendo dei task tra i componenti del gruppo.
 \end{itemize}
 La durata del primo meeting è stata di circa 2 ore.
 
@@ -90,8 +91,9 @@ Sono stati adoperati i seguenti processi:
 \end{itemize}
 
 \subsubsection{Versioning}
-Per gestire in maniera ottimale il codice prodotto, si è deciso di impiegare \textbf{Git} già sperimentato da tutti i
-componenti del gruppo. Allo stato attuale, il gruppo non ha intenzione di adottare la specifica del Semantic Versioning.
-Si ritiene però opportuno l'adozione dei \textit{Conventional Commits} per due motivi: i singoli commit saranno più chiari
-e in futuro si potrebbe decidere di impiegare il Semantic Versioning.
+Per gestire in maniera ottimale il codice prodotto, si è deciso di impiegare \textbf{Git}, già utilizzato da tutti i componenti del gruppo. Il team adotterà \textbf{GitFlow} come flusso di lavoro, che prevede di avere due \textit{stable branch} (nel nostro caso \texttt{main} e \texttt{release}) e un branch per ogni feature in via di sviluppo. \\
+Allo stato attuale, il gruppo non ha intenzione di adottare Semantic Versioning per le release.
+Si ritiene però opportuno l'utilizzo dei \textit{Conventional Commits} per due motivi: i singoli commit saranno più chiari
+e in futuro si potrebbe decidere di impiegare il Semantic Versioning. \\
+Le release saranno effettuate al termine di ogni sprint. Ognuna di esse avrà un tag del tipo \textit{0.1.0} che incrementerà ad ogni rilascio.
 
