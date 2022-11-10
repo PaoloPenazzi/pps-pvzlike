@@ -4,6 +4,7 @@ import akka.actor.typed.scaladsl.Behaviors
 import akka.actor.typed.{ActorRef, Behavior}
 import controller.actors.GameLoopActor.GameLoopCommands.*
 import controller.*
+import model.Statistics.GameStatistics
 import model.actors.ModelMessage
 import model.common.Utilities.{MetaData, Speed}
 import model.entities.{Entity, Plant, Troop}
@@ -24,17 +25,23 @@ case class SendResumeGame() extends ViewMessage
 
 case class SendChangeGameSpeed(velocity: Speed) extends ViewMessage
 
+case class GameOver(stats: GameStatistics) extends ViewMessage
+
 object ViewActor:
-  def apply(renderer: Renderer, gameLoopActor: Option[ActorRef[Command]] = None): Behavior[ViewMessage] =
+  def apply(gameScreen: GameScreen, gameLoopActor: Option[ActorRef[Command]] = None): Behavior[ViewMessage] =
     Behaviors.receive((_, msg) => {
       msg match
         case RenderEntities(entities, replyTo) =>
-          renderer.renderEntities(entities)
-          ViewActor(renderer, Some(replyTo))
+          gameScreen.renderEntities(entities)
+          ViewActor(gameScreen, Some(replyTo))
 
         case RenderMetaData(metaData, replyTo) =>
-          renderer.renderMetadata(metaData)
-          ViewActor(renderer, Some(replyTo))
+          gameScreen.renderMetadata(metaData)
+          ViewActor(gameScreen, Some(replyTo))
+
+        case GameOver(stats) =>
+          gameScreen.gameOver(stats)
+          Behaviors.same 
 
         case SendPlacePlant(troop) =>
           gameLoopActor.foreach(_ ! PlacePlant(troop))
@@ -56,9 +63,8 @@ object ViewActor:
   def apply(): Behavior[ViewMessage] =
     Behaviors.setup(ctx =>
       val gameScreen = GameScreen(ctx.self)
-        Game
-      .changeScreen(gameScreen)
-      ViewActor (gameScreen)
+      Game.changeScreen(gameScreen)
+      ViewActor(gameScreen)
     )
 
 

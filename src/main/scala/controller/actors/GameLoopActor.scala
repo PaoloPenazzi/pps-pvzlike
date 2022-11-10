@@ -12,7 +12,7 @@ import model.actors.{ModelMessage, TroopActor}
 import model.common.Utilities.{MetaData, Speed, Sun}
 import model.entities.{Bullet, Entity, Plant, Troop}
 import view.Game
-import view.actors.{RenderEntities, RenderMetaData, ViewMessage}
+import view.actors.{GameOver, RenderEntities, RenderMetaData, ViewMessage}
 
 import scala.language.{implicitConversions, postfixOps}
 
@@ -59,7 +59,7 @@ object GameLoopActor:
               startTimer(timer, UpdateResources(), metaData.speed.resourceSpeed)
               GameLoopActor(viewActor, createWave(ctx, stats.rounds), metaData, stats)
 
-            case EndReached() => Game.endGame(stats); Behaviors.stopped
+            case EndReached() => viewActor ! GameOver(stats); Behaviors.stopped
 
             case PauseGame() => pauseBehavior(metaData)
 

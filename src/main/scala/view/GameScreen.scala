@@ -18,16 +18,18 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable
 import model.common.Utilities.Speed.*
 import view.ScalaGDX.Screen.ScreenBehavior
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton.ImageButtonStyle
+import model.Statistics.GameStatistics
 import view.actors.{SendChangeGameSpeed, SendPauseGame, SendPlacePlant, SendResumeGame, ViewMessage}
 
 import scala.language.postfixOps
 import scala.language.implicitConversions
 
 
-class GameScreen(viewActor: ActorRef[ViewMessage]) extends ScreenBehavior with Renderer :
+class GameScreen(viewActor: ActorRef[ViewMessage]) extends ScreenBehavior:
   private var pendingPlant: Option[Troop] = None
   private var entities: List[Entity] = List.empty
   private var metaData: MetaData = MetaData()
+  private var faderOut: Option[FadeWidget] = None
 
   override def drawables: Seq[Drawable] =
     def drawableEntities: Seq[Drawable] =
@@ -44,7 +46,7 @@ class GameScreen(viewActor: ActorRef[ViewMessage]) extends ScreenBehavior with R
     Seq(Writable("=" + metaData.sun.toString, SunStringBoundaries))
 
   override def actors: Seq[Actor] =
-    cards :+ pauseButton :+ speedUpButton :+ fadeIn
+    cards :+ pauseButton :+ speedUpButton :+ fadeIn :+ fadeOut
   
   override def onScreenTouch: Vector2 => Unit = pos =>
     for
@@ -60,6 +62,10 @@ class GameScreen(viewActor: ActorRef[ViewMessage]) extends ScreenBehavior with R
   def renderEntities(entities: List[Entity]): Unit = this.entities = entities
 
   def renderMetadata(metaData: MetaData): Unit = this.metaData = metaData
+
+  def gameOver(stats: GameStatistics): Unit =
+    faderOut.foreach(_.play(() =>
+      Game.endGame(stats)))
 
   private def cards =
     val troops = Seq(Troops.shooterOf[PeaBullet], Troops.ofType[Wallnut], Troops.ofType[CherryBomb], Troops.shooterOf[SnowBullet])
@@ -98,3 +104,7 @@ class GameScreen(viewActor: ActorRef[ViewMessage]) extends ScreenBehavior with R
 
   private def fadeIn =
     FadeWidget(true, 1)
+
+  private def fadeOut =
+    faderOut = Some(FadeWidget(false, 1))
+    faderOut.get

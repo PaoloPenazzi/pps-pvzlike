@@ -22,19 +22,15 @@ object Game extends com.badlogic.gdx.Game :
     actorSystem.foreach(_ ! Start())
 
   def changeScreen(behavior: ScreenBehavior): Unit =
-    Gdx.app.postRunnable(new Runnable() :
-      override def run(): Unit =
+    Gdx.app.postRunnable(() =>
         setScreen(Screen(behavior))
-
-      )
+    )
 
   def endGame(stats: GameStatistics): Unit =
-    Gdx.app.postRunnable(new Runnable() :
-      override def run(): Unit =
+    Gdx.app.postRunnable(() =>
         terminateActorSystem()
         setScreen(Screen(GameOverScreen(stats)))
-
-      )
+    )
 
   private def terminateActorSystem(): Unit =
     actorSystem.foreach(_.terminate())
