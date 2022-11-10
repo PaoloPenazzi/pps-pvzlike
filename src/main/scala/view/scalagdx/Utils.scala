@@ -1,7 +1,7 @@
 package view.scalagdx
 
 import com.badlogic.gdx.Gdx
-import com.badlogic.gdx.graphics.Texture
+import com.badlogic.gdx.graphics.{Color, Pixmap, Texture}
 
 /**
  * Some common mechanisms, useful while working with libGDX.
@@ -14,6 +14,19 @@ object Utils:
    */
   def texture(path: String): Texture = new Texture(Gdx.files.classpath(path))
 
+  /**
+   * 
+   * @param color the color
+   * @return a uniform color [[Texture]] of the given color.
+   */
+  def texture(color: Color): Texture =
+    val pixmap = Pixmap(1, 1, Pixmap.Format.RGBA8888)
+    pixmap.setColor(color)
+    pixmap.drawPixel(0, 0)
+    val texture = Texture(pixmap)
+    pixmap.dispose()
+    texture
+    
   /**
    * Memoize a function from A to B using a map.
    *

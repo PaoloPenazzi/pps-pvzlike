@@ -2,8 +2,6 @@ package view
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Color
-import com.badlogic.gdx.graphics.Colors
-import com.badlogic.gdx.graphics.Pixmap
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.math.Interpolation
@@ -13,13 +11,14 @@ import com.badlogic.gdx.scenes.scene2d.actions.SequenceAction
 import com.badlogic.gdx.scenes.scene2d.ui.Widget
 import com.badlogic.gdx.utils.viewport.Viewport
 import ViewportSpace.*
+import scalagdx.Utils.{texture => textureOfColor}
 
 /**
  * A widget for fade in / fade out animation on viewport.
  *
  * @param in true to make this a fadeIn widget, false to make this a fadeOut widget
  * @param duration the duration of the fade in/out animation
- *                 
+ *
  * @note if the "in" parameter is set to true, the fade in animation will play immediately
  */
 class FadeWidget(in: Boolean, val duration: Float) extends Widget:
@@ -31,7 +30,7 @@ class FadeWidget(in: Boolean, val duration: Float) extends Widget:
 
   /**
    * Play the animation.
-   * 
+   *
    * @param callback the runnable to be executed after the animation is over
    */
   def play(callback: Runnable = () => {}): Unit =
@@ -48,11 +47,7 @@ class FadeWidget(in: Boolean, val duration: Float) extends Widget:
   override def setStage(stage: Stage): Unit =
     super.setStage(stage)
     if stage != null then
-      val pixmap = Pixmap(1, 1, Pixmap.Format.RGBA8888)
-      pixmap.setColor(Color.BLACK)
-      pixmap.drawPixel(0, 0)
-      texture = Some(Texture(pixmap))
-      pixmap.dispose()
+      texture = Some(textureOfColor(Color.BLACK))
 
   override def draw(batch: Batch, parentAlpha: Float): Unit =
     super.draw(batch, parentAlpha)
