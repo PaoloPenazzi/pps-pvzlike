@@ -8,8 +8,6 @@
 [![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=PaoloPenazzi_pps-pvzlike&metric=reliability_rating)](https://sonarcloud.io/dashboard?id=PaoloPenazzi_pps-pvzlike)
 [![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=PaoloPenazzi_pps-pvzlike&metric=security_rating)](https://sonarcloud.io/dashboard?id=PaoloPenazzi_pps-pvzlike)
 [![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=PaoloPenazzi_pps-pvzlike&metric=vulnerabilities)](https://sonarcloud.io/dashboard?id=PaoloPenazzi_pps-pvzlike)
-[![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=PaoloPenazzi_pps-pvzlike&metric=ncloc)](https://sonarcloud.io/dashboard?id=PaoloPenazzi_pps-pvzlike)
-![Codecov](https://img.shields.io/codecov/c/github/PaoloPenazzi/pps-pvzlike)
 
 `pps-pvzlike` is a reprodution of the single-player game [Plants vs. Zombies](https://www.ea.com/it-it/games/plants-vs-zombies/plants-vs-zombies)
 In the game, players try to prevent zombies from reaching the end of a path by placing plants that can kill the zombies. The zombies' waves come in different rounds with increasing level of difficulty.
