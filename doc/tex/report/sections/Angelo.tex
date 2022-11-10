@@ -1,5 +1,5 @@
 \subsection{Angelo Parrinello}
-Il mio compito all’interno del progetto è stato quello di modellare il \texttt{GameLoop}, le statistiche della partita ed infine mi sono occupato delle \texttt{Wave} (ondate di nemici) insieme a Penazzi. Inoltre, ho provveduto a sviluppare componenti di \texttt{Model} gestiti dal \texttt{GameLoop} quali \texttt{MetaData} e \texttt{GameData}, che si occupano rispettivamente della gestione di dati trasversali alla partita e di manipolare le entità in gioco. Infine, ho collaborato a stretto contatto con il team per implementare aspetti e funzionalità comuni di \texttt{Model}, \texttt{Controller} e \texttt{View}. 
+Il mio compito all’interno del progetto è stato quello di modellare il \texttt{GameLoop}, le statistiche della partita ed infine mi sono occupato delle \texttt{Wave} (ondate di nemici) insieme a Penazzi. Inoltre, ho provveduto a sviluppare componenti di \texttt{Model} gestiti dal \texttt{GameLoop} quali \texttt{MetaData} e \texttt{GameData}, che si occupano rispettivamente della gestione di dati trasversali alla partita e di manipolare le entità in gioco. Infine, ho collaborato a stretto contatto con il team per implementare aspetti e funzionalità comuni di \texttt{Model}, \texttt{Controller} e \texttt{View}.
 
 \subsubsection{GameLoop}
 Il \texttt{GameLoop} è il componente che si occupa di aggiornare il \texttt{Model} e il successivo \textit{refresh} della \texttt{View}. Nel nostro contesto, il \texttt{GameLoop} si occupa anche di aggiornare il \texttt{Model} a seguito di una richiesta da parte dell'utente (es: piazzare una nuova torretta).\\
@@ -16,13 +16,13 @@ Il design del gioco assume che solo il \texttt{GameLoop} abbia coscienza dello s
 
 \input{code/gamedata.tex}
 
-Questa scelta mi ha poi portato a creare un mini-\textbf{DSL} per creare in maniera elegante e funzionale sequenze di \texttt{GameEntity} definendo solo il tipo. L'idea di base dietro l'implementazione era avere \textbf{strategy} che definisse come una sequenza di \texttt{GameEntity} dovesse venire filtrata in base ad un tipo definito in input. Questo concetto, largamente sfruttato nella programmazione ad oggetti, vede un'analogia funzionale e idiomatica nei \textbf{contex-bounds}. Il metodo \texttt{of}, partendo dalla sequenza iniziale e sfruttando le \textbf{given instances}, genera così una nuova sequenza con solo gli elementi del tipo prestabilito. 
+Questa scelta mi ha poi portato a creare un mini-\textbf{DSL} per creare in maniera elegante e funzionale sequenze di \texttt{GameEntity} definendo solo il tipo. L'idea di base dietro l'implementazione era avere \textbf{strategy} che definisse come una sequenza di \texttt{GameEntity} dovesse venire filtrata in base ad un tipo definito in input. Questo concetto, largamente sfruttato nella programmazione ad oggetti, vede un'analogia funzionale e idiomatica nei \textbf{contex-bounds}. Il metodo \texttt{of}, partendo dalla sequenza iniziale e sfruttando le \textbf{given instances}, genera così una nuova sequenza con solo gli elementi del tipo prestabilito.
 
 \input{code/gameselector.tex}
 
- Infine, il mio lavoro sul \texttt{GameLoop} mi ha portato ad introdurre il concetto di \textit{Collision}, di \textit{MetaData} e ad un utility object con funzionalità cardine per il controller di gioco. Nel caso delle collisioni, è stato interessante escogitare un metodo per rendere queste le più astratte possibili. In fase di modellazione mi è tornato utile il concetto delle \textbf{abstract types}. Infatti, in un primo momento sapevo che le collisioni sarebbero avvenuti tra due oggetti di tipo anche diverso, ma non erano stati definiti. Così facendo, le specifiche collisioni (al momento solo una) potranno essere definite più avanti nel tempo. Sempre rimanendo in tema collisioni, un altro punto importante è stato cercare una maniera \textit{idiomatica} e più \textit{funzionale} possibile per controllare in un'unico passaggio tutte le collisioni in un dato istante; \texttt{checkCollision} era stato implementato inizialmente con una serie di \textit{foreach}, \textit{map} e \textit{flatmap} ma, durante lo sviluppo, mi accorsi che così facendo il codice diveniva \textit{oscuro} ad un primo sgaurdo, più difficile da elaborare ed \textit{error-prone}. La scelta è quindi ricaduta sull'utilizzo di una \textbf{for-comprehension}, che aggiungendo lo \textit{zucchero sintattico} necessario, rendeva il tutto più chiaro e fluente.
+Infine, il mio lavoro sul \texttt{GameLoop} mi ha portato ad introdurre il concetto di \textit{Collision}, di \textit{MetaData} e ad un utility object con funzionalità cardine per il controller di gioco. Nel caso delle collisioni, è stato interessante escogitare un metodo per rendere queste le più astratte possibili. In fase di modellazione mi è tornato utile il concetto delle \textbf{abstract types}. Infatti, in un primo momento sapevo che le collisioni sarebbero avvenuti tra due oggetti di tipo anche diverso, ma non erano stati definiti. Così facendo, le specifiche collisioni (al momento solo una) potranno essere definite più avanti nel tempo. Sempre rimanendo in tema collisioni, un altro punto importante è stato cercare una maniera \textit{idiomatica} e più \textit{funzionale} possibile per controllare in un'unico passaggio tutte le collisioni in un dato istante; \texttt{checkCollision} era stato implementato inizialmente con una serie di \textit{foreach}, \textit{map} e \textit{flatmap} ma, durante lo sviluppo, mi accorsi che così facendo il codice diveniva \textit{oscuro} ad un primo sgaurdo, più difficile da elaborare ed \textit{error-prone}. La scelta è quindi ricaduta sull'utilizzo di una \textbf{for-comprehension}, che aggiungendo lo \textit{zucchero sintattico} necessario, rendeva il tutto più chiaro e fluente.
 
- \input{code/checkcollision.tex}
+\input{code/checkcollision.tex}
 
 \subsubsection{Statistiche}
 Le \textit{Statistiche} sono quelle informazioni importanti per l'utente riguardo la partita appena svolta. Questi dati sono raccolti man mano che la partita avanza, tramite il \texttt{GameLoop}. In principio, sono stati definite quali statistiche andassero create. In generale, si è convenuto che le tre macro-tematiche dovessero essere: informazioni generali (es: numero di rounds) e informazioni su \texttt{Plant}/\texttt{Zombie} (es: numero di zombie uccisi). Quindi, ho ragionato su come il \texttt{GameLoop} dovesse manutenerle e in quali occasioni andassero aggiornate. Questo secondo step mi ha fatto capire che la struttura delle statistiche, così come quella dei \texttt{MetaData}, dovesse essere del tutto \textbf{immutabile}. Un uso sistematico di oggetti immutabili porta a codice più \textit{comprensibile} ed a facilitare la fase di \textit{debugging}. In fase implementativa, sono stati create tre \textit{Traits} ognuno con un compito specifico:
@@ -31,7 +31,7 @@ Le \textit{Statistiche} sono quelle informazioni importanti per l'utente riguard
     \item \texttt{ZombieStatsOps}: definisce delle informazioni specifiche agli \texttt{Zombie};
     \item \texttt{PlantStatsOps}: definisce delle informazioni specifiche alle \texttt{Plant}.
 \end{itemize}
-Il concetto appena descritto era perfettamente adattabile al contesto dei \textbf{self-types} e \textbf{mixins}: concettualmente infatti è corretto che le informazioni relative agli \texttt{Zombie}/\texttt{Plant} venissero derivate solo utilizzando i dati generali. Inoltre, è possibile ottenere una sorta di ereditarietà (ma senza i problemi ad esso legati) e rappresentare questi concetti come \textit{decorazioni} componibili. 
+Il concetto appena descritto era perfettamente adattabile al contesto dei \textbf{self-types} e \textbf{mixins}: concettualmente infatti è corretto che le informazioni relative agli \texttt{Zombie}/\texttt{Plant} venissero derivate solo utilizzando i dati generali. Inoltre, è possibile ottenere una sorta di ereditarietà (ma senza i problemi ad esso legati) e rappresentare questi concetti come \textit{decorazioni} componibili.
 
 \input{code/statistics.tex}
 
@@ -42,16 +42,16 @@ La \texttt{Wave} è una sequenza prestabilita di \textit{Zombie}. Le partite son
 \begin{itemize}
     \item Utilizzando \textbf{Scala}: in questa maniera si genera un'ondata di zombie composta solo da \texttt{BasicZombie}. L'ondata viene creata attraverso una funzione \textbf{tail recursive}.
     \input{code/tailrec-basiczombie.tex}
-    \item Utilizzando \textbf{Prolog}: in questa maniera si genera un'ondata di \texttt{Zombie} composta da qualsiasi tipo di nemico. Il processo sfrutta il \texttt{TuProlog Engine} per creare sequenze di tipi di \texttt{Zombie} casuali ma che rispecchino la potenza dell'ondata. 
+    \item Utilizzando \textbf{Prolog}: in questa maniera si genera un'ondata di \texttt{Zombie} composta da qualsiasi tipo di nemico. Il processo sfrutta il \texttt{TuProlog Engine} per creare sequenze di tipi di \texttt{Zombie} casuali ma che rispecchino la potenza dell'ondata.
     \input{code/prolog-theory.tex}
     Il predicato \texttt{random\_zombie} si occupa di generare un numero casuale fra uno e \texttt{Max} il quale corrisponde ad un tipo di \texttt{Zombie}. Il predicato \texttt{wave}, data una potenza \texttt{WavePower} ritornerà una tra tutte le possibili sequenze di \texttt{Zombie} di tale potenza.\\
-    
+
     Per agevolare il processo realizzativo delle \texttt{Wave} e per integrare in maniera più fluente \texttt{TuProlog}, è stato messo a disposizione un metodo per generare \texttt{Wave} che utilizza al suo interno un engine per risolvere le \textit{query} in input.
 
     \input{code/engine-prolog.tex}
-    
+
     La soluzione così fornita però risultava inutilizzabile. E' stato necessario quindi definirsi dei metodi utili in fase di ricostruzione del risultato finale ossia la sequenza di \texttt{Zombie}. Per riuscire ad ottenere l'ondata finale, il il risultato dell'\texttt{PrologEngine} viene \textit{parsato}, sostituendo i numeri all'interno della soluzione con i rispetti \texttt{Zombie}. Lo stesso principio delle \textbf{given conversion}, come si può notare dal listato sotto, è stato impiegato molteplici volte all'interno della classe per favorire \textit{idiomaticità} e \textit{comprensibilità} oltre che per fornire un \textbf{adapter} automatico che non introducesse \textit{boilerplate code} inutile.
 
     \input{code/prolog-solution.tex}
-    
+
 \end{itemize}

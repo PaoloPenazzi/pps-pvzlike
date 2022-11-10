@@ -4,23 +4,24 @@ In particolare mi sono occupato della implementazione del model degli zombie, de
 Ho partecipato inoltre allo sviluppo del \texttt{Troop Actor} del \texttt{Menù Screen} e del \texttt{Game Screen}.
 
 \subsubsection{Bullet}
-I proiettili rappresentano all'interno del gioco l'attacco delle \texttt{Plant} e degli \texttt{Zombie}.
+I proiettili rappresentano all'interno del gioco l'attacco delle \texttt{Plant} e degli \texttt{Zombie}.\\
 
-Grazie alla buona gerarchia di caratteristiche definite in \texttt{Entity}, è stato possibile grazie  ai \textbf{mixin},
+Grazie alla buona gerarchia di caratteristiche definite in \texttt{Entity}, è stato possibile grazie  ai \textbf{mixins},
 dotare il trait \texttt{Bullet} dell'abilità di movimento \texttt{Movement Ability}.
 Il trait \texttt{Bullet} rappresenta quindi l'entità base "sparata" da una \texttt{Troop}.
-Tutti i \texttt{Bullet} presentano un comportamento comune: hanno una posizione, una velocità, una dimensione ed un danno.
+Tutti i \texttt{Bullet} presentano un comportamento comune: hanno una posizione, una velocità, una dimensione ed un danno.\\
 
 
-Successivamente sono stati individuati due diversi sottotipi \texttt{Bullet}: \texttt{ZombieBullet} e \texttt{PlantBullet}.
+Successivamente sono stati individuati due diversi sottotipi\\ \texttt{Bullet}: \texttt{ZombieBullet} e \texttt{PlantBullet}.
 Il primo è il trait che modella il colpo base degli \texttt{Zombie} mentre il secondo si riferisce all'attacco base delle \texttt{Plant}.
 
 Attraverso il metodo \texttt{checkCollision} i \texttt{PlantBullet} possono collidere solamente contro le entità di tipo \texttt{Zombie} mentre,
 al contrario, gli \texttt{ZombieBullet} potranno colpire solamente le entità sottotipo di \texttt{Plant}.
 
 Mi sono successivamente concentrato nell'implementazione di due tipi di \texttt{ZombieBullet}: \texttt{PawBullet} (il bullet dei
-\texttt{BasicZombie} e \texttt{FastZombie}) e lo \texttt{SwordBullet} (il bullet dei \texttt{WarriorZombie}).
-Lo \texttt{SwordBullet} è un attacco più potente rispetto al \texttt{PawBullet}.
+\texttt{BasicZombie} e \texttt{FastZombie}) e lo \\
+\texttt{SwordBullet} (il bullet dei \texttt{WarriorZombie}).
+Lo \texttt{SwordBullet} è un attacco più potente rispetto al \texttt{PawBullet}.\\
 
 Volendo seguire un approccio puramente funzionale, favorendo l'immutabilità delle entità, il metodo di
 aggiornamento della posizione di un \texttt{Bullet} deve crearne uno nuovo con la posizione aggiornata.
@@ -57,7 +58,7 @@ Viene mostrato di seguito come istanziare un PawBullet:
     \label{fig:class-bullet}
 \end{figure}
 
-Il model del \texttt{Bullet} è stato testato nella classe \texttt{BulletModelTest}
+Il model del \texttt{Bullet} è stato testato nella classe \texttt{BulletModelTest}.
 
 \subsubsection{BulletActor}
 Avendo adottando un'architettura ad attori, abbiamo pensato di incapsulare il comportamento
@@ -76,40 +77,41 @@ Quando il \texttt{Bullet} collide con un'altra entità riceve un messaggio \text
     \item Crea il \texttt{Bullet} della propria \texttt{Troop}.
     \item Crea un \texttt{BulletActor} che controlla il \texttt{Bullet}.
     \item Notifica il \texttt{GameLoop} dell'avvenuta creazione con il messaggio \texttt{BulletSpawned()}.
-    \newpage
-    Il comportamento del \texttt{BulletActor} viene mostrato nel seguente diagramma:
-    \begin{figure}[H]
-        \centering
-        \includegraphics[width=\linewidth]{images/bullet-actor.png}
-        \label{Diagramma di sequenza del Troop Actor.}
-    \end{figure}
+\end{enumerate}
+\newpage
+Il comportamento del \texttt{BulletActor} viene mostrato nel seguente diagramma:
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\linewidth]{images/bullet-actor.png}
+    \caption{Diagramma di sequenza del Bullet Actor.}
+\end{figure}
 
-    Il \texttt{BulletActor} è stato testato nella classe \texttt{BulletActorTest} utilizzando il framework \textbf{AkkaTest}
+Il \texttt{BulletActor} è stato testato nella classe \texttt{BulletActorTest} utilizzando il framework \textbf{AkkaTest}.
 
-    \subsubsection{Zombie}
-    Gli \texttt{Zombie} rappresentano una delle entità fondamentali del gioco. In particolare, rappresentano i nemici che l'utente
-    deve cercare di eliminare attraverso il piazzamento delle piante nel campo di gioco.
-    Tutti gli \texttt{Zombie} sono in grado di muoversi orrizzontalmente nelle lane del campo di gioco con una certa velocità: pertanto
-    attraverso il meccanismo dei mixin il \texttt{trait Zombie} estende il \texttt{trait Troop} a cui aggiunge poi l' abilità \texttt{MovingAbility}.
+\subsubsection{Zombie}
+Gli \texttt{Zombie} rappresentano una delle entità fondamentali del gioco. In particolare, rappresentano i nemici che l'utente
+deve cercare di eliminare attraverso il piazzamento delle piante nel campo di gioco.
+Tutti gli \texttt{Zombie} sono in grado di muoversi orrizzontalmente nelle lane del campo di gioco con una certa velocità: pertanto
+attraverso il meccanismo dei mixins il \texttt{trait Zombie} estende il \texttt{trait Troop} a cui aggiunge poi l' abilità \texttt{MovingAbility}.
 
-    Quando uno \texttt{Zombie} è colpito da un \texttt{CherryBullet} potrebbe essere rallentato, per questo motivo si è deciso di
-    mettere la velocità in ciascun costruttore per ciascun tipo di \texttt{Zombie} implementato.
-    In questo modo, seguendo un approccio funzionale e favorendo l'immutabilità delle istanze, quando il \texttt{CherryBullet} collide con uno specifico \texttt{Zombie}
-    istanzierà nuovamente lo \texttt{Zombie} con la velocità aggiornata.
-    A tal proposito è stata implementata una val \texttt{slowVelocities} dentro all'object \texttt{ZombieDefaultValues}.
+Quando uno \texttt{Zombie} è colpito da un \texttt{SnowBullet} potrebbe essere rallentato, per questo motivo si è deciso di
+mettere la velocità in ciascun costruttore per ciascun tipo di \texttt{Zombie} implementato.
+In questo modo, seguendo un approccio funzionale e favorendo l'immutabilità delle istanze, quando lo \texttt{SnowBullet} collide con uno specifico \texttt{Zombie}
+istanzierà nuovamente lo \texttt{Zombie} con la velocità aggiornata.
+A tal proposito è stata implementata una val \texttt{slowVelocities} dentro all'object \texttt{ZombieDefaultValues}.
 
-    E' infatti nell'object \texttt{ZombieDefaultValue} che sono definite tutte le caratteristiche principali per ogni
-    tipo di \texttt{Zombie} implementato: stato iniziale e di default (\texttt{Moving}), vita iniziale,
-    il tipo \texttt{Bullet} a disposizione, la velocità di default, la velocità degli \texttt{Zombie} rallentati e un metodo per generare
-    la posizione iniziale degli \texttt{Zombie}.
+E' infatti nell'object \texttt{ZombieDefaultValue} che sono definite tutte le caratteristiche principali per ogni
+tipo di \texttt{Zombie} implementato: stato iniziale e di default (\texttt{Moving}), vita iniziale,
+il tipo \texttt{Bullet} a disposizione, la velocità di default, la velocità degli \texttt{Zombie} rallentati e un metodo per generare
+la posizione iniziale degli \texttt{Zombie}.
 
-    Come mostrato nel diagramma delle classi degli \texttt{Zombie}, ogni classe che rappresenta uno \texttt{Zombie} deve estendere dal \texttt{trait Zombie}
+Come mostrato nel diagramma delle classi degli \texttt{Zombie}, ogni classe che rappresenta uno \texttt{Zombie} deve estendere dal \texttt{trait Zombie}.
 
-    \begin{figure}[H]
-        \centering
-        \includegraphics[width=1\linewidth]{images/model-zombie.png}
-        \caption{Diagramma delle classi rappresentante gli \texttt{Zombie}.}
-        \label{fig:class-zombie}
-    \end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{images/model-zombie.png}
+    \caption{Diagramma delle classi rappresentante gli \texttt{Zombie}.}
+    \label{fig:class-zombie}
+\end{figure}
 
-    Il comportamento degli \texttt{Zombie} è incapsulato nel \texttt{TroopActor} e il model degli \texttt{Zombie} è stato testato nella classe \texttt{ZombieModelTest}
+Il comportamento degli \texttt{Zombie} è incapsulato nel \texttt{TroopActor} e il model degli \texttt{Zombie} è stato testato nella classe \texttt{ZombieModelTest}.

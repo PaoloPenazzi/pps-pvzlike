@@ -51,29 +51,29 @@ Il punto di forza di questo \textit{Troop Actor} è che modella il comportamento
 Questo conferma le scelte di design fatte, in particolare quella di creare un \textit{trait troop} comune sia alle piante che agli zombie.
 
 Ad ogni iterazione del GameLoop il TroopActor riceve un messaggio di \textit{Update()} a seguito del quale:
-\begin{enumerate}
+\begin{itemize}
     \item Aggiorna la propria troop.
     \item Se la troop ha raggiunto la fine della corsia notifica il GameLoop.
     \item Manda la troop aggiornata al GameLoop.
     \item Se c'è un nemico attaccabile, manda a se stesso un messaggio Shoot().
     \item Ricrea il proprio Behaviour con la troop aggiornata.
-\end{enumerate}
+\end{itemiza}
 
 Nel caso ci sia un'entità da attaccare, riceverà il messaggio Shoot(), che si è precedentemente inviato, a seguito del quale:
 
-\begin{enumerate}
+\begin{itemize}
     \item Crea il bullet che la propria troop spara.
     \item Crea un BulletActor che controlla il bullet.
     \item Notifica il GameLoop dell'avvenuta creazione inviandogli il messaggio BulletSpawned(), contenente il riferimento al bullet e al BulletActor.
-\end{enumerate}
+\end{itemize}
 
 Nel caso la troop venga colpita da un bullet, il TroopActor viene notificato dal GameLoop con il messaggio Collision(), a seguito del quale:
 
-\begin{enumerate}
+\begin{itemize}
     \item Applica il danno e l'eventuale effetto del bullet alla troop.
     \item Se la troop viene uccisa, risponde con il messaggio EntityDead()
     \item Se la troop non viene uccisa, risponde con il messaggio EntityUpdated()
-\end{enumerate}
+\end{itemize}
 
 Il comportamento del TroopActor viene mostrato nel seguente diagramma:
 
