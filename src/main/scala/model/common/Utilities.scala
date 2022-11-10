@@ -21,7 +21,7 @@ object Utilities:
      * @return the updated [[MetaData]].
      */
     @targetName("sum")
-    def +(quantity: Int): MetaData = MetaData(quantity + sun, speed)
+    def +(quantity: Int): MetaData = copy(sun = quantity + sun)
 
     /** Subtracts a specific [[quantity]] of [[Sun]] at the [[MetaData]].
      *
@@ -29,7 +29,7 @@ object Utilities:
      * @return the updated [[MetaData]].
      */
     @targetName("subtraction")
-    def -(quantity: Int): MetaData = MetaData(sun - quantity, speed)
+    def -(quantity: Int): MetaData = copy(sun = sun - quantity)
 
     /** Changes the game's speed.
      *
@@ -37,7 +37,7 @@ object Utilities:
      * @return the updated [[MetaData]].
      */
     @targetName("change speed")
-    def >>>(newSpeed: Speed): MetaData = MetaData(sun, newSpeed)
+    def >>>(newSpeed: Speed): MetaData = copy(speed = newSpeed)
 
   /** Defines the concepts of game and resources' speed. */
   enum Speed(val gameSpeed: FiniteDuration)(val resourceSpeed: FiniteDuration):
