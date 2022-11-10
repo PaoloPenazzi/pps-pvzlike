@@ -1,0 +1,51 @@
+\section{Third Sprint Planning - 07/10/2022}
+Il team si è incontrato via Microsoft Teams per definire gli obiettivi del terzo sprint.
+
+\subsection{Obiettivi}
+\begin{itemize}
+    \item Gestione delle collisioni tra entità.
+    \item Renderizzazione del campo di gioco.
+    \item Modellazione della valuta di gioco per piazzare le torrette.
+    \item Modellazione delle ondate di gioco.
+    \item Schermata di gioco con interfaccia completa.
+    \item Raffinamento del modello dei nemici e degli attori relativi.
+    \item Modellazione dello stato delle entità della partita.
+    \item Rendere il gioco più leggero in termini di utilizzo di risorse hw.
+    \item Generazione delle wave con Prolog. (Opzionale)
+    \item Realizzazione di una versione del gioco che permetta di giocare una wave.
+\end{itemize}
+
+\subsection{Planning}
+Deadline sprint: 22 Ottobre.
+
+\subsubsection{Suddivisione del lavoro}
+\begin{itemize}
+    \item Parrinello =\textgreater  Gestione delle collisioni tra entità.
+    \item All =\textgreater  Renderizzazione del campo di gioco.
+    \item Parrinello =\textgreater  Modellazione della valuta di gioco per piazzare le torrette.
+    \item Penazzi =\textgreater  Modellazione delle ondate di gioco.
+    \item Foschini =\textgreater  Schermata di gioco con interfaccia completa.
+    \item Foschini =\textgreater  Raffinamento del modello dei nemici e degli attori relativi.
+    \item Alpi =\textgreater  Modellazione dello stato delle entità della partita.
+    \item Alpi =\textgreater  Rendere il gioco più leggero in termini di utilizzo di risorse hw.
+    \item Penazzi, Parrinello =\textgreater  Generazione delle wave con Prolog. (Opzionale)
+    \item All =\textgreater  Realizzazione di una versione del gioco che permetta di giocare una wave.
+\end{itemize}
+
+\subsubsection{Sprint Review - 23/10/2022}
+Risultati:
+\begin{itemize}
+  \item Le collisioni tra entità sono state gestite.
+  \item Sono stati modellati i metadati (attualmente risorse e velocità della partita).
+  \item Rifattorizzate le Entity, introducendo il concetto di Troop (dal quale estendono sia le turret che gli enemy).
+        Questo ci permette di avere una singola tipologia di attore (TroopActor) per gestire sia turret che enemy.
+  \item Sono stati aggiunti il campo da gioco diviso in celle e l'HUD contenente le torrette piazzabili e il numero di risorse disponibili.
+  \item È stato modellato il wave manager, che attualmente genera uno zombie aggiuntivo ogni round.
+  \item Aggiunto il concetto di stato nelle Troop, e gestito di conseguenza il loro comportamento nei metodi di update e lato attori.
+  \item Risolto il memory leak che minava le performance.
+  \item Aggiunti i click listener per piazzare le torrette.
+  \item Rilasciata una versione giocabile, senza win condition e lose condition.
+\end{itemize}
+
+Malgrado i numerosi test implementati, durante la fase di acceptance testing sono stati rilevati alcuni bug. Il team ha quindi preferto ritardare di un giorno la release per rilasciare una versione senza questi bug, con un gameplay fluido.
+Durante questa breve fase di debug, ci siamo accorti della difficoltà nel debuggare il comportamento degli attori. Ci siamo inoltre accorti che in alcuni casi gli unit test che avevamo scritto non descrivevano abbastanza accuratamente le funzionalità base del model.

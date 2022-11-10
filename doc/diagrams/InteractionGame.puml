@@ -1,0 +1,64 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+
+entity GameScreen
+control ViewActor
+control ActorSystem
+entity Game
+actor User
+entity MainMenuScreen
+entity GameOverScreen
+skinparam sequenceMessageAlign center
+
+== Application launch ==
+User --> Game: <<execute application>>
+Activate Game
+
+Game --> MainMenuScreen: <<set screen>>
+Activate MainMenuScreen
+
+User --> Game: <<tap to start>>
+Deactivate MainMenuScreen
+
+== Start new game ==
+Game -> ActorSystem: <<spawn>>
+Activate ActorSystem
+
+ActorSystem -> ViewActor: <<spawn>>
+Activate ViewActor
+
+ViewActor --> Game: changeScreen()
+
+Game --> GameScreen: <<set screen>>
+Activate GameScreen
+
+== Game over ==
+ActorSystem -> ViewActor: GameOver
+
+ViewActor --> GameScreen: gameOver()
+GameScreen --> Game: endGame()
+
+Game -> ActorSystem: <<terminate>>
+
+ActorSystem -> ViewActor: <<terminate>>
+Deactivate ViewActor
+Deactivate ActorSystem
+
+
+Game --> GameOverScreen: <<set screen>>
+Deactivate GameScreen
+Activate GameOverScreen
+
+User --> Game: <<tap button to start new game>>
+Deactivate GameOverScreen
+
+note over Game: Repeat Start new game.
+
+legend
+    | <#Beige>Arrow type | <#Beige>Interaction type |
+    |<#Beige>Solid|  <#Beige>Akka message |
+    |<#Beige>Dashed|  <#Beige>Direct method invocation |
+endlegend
+
+@enduml

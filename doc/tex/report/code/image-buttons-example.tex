@@ -1,0 +1,11 @@
+\begin{lstlisting}[language=Scala, label=code:image-buttons-example, caption=Esempio di creazione di un ImageButton con e senza given conversion abilitata]
+
+val source: Texture = ???
+
+ImageButtons.withSource(source).withBounds(0,0,0,0).build()
+
+import ImageButtons.given
+
+ImageButtons withSource source withBounds (0,0,0,0)
+
+\end{lstlisting}

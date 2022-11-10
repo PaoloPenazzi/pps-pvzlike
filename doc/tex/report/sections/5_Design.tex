@@ -1,0 +1,89 @@
+\newpage
+\section{Design di Dettaglio}
+Dopo aver analizzato l'architettura generale del sistema, in questa sezione viene effettuato uno studio sul design
+di dettaglio del progetto.
+Verranno evidenziati aspetti interni ai componenti, senza toccarne la reale implementazione.
+
+\subsection{Design del Model}
+E' stato creato un \textit{Trait} che modella tutte le entità del gioco come \textbf{Entity}. Questo tratto rappresenterà
+alcuni degli aspetti fondamentali di ogni oggetto in gioco, ad esempio la posizione. Partendo da ciò sono stati definiti
+altri due macro concetti fondamentali del nostro gioco:
+\begin{itemize}
+    \item \textbf{MovingAbility} - rappresenta l'abilità di movimento da parte delle entità.
+    \item \textbf{AttackingAbility} - rappresenta l'abilità di un componente di gioco di attaccare un'altra entità.
+\end{itemize}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\linewidth]{images/model-desing}
+    \caption{Diagramma delle classi della gerarchia delle entità di gioco.}
+\end{figure}
+Attraverso queste due abilità abbiamo composto le altre entità base del gioco:
+\begin{itemize}
+    \item \textbf{Troop} - il trait \textit{Troop} modella tutta le entità di gioco che sono Piante o Zombie.
+    \item \textbf{Bullet} - il trait \textit{Bullet} rappresenta le entità che vengono generate dalle Troop quando
+    attaccano.
+\end{itemize}
+Ogni entità appena descritta presenta una controparte
+reattiva, ovvero un attore, che si occupa del corretto aggiornamento della stessa e delle sue
+interazioni all’interno del dominio.\\
+
+La posizione delle entità è definita dal numero della corsia in cui si trova (y) e dal punto nella corsia nella quale si trova (x).\\
+
+Le Troop incorporano un concetto di stato, che rispecchia la loro condizione attuale all'interno del gioco. Questi stati sono:
+\begin{itemize}
+    \item \textit{Idle}: la truppa non fa nulla, aspetta che avvenga qualcosa.
+    \item \textit{Moving}: la truppa è in movimento.
+    \item \textit{Attacking}: la truppa sta attaccando.
+    \item \textit{Dead}: la truppa è morta.
+\end{itemize}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.61\linewidth]{images/detail-model.png}
+    \caption{Messaggi degli attori Model.}
+\end{figure}
+
+\newpage
+
+\subsection{Design della View}
+La view, come standard da paradigma MVC, deve inoltrare al controller le richieste da parte dell'utente,
+come il piazzamento delle piante.
+Deve inoltre fornire API per renderizzare gli elementi del gioco (entità e metadata).
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.61\linewidth]{images/detail-view.png}
+    \caption{Messaggi del ViewActor.}
+\end{figure}
+
+\subsection{Design del Controller}
+Per modularizzare al meglio il sistema e rispettare il \textit{Single Responsibility Principle}
+sono stati introdotto degli attori che si occupano di controllare specifiche parti di sistema. Con questo presupposto sono
+stati identificati cinque attori:
+\begin{itemize}
+    \item \textbf{RootActor} - attore \textit{Launcher} del sistema. Si occuperà di
+    istanziare gli attori relativi alla View e al Loop del gioco.
+    \item \textbf{GameLoopActor} - attore relativo al \textit{Loop} di gioco nonché
+    \textit{Main Controller}. Tutti gli aggiornamenti di gioco saranno di sua responsabilità.
+    \item \textbf{ViewActor} - attore relativo alla \textit{View} di gioco.
+    La sua funzione sarà quella di renderizzare a schermo le informazioni relative al dominio.
+    \item \textbf{BulletActor} - attore che incapsula il flusso di controllo di un singolo \textit{Bullet}.
+    \item \textbf{TroopActor} - attore che incapsula il flusso di controllo di un singola \textit{Troop}.
+\end{itemize}
+In particolare si è voluto modellare gli attori relativi ai Bullet, Troop e
+View in modo tale da avere esposti al Main
+Controller solo determinate funzionalità a lui interessate.
+Così facendo questi tre attori non fanno altro che rispondere
+in maniera reattiva alle richieste del Controller ed inoltre permettono,
+attraverso un'interfaccia più semplice, l'accesso
+agli oggetti del Model che contengono un'interfaccia ben più complessa.
+Questo design è tratto dal pattern \textbf{Facade}.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.61\linewidth]{images/detail-controller.png}
+    \caption{Messaggi degli attori Controller.}
+\end{figure}
+
+
+

@@ -1,0 +1,28 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+package model{
+    abstract TroopActor
+    abstract BulletActor
+}
+
+package view{
+    abstract ViewActor
+}
+
+package controller{
+    abstract GameLoopActor
+}
+
+GameLoopActor <-down-> TroopActor
+note on link #beige: Le frecce indicano l'invio di messaggi tramite Akka
+GameLoopActor <-left-> BulletActor
+GameLoopActor <-up-> ViewActor
+GameLoopActor --> GameLoopActor
+TroopActor --> TroopActor
+
+
+
+
+
+@enduml

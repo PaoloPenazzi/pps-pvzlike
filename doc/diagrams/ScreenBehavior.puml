@@ -1,0 +1,17 @@
+@startuml
+title ScreenBehavior
+
+[*] --> Startup
+
+Startup : call "actors" and add them to the screen
+Startup : call "onScreenTouch" and add listener to the screen
+Startup: call ""viewport" and set it as the screen's viewport
+
+Startup -down-> RenderLoop
+RenderLoop -> RenderLoop
+RenderLoop: call "drawables" and render them
+RenderLoop: call "writables" and render them
+RenderLoop: make actors act (based on their own behavior)
+
+
+@enduml

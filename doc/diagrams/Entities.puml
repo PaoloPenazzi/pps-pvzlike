@@ -1,0 +1,41 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+interface Entity <<trait>> {
++ position: Position
++ width: Float
++ withPosition(pos: Position): UpdatedEntity
++ update(elapsedTime: FiniteDuration, interests: List[Entity]): UpdatedEntity
++ isInterestedIn(): Entity => Boolean
+}
+interface AttackingAbility <<trait>> {
++ bullet: Bullet
++ fireRate: Int
++ range: Int
+}
+interface MovingAbility <<trait>> {
++ velocity: Float
+}
+interface Troop <<trait>> {
++ collideWith(bullet: Bullet): UpdatedEntity
++ life: Int
++ state: TroopState
++ withState(newState: TroopState): Troop
++ withLife(healthPoints: Int): Troop
+}
+interface Bullet <<trait>> {
++ damage: Int
++ hitMultipleTimes: Boolean
++ applyDamageAndEffect(troop: Troop): Troop
++ shouldDisappearAfterHitting(entity: Entity): Boolean
++ isCollidingWith(entity: Entity): Boolean
+}
+
+Entity <|-down- MovingAbility
+Entity <|-down- AttackingAbility
+Entity <|-down- Bullet
+Entity <|-down- Troop
+AttackingAbility <|-down- Troop
+MovingAbility <|-down- Bullet
+
+@enduml

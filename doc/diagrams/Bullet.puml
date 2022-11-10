@@ -1,0 +1,33 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+interface Bullet <<trait>> {
++ damage: Int
++ shouldDisappearAfterHitting(entity: Entity): Boolean
++ hitMultipleTimes: Boolean
++ isCollidingWith(entity: Entity): Boolean
++ applyDamageAndEffect(troop: Troop): Troop
+}
+
+interface ZombieBullet <<trait>>
+interface PlantBullet <<trait>>
+
+class PeaBullet
+class SnowBullet
+class CherryBullet
+
+class PawBullet
+class SwordBullet
+
+Entity <|-down- MovingAbility
+Entity <|-down- Bullet
+MovingAbility <|-down- Bullet
+Bullet <|-down- ZombieBullet
+ZombieBullet <|-down- PawBullet
+ZombieBullet <|-down- SwordBullet
+Bullet <|-down- PlantBullet
+PlantBullet <|-down- PeaBullet
+PlantBullet <|-down- SnowBullet
+PlantBullet <|-down- CherryBullet
+
+@enduml

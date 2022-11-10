@@ -1,0 +1,35 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+control GameLoopActor
+control ViewActor
+entity GameScreen
+entity Game
+skinparam sequenceMessageAlign center
+
+loop game loop
+GameLoopActor -> ViewActor: RenderMetaData
+ViewActor --> GameScreen: RenderMetaData
+GameLoopActor -> ViewActor: RenderEntities
+ViewActor --> GameScreen: RenderEntities
+opt User places plant
+GameScreen -> ViewActor: SendPlacePlant
+ViewActor -> GameLoopActor: PlacePlant
+end
+opt User request game pause/resume
+GameScreen -> ViewActor: SendGamePause/SendGameResume
+ViewActor -> GameLoopActor: GamePause/GameResume
+end
+opt User request game speed change
+GameScreen -> ViewActor: SendChangeGameSpeed
+ViewActor -> GameLoopActor: ChangeGameSpeed
+end
+end
+
+legend
+    | <#Beige>Arrow type | <#Beige>Interaction type |
+    |<#Beige>Solid|  <#Beige>Akka message |
+    |<#Beige>Dashed|  <#Beige>Direct method invocation |
+endlegend
+
+@enduml

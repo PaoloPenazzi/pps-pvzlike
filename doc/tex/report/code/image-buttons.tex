@@ -1,0 +1,19 @@
+\begin{lstlisting}[language=Scala, label=code:image-buttons, caption=Builder pattern per ImageButtons]
+
+object ImageButtons:
+  case class ImageButtonBuilder private[ImageButtons](source: Texture|ImageButtonStyle, bounds: Rectangle = Rectangle(0, 0, 0, 0)):
+    def withBounds(x: Float, y: Float, width: Float, height: Float): ImageButtonBuilder = copy(bounds = Rectangle(x, y, width, height))
+
+    def build: ImageButton =
+      val button = source match
+        case t: Texture => ImageButton(TextureRegionDrawable(t))
+        case s: ImageButtonStyle => ImageButton(s)
+      button.setBounds(bounds.x, bounds.y, bounds.width, bounds.height)
+      button.setTransform(true)
+      button
+
+  def withSource(source: Texture|ImageButtonStyle): ImageButtonBuilder = ImageButtonBuilder(source)
+
+  given Conversion[ImageButtonBuilder, ImageButton] = _.build
+  
+\end{lstlisting}

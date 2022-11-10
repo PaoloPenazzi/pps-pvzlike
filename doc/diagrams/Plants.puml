@@ -1,0 +1,27 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+interface Troop <<trait>> {
++life: Int
++state: TroopState
++collideWith(bullet: Bullet): Troop
++withState(newState: TroopState): Troop
++withLife(healthPoints: Int): Troop
+}
+
+interface Plant <<trait>> {
++BulletType <: Bullet
++cost(): Int
++pointOfShoot(): Position
+}
+
+class Shooter <<type class>>
+class Wallnut
+class CherryBomb
+
+Troop <|-down- Plant
+Plant <|-down- Shooter
+Plant <|-down- Wallnut
+Plant <|-down- CherryBomb
+
+@enduml

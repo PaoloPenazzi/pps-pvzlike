@@ -1,0 +1,14 @@
+\begin{lstlisting}[language=Scala, label=code:troop-builder, caption= Builder per la creazione di una Troop.]
+    object Troops:
+        trait TroopBuilder[T <: Troop, B <: Bullet]:
+            def build: T
+
+        given TroopBuilder[BasicZombie, Bullet] with
+            override def build: BasicZombie = BasicZombie()
+
+        given TroopBuilder[Wallnut, Bullet] with
+            override def build: Wallnut = Wallnut()
+
+        def ofType[T <: Troop](using troopBuilder: TroopBuilder[T, Bullet]): T =
+            troopBuilder.build
+\end{lstlisting}

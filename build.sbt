@@ -17,8 +17,7 @@ scalacOptions ++= Seq(
   "-deprecation",
   "-encoding",
   "utf8",
-  "-feature",
-  "-Ymacro-annotations"
+  "-feature"
 )
 
 ThisBuild / scalaVersion := "3.2.0"
@@ -31,9 +30,10 @@ lazy val root = (project in file("."))
   )
 
 
-val akkaVersion = "2.6.20"
+val akkaVersion = "2.7.0"
 
 libraryDependencies ++= Seq(
+  "it.unibo.alice.tuprolog" % "2p-core" % "4.1.1",
   "com.typesafe.akka" %% "akka-testkit" % akkaVersion % Test,
   "com.typesafe.akka" %% "akka-actor-typed" % akkaVersion,
   "com.typesafe.akka" %% "akka-actor-testkit-typed" % akkaVersion % Test,
