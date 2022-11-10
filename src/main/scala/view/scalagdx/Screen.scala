@@ -112,19 +112,19 @@ object Screen:
   trait ScreenBehavior:
     /**
      *
-     * @return the [[Drawable]]s that should be rendered each frame.
+     * @return the [[Drawable]]s that should be rendered, called each frame.
      */
     def drawables: Seq[Drawable] = Seq.empty
 
     /**
      *
-     * @return the [[Writable]]s that should be rendered each frame.
+     * @return the [[Writable]]s that should be rendered, called each frame.
      */
     def writables: Seq[Writable] = Seq.empty
 
     /**
      *
-     * @return the [[Actor]]s on the screen.
+     * @return the [[Actor]]s on the screen, called on screen startup.
      */
     def actors: Seq[Actor] = Seq.empty
 
@@ -141,15 +141,16 @@ object Screen:
     def viewport: Viewport
 
   /**
+   *
+   * A basic screen that implements the given behavior.
    * The writables will be rendered in foreground with respect to the drawables.
    * The rendering of both writables and drawables follows the Seq ordering. Last elements of the seq will be in foreground with respect to the first ones.
    *
-   * @param behavior the screen logic
-   * @return a simple screen that implements the screen logic.
+   * @param behavior the screen behavior
    * @note The drawables are rendered through a memoized approach to reduce workload.
    *       The assumption is that the asset associated with a given filepath will not change at runtime.
    */
-  def apply(behavior: ScreenBehavior): ScreenAdapter = new ScreenAdapter :
+  case class BasicScreen(behavior: ScreenBehavior) extends ScreenAdapter:
     private val camera = behavior.viewport.getCamera
     private lazy val stage = new Stage(behavior.viewport)
     private lazy val batch: SpriteBatch = SpriteBatch()

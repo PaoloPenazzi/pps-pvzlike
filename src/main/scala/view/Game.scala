@@ -7,8 +7,7 @@ import controller.actors.GameLoopActor.GameLoopCommands.Command
 import controller.actors.RootActor
 import controller.actors.RootActor.RootCommands.{RootCommand, Start}
 import model.Statistics.GameStatistics
-import scalagdx.Screen
-import scalagdx.Screen.ScreenBehavior
+import scalagdx.Screen.*
 import ViewportSpace.{ViewportWidth, ViewportHeight}
 
 
@@ -23,20 +22,20 @@ object Game extends com.badlogic.gdx.Game :
 
   def changeScreen(behavior: ScreenBehavior): Unit =
     Gdx.app.postRunnable(() =>
-        setScreen(Screen(behavior))
+        setScreen(BasicScreen(behavior))
     )
 
   def endGame(stats: GameStatistics): Unit =
     Gdx.app.postRunnable(() =>
         terminateActorSystem()
-        setScreen(Screen(GameOverScreen(stats)))
+        changeScreen(GameOverScreen(stats))
     )
 
   private def terminateActorSystem(): Unit =
     actorSystem.foreach(_.terminate())
 
   override def create(): Unit =
-    setScreen(Screen(MainMenuScreen()))
+    changeScreen(MainMenuScreen())
 
   override def dispose(): Unit =
     super.dispose()
