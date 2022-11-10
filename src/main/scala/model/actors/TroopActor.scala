@@ -12,7 +12,8 @@ import view.Game
 import concurrent.duration.DurationInt
 
 object TroopActor:
-  private val ShootingTimerKey: String = "Shooting"
+  private val shootingTimerKey: String = "Shooting"
+  private val standardElapsedTime = 16
 
   def apply(troop: Troop): Behavior[ModelMessage] =
     standardBehaviour(troop)
@@ -29,9 +30,10 @@ object TroopActor:
             replyTo ! EntityUpdated(ctx.self, entityUpdated)
             entityUpdated.state match
               case Attacking =>
-                if !timer.isTimerActive(ShootingTimerKey)
-                then timer.startSingleTimer(ShootingTimerKey, Shoot(replyTo), troop.fireRate.seconds)
-              case _ => timer cancel ShootingTimerKey
+                if !timer.isTimerActive(shootingTimerKey)
+                then timer.startSingleTimer(shootingTimerKey, Shoot(replyTo),
+                  troop.fireRate.seconds * standardElapsedTime / elapsedTime.toMillis)
+              case _ => timer cancel shootingTimerKey
             standardBehaviour(entityUpdated)
 
           case Shoot(replyTo) =>
