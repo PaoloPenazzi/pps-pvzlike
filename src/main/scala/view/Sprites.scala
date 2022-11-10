@@ -3,8 +3,10 @@ package view
 import com.badlogic.gdx.graphics.Texture
 import model.entities.*
 import model.entities.WorldSpace.LanesLength
-import view.ViewportSpace.gridWidth
 
+/**
+ * Configuration of assets filepath.
+ */
 object Sprites {
   val MainMenuBackground: String = "assets/background/mainmenu.png"
   val GameBackground: String = "assets/background/day.png"
@@ -14,8 +16,10 @@ object Sprites {
   val ResumeButton: String = "assets/gameWindow/resume.png"
   val FastButton: String = "assets/gameWindow/fast.png"
   val NormalButton: String = "assets/gameWindow/normal.png"
-  
-  
+
+  /**
+   * @return the filepath of the asset corresponding to given entity.
+   */
   def spriteName(entity: Entity): String = "assets/" + (entity match
     case s: Shooter[_] => s.bullet match
       case _: PeaBullet => "troops/peashooter.png"
@@ -36,6 +40,9 @@ object Sprites {
     case _: PawBullet => "bullets/paw.png"
     case _: SwordBullet => "bullets/sword.png")
 
+  /**
+   * @return the filepath of the asset corresponding to the card button to place given Troop
+   */
   def cardName(troop: Troop): String = troop match
     case s: Shooter[_] => s.bulletInstance match
       case _: PeaBullet => "assets/gameWindow/peashooter-card.png"
