@@ -1,0 +1,8 @@
+\begin{lstlisting}[language=Scala, label=code:screen-behavior, caption=trait ScreenBehavior]
+  trait ScreenBehavior:
+    def drawables: Seq[Drawable]
+    def writables: Seq[Writable]
+    def actors: Seq[Actor]
+    def onScreenTouch: Vector2 => Unit
+    def viewport: Viewport
+\end{lstlisting}
