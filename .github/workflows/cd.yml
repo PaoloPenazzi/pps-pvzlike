@@ -40,16 +40,26 @@ jobs:
           root_file: report.tex
           args: '-output-format=pdf -file-line-error -synctex=1 -halt-on-error -interaction=nonstopmode -shell-escape'
           working_directory: doc/tex/report
+      - name: Build backlog report
+        uses: xu-cheng/latex-action@v2
+        with:
+          root_file: backlog.tex
+          args: '-output-format=pdf -file-line-error -synctex=1 -halt-on-error -interaction=nonstopmode -shell-escape'
+          working_directory: backlog/process
       - name: Rename jar file
         run: mv pps-pvzlike/*.jar pps-pvzlike/pps-pvzlike.jar
       - name: Rename report file
         run: mv doc/tex/report/*.pdf doc/tex/report/pps-pvzlike-report.pdf
+      - name: Rename backlog file
+        run: mv backlog/process/*.pdf backlog/process/process-backlog.pdf
       - uses: marvinpinto/action-automatic-releases@latest
         with:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
-          automatic_release_tag: "0.3.0"
+          automatic_release_tag: "0.4.0"
           prerelease: false
-          title: "Scrum Sprint 4 - Release"
+          title: "Scrum Sprint 5 - Release"
           files: |
             pps-pvzlike/*.jar
             doc/tex/report/pps-pvzlike-report.pdf
+            backlog/process/process-backlog.pdf
+            backlog/product/product-backlog.xlsx
