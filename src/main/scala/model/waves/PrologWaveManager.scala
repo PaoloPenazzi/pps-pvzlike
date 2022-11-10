@@ -64,12 +64,6 @@ object PrologWaveManager:
 
   /** Contains useful method for deserializing TuProlog solutions. */
   object PrologSolution:
-    /**
-     * Transform the TuProlog [[model.waves.PrologWaveManager.PrologEngine]]'s output in a [[List]] of [[Zombie]].
-     *
-     * @param solution the [[PrologEngine]] output.
-     * @return a [[List]] of [[Zombie]].
-     */
     given Conversion[SolveInfo, List[Zombie]] = e => waveFromTerm(e.getTerm("L"))
 
     private def waveFromTerm(term: Term): List[Zombie] =
