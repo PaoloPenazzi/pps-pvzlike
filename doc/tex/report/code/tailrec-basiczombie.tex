@@ -1,0 +1,7 @@
+\begin{lstlisting}[language=Scala, label=code:tailrec-basiczombie, caption=Tail recursive Function per la creazione di Wave con Scala.]
+  @tailrec
+  private def createEnemyList(n: Int)(l: Seq[Zombie]): Seq[Zombie] =
+    n match
+      case 0 => l
+      case _ => createEnemyList(n - 1)(l = l :+ BasicZombie())
+\end{lstlisting}

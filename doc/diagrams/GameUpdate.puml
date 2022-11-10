@@ -1,0 +1,15 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+control TroopActor
+control GameLoop
+control ViewActor
+skinparam sequenceMessageAlign center
+loop
+GameLoop -> GameLoop: UpdateLoop()
+GameLoop -> TroopActor: Update()
+GameLoop -> GameLoop: startTimer()
+TroopActor --> GameLoop: EntityUpdated()
+GameLoop -> ViewActor: RenderEntities()
+
+@enduml

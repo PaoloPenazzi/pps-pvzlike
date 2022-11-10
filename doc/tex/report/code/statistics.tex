@@ -1,0 +1,17 @@
+\begin{lstlisting}[language=Scala, label=code:statistics, caption=Statistiche relative agli Zombie.]
+  /**
+   * Defines which [[Zombie]]'s insights we want to gather from the game.
+   */
+  trait ZombieStatsOps:
+    stats: GameStats =>
+    /**
+     *
+     * @return the [[Zombie]]s killed.
+     */
+    def getZombies: Seq[Zombie] =
+      stats.entities.foldLeft(List.empty)((acc, e) => e match {
+        case zombie: Zombie => acc :+ zombie
+        case _ => acc
+      })
+\end{lstlisting}
+

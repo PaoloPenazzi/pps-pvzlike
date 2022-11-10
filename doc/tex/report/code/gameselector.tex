@@ -1,0 +1,22 @@
+\begin{lstlisting}[language=Scala, label=code:gameselector, caption= Creazione di una sequenza di gioco di soli tipi Troop.]
+def of[E <: Entity : GameSelectorBuilder]: Seq[GameEntity[E]] =
+    seq.collect(summon[GameSelectorBuilder[E]].by) 
+    .
+    .
+ /** Contains some ways of creating [[GameSeq]]. */
+  object GameSelector:
+    /** Filters the [[GameEntity]] whose type is [[E]].
+     *
+     * @tparam E the type to filter.
+     */
+    trait GameSelectorBuilder[E <: Entity]:
+      def by: PartialFunction[GameEntity[Entity], GameEntity[E]]
+
+    given GameSelectorBuilder[Troop] with
+      override def by: PartialFunction[GameEntity[Entity],               GameEntity[Troop]] = {
+            case e if e.entity.isInstanceOf[Troop] => 
+                GameEntity(e.ref, e.entity.asInstanceOf[Troop])
+            }
+\end{lstlisting}
+
+

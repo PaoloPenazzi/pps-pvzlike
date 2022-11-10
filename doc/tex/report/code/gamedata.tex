@@ -1,0 +1,15 @@
+\begin{lstlisting}[language=Scala, label=code:gamedata, caption=Parte del GameSeq.]
+    given Conversion[Seq[GameEntity[Entity]], GameSeq] = 
+        GameSeqImpl(_)
+
+    /** Defines a [[GameSeq]] ... */
+    trait GameSeq:
+      /** Creates a [[Seq]] ... */
+      def of[E <: Entity : GameSelectorBuilder]: Seq[GameEntity[E]] 
+      = seq.collect(summon[GameSelectorBuilder[E]].by)
+
+      /** Deletes a [[GameEntity]] ... */
+      @targetName("delete")
+      def :-(ref: ActorRef[ModelMessage]): Seq[GameEntity[Entity]] 
+      = seq filter (_.ref != ref)
+\end{lstlisting}
