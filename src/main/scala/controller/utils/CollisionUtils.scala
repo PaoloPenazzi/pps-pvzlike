@@ -50,6 +50,15 @@ object CollisionUtils:
      */
     type B <: Entity
 
+    /** Send [[Collision]] messages to both [[entity]] and a [[GameEntity]] that has collided with him.
+     *
+     * @param receiver the [[GameEntity]] collided with [[entity]].
+     * @param ctx      the [[ActorContext]] that wants to receive the replies.
+     */
+    def sendCollisionMessages(receiver: GameEntity[B], ctx: ActorContext[Command]): Unit =
+      entity.ref ! Collision(receiver.entity, ctx.self)
+      receiver.ref ! Collision(entity.entity, ctx.self)
+
     /**
      *
      * @return the [[GameEntity]] with [[A]] type.
@@ -62,24 +71,11 @@ object CollisionUtils:
      */
     def collidedEntities: Seq[GameEntity[B]]
 
-    /** Send [[Collision]] messages to both [[entity]] and a [[GameEntity]] that has collided with him.
-     *
-     * @param receiver the [[GameEntity]] collided with [[entity]].
-     * @param ctx      the [[ActorContext]] that wants to receive the replies.
-     */
-    def sendCollisionMessages(receiver: GameEntity[B], ctx: ActorContext[Command]): Unit =
-      entity.ref ! Collision(receiver.entity, ctx.self)
-      receiver.ref ! Collision(entity.entity, ctx.self)
-
   /** An implementation of a [[Collision]] between a [[Bullet]] and a [[Troop]].
    *
-   * @param bullet         the [[GameEntity]] involved in the collision.
-   * @param troopsCollided the [[Seq]] of [[GameEntity]] involved in the collision.
+   * @param entity         the [[GameEntity]] involved in the collision.
+   * @param collidedEntities the [[Seq]] of [[GameEntity]] involved in the collision.
    */
-  case class BulletTroopCollision(bullet: GameEntity[Bullet], troopsCollided: Seq[GameEntity[Troop]]) extends Collision :
+  case class BulletTroopCollision(entity: GameEntity[Bullet], collidedEntities: Seq[GameEntity[Troop]]) extends Collision :
     override type A = Bullet
     override type B = Troop
-
-    override def entity: GameEntity[Bullet] = bullet
-
-    override def collidedEntities: Seq[GameEntity[Troop]] = troopsCollided

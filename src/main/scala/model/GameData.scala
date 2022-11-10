@@ -25,19 +25,13 @@ object GameData:
 
     /** Defines a [[GameSeq]] a [[Seq]] of [[GameEntity]] with special abilities. */
     trait GameSeq:
-      /**
+      /** Creates a [[Seq]], starting from [[seq]], composed only of [[GameEntity]] with type [[E]].
        *
-       * @return the [[Seq]] made of [[GameEntity]].
+       * @tparam E the type of [[GameSeq]] that you want.
+       * @return a [[Seq]] made of [[GameEntity]] of [[E]]
        */
-      def seq: Seq[GameEntity[Entity]]
-
-      /** Creates a [[Seq]], starting from [[seq]], composed only of [[GameEntity]] with type [[A]].
-       *
-       * @tparam A the type of [[GameSeq]] that you want.
-       * @return a [[Seq]] made of [[GameEntity]] of [[A]]
-       */
-      def of[A <: Entity : GameSelectorBuilder]: Seq[GameEntity[A]] =
-        seq.collect(summon[GameSelectorBuilder[A]].by)
+      def of[E <: Entity : GameSelectorBuilder]: Seq[GameEntity[E]] =
+        seq.collect(summon[GameSelectorBuilder[E]].by)
 
       /** Deletes a [[GameEntity]] from the [[seq]].
        *
@@ -55,6 +49,12 @@ object GameData:
       def updateWith(entity: GameEntity[Entity]): Seq[GameEntity[Entity]] =
         seq collect { case x if x.ref == entity.ref => entity case x => x }
 
+      /**
+       *
+       * @return the [[Seq]] made of [[GameEntity]].
+       */
+      def seq: Seq[GameEntity[Entity]]
+
     /** Implements the [[GameSeq]].
      *
      * @param seq the [[Seq]] of [[GameEntity]] in game.
@@ -69,7 +69,6 @@ object GameData:
      */
     trait GameSelectorBuilder[E <: Entity]:
       def by: PartialFunction[GameEntity[Entity], GameEntity[E]]
-
 
     given GameSelectorBuilder[Troop] with
       override def by: PartialFunction[GameEntity[Entity], GameEntity[Troop]] = {

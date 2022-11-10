@@ -19,6 +19,20 @@ object Statistics:
      */
     def rounds: Int
 
+    /** Adds an [[Entity]] played/killed.
+     *
+     * @param entity the [[Entity]] that you want to add.
+     * @return the statistics updated.
+     */
+    def played(entity: Entity): GameStats
+
+    /** Increases the number of rounds of a certain quantity.
+     *
+     * @param r the number of rounds to increase.
+     * @return the statistics updated.
+     */
+    def increaseRound(r: Int): GameStats
+
   /**
    * Defines which [[Zombie]]'s insights we want to gather from the game.
    */
@@ -45,28 +59,13 @@ object Statistics:
      */
     def getPlants: Seq[Plant] = stats.entities.collect { case e: Plant => e }
 
-  trait GameStatsOps:
-    /** Adds an [[Entity]] played/killed.
-     *
-     * @param entity the [[Entity]] that you want to add.
-     * @return the statistics updated.
-     */
-    def played(entity: Entity): GameStats
-
-    /** Increases the number of rounds of a certain quantity.
-     *
-     * @param r the number of rounds to increase.
-     * @return the statistics updated.
-     */
-    def increaseRound(r: Int): GameStats
-
   /** Implements our standards statistics.
    *
    * @param entities the entities played/killed.
    * @param rounds   the number of rounds survived.
    */
   case class GameStatistics(entities: Seq[Entity] = List.empty, rounds: Int = 1) extends GameStats
-    with GameStatsOps with ZombieStatsOps with PlantStatsOps:
+    with ZombieStatsOps with PlantStatsOps :
 
     override def played(entity: Entity): GameStatistics = copy(entities = entities :+ entity)
 
