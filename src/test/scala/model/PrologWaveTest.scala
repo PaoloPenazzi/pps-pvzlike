@@ -6,6 +6,7 @@ import model.waves.PrologWaveManager.*
 import model.waves.PrologWaveManager.PrologEngine.PrologEngine
 import model.waves.PrologWaveManager.PrologTheory.given
 import model.waves.PrologWaveManager.WaveTerm.given
+import model.waves.PrologWaveManager.PrologSolution.given
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should
 
@@ -18,13 +19,13 @@ class PrologWaveTest extends AnyFlatSpec with should.Matchers :
   "The engine" should "create a 1-length solution" in {
     val query: String = "wave(1, L)"
     val solution: LazyList[SolveInfo] = engine solve query
-    PrologSolution.waveFromPrologSolution(solution.head).size shouldEqual 1
+    solution.head.size shouldEqual 1
   }
 
   "The engine" should "create a correct solution" in {
     val query: String = "wave(6, L)"
     val solution: LazyList[SolveInfo] = engine solve query
-    PrologSolution.waveFromPrologSolution(solution.head).foldRight(0)((e, acc) => {
+    solution.head.foldRight(0)((e, acc) => {
       e match
         case BasicZombie(_, _, _, _) => acc + 1
         case FastZombie(_, _, _, _) => acc + 2

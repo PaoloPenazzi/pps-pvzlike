@@ -3,6 +3,9 @@ package model.waves
 
 import alice.tuprolog.{Prolog, SolveInfo, Term, Theory}
 import model.entities.*
+import model.waves.PrologWaveManager.WaveTerm.given
+import model.waves.PrologWaveManager.PrologSolution.given
+
 
 import java.util.Scanner
 import scala.io.Source
@@ -41,10 +44,8 @@ object PrologWaveManager:
       engine.setTheory(theory)
 
       override def generateWave(power: Int): List[Zombie] =
-        import WaveTerm.given
         val query: String = "wave(" + power + ", L)"
-        val solution: LazyList[SolveInfo] = solve(query)
-        PrologSolution.waveFromPrologSolution(solution.head)
+        solve(query).head
 
       override def solve: Term => LazyList[SolveInfo] = term =>
         LazyList.continually(engine solve term)
@@ -69,8 +70,7 @@ object PrologWaveManager:
      * @param solution the [[PrologEngine]] output.
      * @return a [[List]] of [[Zombie]].
      */
-    def waveFromPrologSolution(solution: SolveInfo): List[Zombie] =
-      waveFromTerm(solution.getTerm("L"))
+    given Conversion[SolveInfo, List[Zombie]] = e => waveFromTerm(e.getTerm("L"))
 
     private def waveFromTerm(term: Term): List[Zombie] =
       term.toString.replaceAll("\\[|\\]", "")
