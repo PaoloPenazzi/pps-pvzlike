@@ -8,7 +8,6 @@ import model.Statistics.GameStatistics
 import model.actors.ModelMessage
 import model.common.Utilities.{MetaData, Speed}
 import model.entities.{Entity, Plant, Troop}
-import view.View.Renderer
 import view.{Game, GameScreen}
 
 trait ViewMessage

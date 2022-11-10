@@ -9,7 +9,6 @@ import controller.actors.RootActor.RootCommands.{RootCommand, Start}
 import model.Statistics.GameStatistics
 import view.ScalaGDX.Screen
 import view.ScalaGDX.Screen.ScreenBehavior
-import view.View.Renderer
 import view.ViewportSpace.*
 
 

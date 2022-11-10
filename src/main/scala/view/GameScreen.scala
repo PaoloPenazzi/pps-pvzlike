@@ -1,7 +1,6 @@
 package view
 
 import com.badlogic.gdx.scenes.scene2d.Actor
-import view.View.Renderer
 import view.ViewportSpace.*
 import view.Sprites.{FastButton, GameBackground, NormalButton, PauseButton, ResumeButton, Sun, cardName, spriteName}
 import model.entities.{CherryBomb, Entity, PeaBullet, Shooter, SnowBullet, Troop, Troops, Wallnut}
