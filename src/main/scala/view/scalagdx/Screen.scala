@@ -140,54 +140,56 @@ object Screen:
      */
     def viewport: Viewport
 
-  /**
-   *
-   * A basic screen that implements the given behavior.
-   * The writables will be rendered in foreground with respect to the drawables.
-   * The rendering of both writables and drawables follows the Seq ordering. Last elements of the seq will be in foreground with respect to the first ones.
-   *
-   * @param behavior the screen behavior
-   * @note The drawables are rendered through a memoized approach to reduce workload.
-   *       The assumption is that the asset associated with a given filepath will not change at runtime.
-   */
-  case class BasicScreen(behavior: ScreenBehavior) extends ScreenAdapter:
-    private val camera = behavior.viewport.getCamera
-    private lazy val stage = new Stage(behavior.viewport)
-    private lazy val batch: SpriteBatch = SpriteBatch()
-    private lazy val font: BitmapFont = BitmapFont(Gdx.files.internal("assets/gameWindow/font.fnt"))
-    font.setUseIntegerPositions(false)
-
-    override def render(delta: Float): Unit =
-      Gdx.gl.glClearColor(0, 0, 0, 1)
-      Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
-      batch.setProjectionMatrix(camera.combined)
-      batch.begin()
-
-      behavior.drawables.foreach(d =>
-        batch.draw(memoizedTexture(d.path), d.bounds.x, d.bounds.y, d.bounds.width, d.bounds.height)
-      )
-
-      behavior.writables.foreach(w =>
-        scaleFont(w.height)
-        font.draw(batch, w.s, w.pos.x, w.pos.y)
-      )
-
-      batch.end()
-      stage.draw()
-      stage.act(delta)
-
-    override def show(): Unit =
-      stage.clear()
-      behavior.actors.foreach(stage.addActor)
-      Gdx.input.setInputProcessor(stage)
-      stage.onTouchDown(behavior.onScreenTouch)
-
-    override def resize(width: Int, height: Int): Unit =
-      behavior.viewport.update(width, height)
-      camera.position.set(camera.viewportWidth / 2, camera.viewportHeight / 2, 0)
-      camera.update()
-
-    private def scaleFont(height: Float): Unit =
-      font.getData.setScale(height * 2 * font.getScaleY / font.getLineHeight)
-
-    private val memoizedTexture: String => Texture = memoized(texture)
+  object BasicScreen:
+    given Conversion[ScreenBehavior, ScreenAdapter] = BasicScreen(_)
+    /**
+     *
+     * A basic screen that implements the given behavior.
+     * The writables will be rendered in foreground with respect to the drawables.
+     * The rendering of both writables and drawables follows the Seq ordering. Last elements of the seq will be in foreground with respect to the first ones.
+     *
+     * @param behavior the screen behavior
+     * @note The drawables are rendered through a memoized approach to reduce workload.
+     *       The assumption is that the asset associated with a given filepath will not change at runtime.
+     */
+    case class BasicScreen(behavior: ScreenBehavior) extends ScreenAdapter:
+      private val camera = behavior.viewport.getCamera
+      private lazy val stage = new Stage(behavior.viewport)
+      private lazy val batch: SpriteBatch = SpriteBatch()
+      private lazy val font: BitmapFont = BitmapFont(Gdx.files.internal("assets/gameWindow/font.fnt"))
+  
+      override def render(delta: Float): Unit =
+        Gdx.gl.glClearColor(0, 0, 0, 1)
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
+        batch.setProjectionMatrix(camera.combined)
+        batch.begin()
+  
+        behavior.drawables.foreach(d =>
+          batch.draw(memoizedTexture(d.path), d.bounds.x, d.bounds.y, d.bounds.width, d.bounds.height)
+        )
+  
+        behavior.writables.foreach(w =>
+          scaleFont(w.height)
+          font.draw(batch, w.s, w.pos.x, w.pos.y)
+        )
+  
+        batch.end()
+        stage.draw()
+        stage.act(delta)
+  
+      override def show(): Unit =
+        font.setUseIntegerPositions(false)
+        stage.clear()
+        behavior.actors.foreach(stage.addActor)
+        Gdx.input.setInputProcessor(stage)
+        stage.onTouchDown(behavior.onScreenTouch)
+  
+      override def resize(width: Int, height: Int): Unit =
+        behavior.viewport.update(width, height)
+        camera.position.set(camera.viewportWidth / 2, camera.viewportHeight / 2, 0)
+        camera.update()
+  
+      private def scaleFont(height: Float): Unit =
+        font.getData.setScale(height * 2 * font.getScaleY / font.getLineHeight)
+  
+      private val memoizedTexture: String => Texture = memoized(texture)

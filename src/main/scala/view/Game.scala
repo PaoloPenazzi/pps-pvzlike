@@ -7,8 +7,10 @@ import controller.actors.GameLoopActor.GameLoopCommands.Command
 import controller.actors.RootActor
 import controller.actors.RootActor.RootCommands.{RootCommand, Start}
 import model.Statistics.GameStatistics
-import scalagdx.Screen.*
+import scalagdx.Screen.ScreenBehavior
+import scalagdx.Screen.BasicScreen.given
 import ViewportSpace.{ViewportWidth, ViewportHeight}
+import scala.language.implicitConversions
 
 
 /**
@@ -31,7 +33,7 @@ object Game extends com.badlogic.gdx.Game :
    */
   def changeScreen(behavior: ScreenBehavior): Unit =
     Gdx.app.postRunnable(() =>
-        setScreen(BasicScreen(behavior))
+        setScreen(behavior)
     )
 
   /**
