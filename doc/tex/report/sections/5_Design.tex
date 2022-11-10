@@ -1,3 +1,4 @@
+\newpage
 \section{Design di Dettaglio}
 Dopo aver analizzato l'architettura generale del sistema, in questa sezione viene effettuato uno studio sul design
 di dettaglio del progetto.
@@ -36,10 +37,24 @@ Le Troop incorporano un concetto di stato, che rispecchia la loro condizione att
     \item \textit{Dead}: la truppa è morta.
 \end{itemize}
 
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.61\linewidth]{images/detail-model.png}
+    \caption{API degli attori Model.}
+\end{figure}
+
+\newpage
+
 \subsection{Design della View}
 La view, come standard da paradigma MVC, deve inoltrare al controller le richieste da parte dell'utente,
 come il piazzamento delle piante.
 Deve inoltre fornire API per renderizzare gli elementi del gioco (entità e metadata).
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.61\linewidth]{images/detail-view.png}
+    \caption{API del ViewActor.}
+\end{figure}
 
 \subsection{Design del Controller}
 Per modularizzare al meglio il sistema e rispettare il \textit{Single Responsibility Principle}
@@ -63,6 +78,12 @@ in maniera reattiva alle richieste del Controller ed inoltre permettono,
 attraverso un'interfaccia più semplice, l'accesso
 agli oggetti del Model che contengono un'interfaccia ben più complessa.
 Questo design è tratto dal pattern \textbf{Facade}.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.61\linewidth]{images/detail-controller.png}
+    \caption{API degli attori Model.}
+\end{figure}
 
 
 

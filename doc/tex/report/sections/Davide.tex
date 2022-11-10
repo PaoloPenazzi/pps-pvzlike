@@ -17,7 +17,7 @@ Le librerie grafiche che ho valutato per lo sviluppo della parte di View sono st
 \end{itemize}
 Verrà scelta la tecnologia tenendo conto dei seguenti parametri:
 \begin{itemize}
-    \item Qualità della documentazione: La documentazione è completa e aggiornata? Gli esempi forniti compilano? 
+    \item Qualità della documentazione: La documentazione è completa e aggiornata? Gli esempi forniti compilano?
     \item Adozione: quanti progetti, commerciali e non, sono stati completati con questa tecnologia?
     \item Query results: numero di risultati di query google relative a diverse problematiche che gli sviluppatori tipicamente devono affrontare durante l'utilizzo della libreria.
     \item Funzionalità: quanto permette di fare? Quanto è vasta e flessibile l'API fornita?
@@ -43,12 +43,12 @@ Un esempio è il metodo "render", metodo dello ScreenAdapter che verrà chiamato
 
 Con scalagdx.Screen.ScreenBehavior ho voluto risolvere questo problema, fornendo un'API per definire in maniera più dichiarativa gli elementi che dovranno apparire a schermo. Lo ScreenBehavior si basa anche sui concetti di Drawable e Writable objects, che modellano rispettivamente delle immagini e delle scritte unitamente ai loro boundaries all'interno del viewport.
 
-\input{sections/code/screen-behavior}
+\input{code/screen-behavior}
 
 \begin{figure}[H]
     \centering
     \caption{ScreenBehavior's promise of execution}
-    \includegraphics[width=0.8\linewidth]{sections/images/screen-behavior.png}
+    \includegraphics[width=0.8\linewidth]{images/screen-behavior.png}
     \label{ScreenBehavior}
 \end{figure}
 
@@ -63,18 +63,18 @@ Una soluzione sarebbe stata implementare extension methods per entrambe le class
 
 La soluzione adottata è stata la seguente:
 
-\input{sections/code/clickable}
+\input{code/clickable}
 
 Il trait Clickable implementa le funzionalità aggiuntive in comune tra tutte le classi che implementano "addListener" (in questo caso "Actor" e "Stage".
 
 \subsubsection{ImageButton builder}
 Per semplificare l'istanziamento di ImageButton, e ridurre la necessità di boilerplate code, ho realizzato il seguente builder.
 
-\input{sections/code/image-buttons}
+\input{code/image-buttons}
 
 Grazie alla given conversion, è possibile evitare la chiamata finale al "build()" e rendere così il suo utilizzo più fluente:
 
-\input{sections/code/image-buttons-example}
+\input{code/image-buttons-example}
 
 Questo builder pattern potrebbe essere implementato anche per molte altre classi di libGDX che si intendono usare, seguendo lo stesso schema.
 Nel caso degli ImageButton, una source è obbligatoria per la creazione dell'oggetto, ma in caso il builder non richieda parametri obbligatori basta cambiare il metodo "withSource(...)" in un generico "builder".
@@ -85,7 +85,7 @@ Nel caso degli ImageButton, una source è obbligatoria per la creazione dell'ogg
 \subsubsection{Lancio dell'applicazione}
 Una volta sviluppato il \textit{core} di un'applicazione con libGDX, occorre definire un \textit{main} ad hoc per ciascuna piattaforma che si intende supportare. Ho creato quindi un launcher con LWJGL3 per supportare i dispositivi desktop.
 
-Al launcher LWJGL3 deve essere fornita una particolare classe di libGDX. Ho implementato quindi un'estensione di questa classe, "\textbf{Game}", che rappresenta l'entry point del \textit{core} della nostra applicazione. 
+Al launcher LWJGL3 deve essere fornita una particolare classe di libGDX. Ho implementato quindi un'estensione di questa classe, "\textbf{Game}", che rappresenta l'entry point del \textit{core} della nostra applicazione.
 
 Il Game agisce da top level controller dell'applicazione, occupandosi di avviare l'ActorSystem ogni volta che viene avviata una nuova partita e cambiando schermata quando richiesto.
 
@@ -97,7 +97,7 @@ Sono mostrate anche le tre schermate di gioco, implementate con MainMenuScreen, 
 \begin{figure}[H]
     \centering
     \caption{Interazioni di lancio applicazione, inizio partita e fine partita}
-    \includegraphics[width=0.8\linewidth]{sections/images/actors-game-interaction.png}
+    \includegraphics[width=0.8\linewidth]{images/actors-game-interaction.png}
     \label{ScreenBehavior}
 \end{figure}
 
@@ -108,7 +108,7 @@ Il ViewActor rappresenta la parte di View dell'ActorSystem, come illustrato nel 
 \begin{figure}[H]
     \centering
     \caption{ViewActor message exchange during game}
-    \includegraphics[width=0.8\linewidth]{sections/images/view-actor.png}
+    \includegraphics[width=0.8\linewidth]{images/view-actor.png}
     \label{ScreenBehavior}
 \end{figure}
 
