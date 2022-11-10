@@ -1,33 +1,35 @@
 package view
 
 import com.badlogic.gdx.scenes.scene2d.Actor
-import view.View.Renderer
-import view.ViewportSpace.*
-import view.Sprites.{FastButton, GameBackground, NormalButton, PauseButton, ResumeButton, Sun, cardName, spriteName}
+import ViewportSpace.*
+import Sprites.{FastButton, GameBackground, NormalButton, PauseButton, ResumeButton, Sun, cardName, spriteName}
 import model.entities.{CherryBomb, Entity, PeaBullet, Shooter, SnowBullet, Troop, Troops, Wallnut}
 import model.common.Utilities.MetaData
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.utils.viewport.Viewport
-import ScalaGDX.{Drawable, ImageButtons, Writable, given}
-import ScalaGDX.Utils.texture
-import ScalaGDX.ImageButtons.{builder, given}
-import ScalaGDX.ActorBehaviors.*
 import akka.actor.typed.ActorRef
 import com.badlogic.gdx.scenes.scene2d.ui.{Image, ImageButton}
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable
-import controller.{SendChangeGameSpeed, SendPauseGame, SendPlacePlant, SendResumeGame, ViewMessage}
 import model.common.Utilities.Speed.*
-import view.ScalaGDX.Screen.ScreenBehavior
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton.ImageButtonStyle
-
+import model.Statistics.GameStatistics
+import actors.{SendChangeGameSpeed, SendPauseGame, SendPlacePlant, SendResumeGame, ViewMessage}
+import scalagdx.{Drawable, Writable}
+import scalagdx.Utils.texture
+import scalagdx.ActorBehaviors.*
+import scalagdx.Screen.ScreenBehavior
+import scalagdx.Clickable.given
+import scalagdx.ImageButtons
+import scalagdx.ImageButtons.given
 import scala.language.postfixOps
 import scala.language.implicitConversions
 
 
-class GameScreen(viewActor: ActorRef[ViewMessage]) extends ScreenBehavior with Renderer :
+class GameScreen(viewActor: ActorRef[ViewMessage]) extends ScreenBehavior:
   private var pendingPlant: Option[Troop] = None
   private var entities: List[Entity] = List.empty
   private var metaData: MetaData = MetaData()
+  private var faderOut: Option[FadeWidget] = None
 
   override def drawables: Seq[Drawable] =
     def drawableEntities: Seq[Drawable] =
@@ -44,9 +46,8 @@ class GameScreen(viewActor: ActorRef[ViewMessage]) extends ScreenBehavior with R
     Seq(Writable("=" + metaData.sun.toString, SunStringBoundaries))
 
   override def actors: Seq[Actor] =
-    cards :+ pauseButton :+ speedUpButton
-
-
+    cards :+ pauseButton :+ speedUpButton :+ fadeIn :+ fadeOut
+  
   override def onScreenTouch: Vector2 => Unit = pos =>
     for
       plant <- pendingPlant
@@ -61,6 +62,10 @@ class GameScreen(viewActor: ActorRef[ViewMessage]) extends ScreenBehavior with R
   def renderEntities(entities: List[Entity]): Unit = this.entities = entities
 
   def renderMetadata(metaData: MetaData): Unit = this.metaData = metaData
+
+  def gameOver(stats: GameStatistics): Unit =
+    faderOut.foreach(_.play(() =>
+      Game.endGame(stats)))
 
   private def cards =
     val troops = Seq(Troops.shooterOf[PeaBullet], Troops.ofType[Wallnut], Troops.ofType[CherryBomb], Troops.shooterOf[SnowBullet])
@@ -96,3 +101,10 @@ class GameScreen(viewActor: ActorRef[ViewMessage]) extends ScreenBehavior with R
       viewActor ! SendChangeGameSpeed(speed)
     )
     button
+
+  private def fadeIn =
+    FadeWidget(true, 1)
+
+  private def fadeOut =
+    faderOut = Some(FadeWidget(false, 1))
+    faderOut.get

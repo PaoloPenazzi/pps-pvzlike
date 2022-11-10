@@ -2,17 +2,17 @@ package model
 
 import akka.actor.testkit.typed.scaladsl.{BehaviorTestKit, TestInbox}
 import akka.actor.typed.ActorRef
-import controller.{GameLoopActor, ViewMessage}
+import controller.actors.GameLoopActor
 import model.GameData.GameSeq.{GameSeq, GameSeqImpl}
 import model.GameData.{GameEntity, GameSeq}
 import model.actors.ModelMessage
-import model.entities.*
 import model.entities.WorldSpace.{LanesLength, Position}
-import model.entities.{BasicZombie, Bullet, Bullets, Entity, PeaBullet, Plant, Troops, Zombie}
+import model.entities.*
 import org.scalatest.BeforeAndAfter
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
+import view.actors.ViewMessage
 
 import scala.language.implicitConversions
 

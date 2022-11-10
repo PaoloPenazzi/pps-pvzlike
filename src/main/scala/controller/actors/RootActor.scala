@@ -1,13 +1,11 @@
-package controller
+package controller.actors
 
 import akka.actor.typed.Behavior
 import akka.actor.typed.scaladsl.Behaviors
-import com.badlogic.gdx.ScreenAdapter
-import controller.GameLoopActor.*
-import controller.GameLoopActor.GameLoopCommands.StartGame
-import controller.RootActor.RootCommands
-import controller.RootActor.RootCommands.*
-import view.{Game, GameScreen}
+import controller.actors.GameLoopActor.GameLoop
+import controller.actors.GameLoopActor.GameLoopCommands.StartGame
+import controller.actors.RootActor.RootCommands.{RootCommand, Start}
+import view.actors.ViewActor
 
 /** It's the actor responsible for launching the system.
  *
