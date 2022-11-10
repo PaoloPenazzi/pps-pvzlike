@@ -16,6 +16,7 @@ import model.Statistics.GameStatistics
 import actors.{SendChangeGameSpeed, SendPauseGame, SendPlacePlant, SendResumeGame, ViewMessage}
 import scalagdx.{Drawable, Writable}
 import scalagdx.Utils.texture
+import scalagdx.FadeWidget
 import scalagdx.ActorBehaviors.*
 import scalagdx.Screen.ScreenBehavior
 import scalagdx.Clickable.given

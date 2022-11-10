@@ -7,6 +7,7 @@ import Sprites.MainMenuBackground
 import scalagdx.Screen.ScreenBehavior
 import scalagdx.Drawable
 import ViewportSpace.{ViewportHeight, ViewportWidth}
+import scalagdx.FadeWidget
 
 
 class MainMenuScreen extends ScreenBehavior:

@@ -14,6 +14,7 @@ import Sprites.{MainMenuBackground, NewGameButton}
 import ViewportSpace.{HUDHeight, ViewportHeight, ViewportWidth}
 import scalagdx.Clickable.given
 import scalagdx.ImageButtons
+import scalagdx.FadeWidget
 
 import scala.language.implicitConversions
 

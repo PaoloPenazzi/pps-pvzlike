@@ -1,17 +1,14 @@
-package view
+package view.scalagdx
 
 import com.badlogic.gdx.Gdx
-import com.badlogic.gdx.graphics.Color
-import com.badlogic.gdx.graphics.Texture
+import com.badlogic.gdx.graphics.{Color, Texture}
 import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.math.Interpolation
 import com.badlogic.gdx.scenes.scene2d.Stage
-import com.badlogic.gdx.scenes.scene2d.actions.Actions
-import com.badlogic.gdx.scenes.scene2d.actions.SequenceAction
+import com.badlogic.gdx.scenes.scene2d.actions.{Actions, SequenceAction}
 import com.badlogic.gdx.scenes.scene2d.ui.Widget
 import com.badlogic.gdx.utils.viewport.Viewport
-import ViewportSpace.*
-import scalagdx.Utils.{texture => textureOfColor}
+import Utils.texture as textureOfColor
 
 /**
  * A widget for fade in / fade out animation on viewport.
@@ -53,4 +50,4 @@ class FadeWidget(in: Boolean, val duration: Float) extends Widget:
     super.draw(batch, parentAlpha)
     validate()
     batch.setColor(getColor)
-    batch.draw(texture.get, 0, 0, ViewportWidth, ViewportHeight)
+    batch.draw(texture.get, 0, 0, getStage.getWidth, getStage.getHeight)
