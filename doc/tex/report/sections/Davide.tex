@@ -37,11 +37,13 @@ Da un punto di vista commerciale, libGDX è la scelta migliore.
 Anche da un punto di vista di ricerca, è interessante capire come libGDX può essere inserito all'interno di un progetto Scala in maniera idiomatica. Si sfrutta anche la possibilità di Scala di accedere all'intero ecosistema Java. Per questa serie di motivazioni, ho scelto libGDX come libreria grafica.
 
 \subsection{scalagdx}
-\subsubsection{Screen}
-libGDX fornisce un'API che permette di definire in maniera piuttosto imperativa il codice da "agganciare" all'esecuzione di alcuni "lifecylcle methods" delle schermate di gioco (ScreenAdapter).
-Un esempio è il metodo "render", metodo dello ScreenAdapter che verrà chiamato dal motore grafico ad ogni frame. Effettuandone l'override, è possibile quindi definire cosa disegnare a schermo ciascun frame. L'implementazione di diversi ScreenAdapter è tediosa, error-prone, e richiede una grande quantità di boilerplate code.
+Durante l'implementazione delle diverse schermate del gioco, per evitare boilerplate code e per rendere il codice più idiomatico, ho sentito la necessità di creare il package scalagdx. Di seguito ne illustro alcuni object salienti.
 
-Con scalagdx.Screen.ScreenBehavior ho voluto risolvere questo problema, fornendo un'API per definire in maniera più dichiarativa gli elementi che dovranno apparire a schermo. Lo ScreenBehavior si basa anche sui concetti di Drawable e Writable objects, che modellano rispettivamente delle immagini e delle scritte unitamente ai loro boundaries all'interno del viewport.
+\subsubsection{Screen}
+libGDX fornisce un'API che permette di definire in maniera piuttosto imperativa il codice da "agganciare" all'esecuzione di alcuni \textit{lifecylcle methods} delle schermate di gioco (\textit{ScreenAdapter}).
+Un esempio è il metodo \textit{render}, metodo dello ScreenAdapter che verrà chiamato dal motore grafico ad ogni frame. Effettuandone l'override, è possibile quindi definire cosa disegnare a schermo ciascun frame. L'implementazione di diversi ScreenAdapter è tediosa, error-prone, e richiede una grande quantità di boilerplate code.
+
+Con \textit{scalagdx.Screen.ScreenBehavior} ho voluto risolvere questo problema, fornendo un'API per definire in maniera più dichiarativa gli elementi che dovranno apparire a schermo. Lo \textit{ScreenBehavior} si basa anche sui concetti di \textit{Drawable} e \textit{Writable}, che modellano rispettivamente delle immagini e delle scritte unitamente ai loro boundaries all'interno del viewport.
 
 \input{code/screen-behavior}
 
@@ -57,27 +59,27 @@ Lo ScreenBehavior può essere poi usato per costruire un BasicScreen, che implem
 
 
 \subsubsection{Clickable}
-Il mio obiettivo era attuare il pattern "pimp my library" per aggiungere un metodo "onTouchDown" e "onTouchUp" alle classi di libGDX "Actor" e "Stage".
-Entrambi implementano il metodo "addListener" (con la stessa signature), ma non hanno sfortunatamente interfacce comuni da poter estendere (con extension method ad esempio).
+Il mio obiettivo era attuare il pattern \textbf{pimp my library} per aggiungere un metodo \textit{onTouchDown} e \textit{onTouchUp} alle classi di libGDX \textit{Actor} e \textit{Stage}.
+Entrambi implementano il metodo "addListener" (con la stessa signature), ma non hanno sfortunatamente interfacce comuni da poter "pimpare" (con extension method ad esempio).
 Una soluzione sarebbe stata implementare extension methods per entrambe le classi per implementare i due metodi di cui sopra per entrambe le classi. Questo avrebbe portato però alla duplicazione del codice.
 
 La soluzione adottata è stata la seguente:
 
 \input{code/clickable}
 
-Il trait Clickable implementa le funzionalità aggiuntive in comune tra tutte le classi che implementano "addListener" (in questo caso "Actor" e "Stage".
+Il trait Clickable implementa le funzionalità aggiuntive in comune tra tutte le classi che implementano \textit{addListener} (in questo caso \textit{Actor} e \textit{Stage}).
 
 \subsubsection{ImageButton builder}
 Per semplificare l'istanziamento di ImageButton, e ridurre la necessità di boilerplate code, ho realizzato il seguente builder.
 
 \input{code/image-buttons}
 
-Grazie alla given conversion, è possibile evitare la chiamata finale al "build()" e rendere così il suo utilizzo più fluente:
+Grazie alla given conversion, è possibile evitare la chiamata finale al \textit{build()} e rendere così il suo utilizzo più fluente:
 
 \input{code/image-buttons-example}
 
 Questo builder pattern potrebbe essere implementato anche per molte altre classi di libGDX che si intendono usare, seguendo lo stesso schema.
-Nel caso degli ImageButton, una source è obbligatoria per la creazione dell'oggetto, ma in caso il builder non richieda parametri obbligatori basta cambiare il metodo "withSource(...)" in un generico "builder".
+Nel caso degli ImageButton, una source è obbligatoria per la creazione dell'oggetto, ma in caso il builder non richieda parametri obbligatori basta cambiare il metodo \textit{withSource(...)} in un generico \textit{builder}.
 
 
 \subsection{Game}
@@ -90,8 +92,8 @@ Al launcher LWJGL3 deve essere fornita una particolare classe di libGDX. Ho impl
 Il Game agisce da top level controller dell'applicazione, occupandosi di avviare l'ActorSystem ogni volta che viene avviata una nuova partita e cambiando schermata quando richiesto.
 
 \subsubsection{Interazione tra Game e ActorSystem}
-Di seguito le interazioni tra il Game e l'ActorSystem (che contiene, tra gli altri attori, il ViewActor).
-Sono mostrate anche le tre schermate di gioco, implementate con MainMenuScreen, GameScreen e GameOverScreen.
+Di seguito le interazioni tra il \textbf{Game} e l'\textbf{ActorSystem} (che contiene, tra gli altri attori, il ViewActor).
+Sono mostrate anche le tre schermate di gioco, implementate con \textit{MainMenuScreen}, \textit{GameScreen} e \textit{GameOverScreen}.
 
 
 \begin{figure}[H]
