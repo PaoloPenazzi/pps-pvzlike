@@ -158,9 +158,9 @@ object ZombieDefaultValues:
    * Returns the velocity of [[Zombie]] when slowed.
    */
   val slowVelocities: Zombie => Float =
-    case basicZombie: BasicZombie => -0.008
-    case fastZombie: FastZombie => fastZombieDefaultVelocity
-    case warriorZombie: WarriorZombie => -0.006
+    case _: BasicZombie => -0.008
+    case _: FastZombie => fastZombieDefaultVelocity
+    case _: WarriorZombie => -0.006
 
   /**
    * Generate the spawn position of Zombie
