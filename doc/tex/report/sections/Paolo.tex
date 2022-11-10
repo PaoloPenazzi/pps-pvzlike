@@ -103,6 +103,13 @@ Per istanziare questa pianta ho definito un metodo ad-hoc, che sotto utilizza il
 
 \input{code/shooter-builder.text}
 
+In questa classe non rientrano due tipi di piante, il \texttt{wallnut} e la \texttt{cherry bomb}.
+Queste sono state implementate utilizzando classi ad-hoc perchè hanno un comportamente diverso rispetto alle piante che sparano:
+\begin{itemize}
+    \item Il Wallnut è una pianta con tanta vita che però non può attaccare.
+    \item La Cherrybomb è una pianta che quando piazzata esplode, colpendo tutti i tipi di \textit{Troop}.
+\end{itemize}
+
 Il diagramma della gerarchia delle piante è il seguente:
 
 \begin{figure}[H]
