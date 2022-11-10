@@ -14,17 +14,7 @@ object ImageButtons:
   /**
    * A builder for [[ImageButton]]s.
    */
-  case class ImageButtonBuilder private[ImageButtons](texture: Option[Texture] = None, style: Option[ImageButtonStyle] = None, bounds: Rectangle = Rectangle(0, 0, 0, 0)):
-    /**
-     * Define the texture the button should use
-     */
-    def withTexture(t: Texture): ImageButtonBuilder = copy(texture = Some(t))
-
-    /**
-     * Define the style the button should use
-     */
-    def withStyle(s: ImageButtonStyle): ImageButtonBuilder = copy(style = Some(s))
-
+  case class ImageButtonBuilder private[ImageButtons](source: Texture|ImageButtonStyle, bounds: Rectangle = Rectangle(0, 0, 0, 0)):
     /**
      * Define bounds for the button
      */
@@ -37,10 +27,9 @@ object ImageButtons:
      * @return the image button
      */
     def build: ImageButton =
-      val button =
-        if style.isDefined
-        then ImageButton(style.get)
-        else ImageButton(TextureRegionDrawable(texture.get))
+      val button = source match
+        case t: Texture => ImageButton(TextureRegionDrawable(t))
+        case s: ImageButtonStyle => ImageButton(s)
       button.setBounds(bounds.x, bounds.y, bounds.width, bounds.height)
       button.setTransform(true)
       button
@@ -48,7 +37,7 @@ object ImageButtons:
   /**
    * @return an [[ImageButtonBuilder]].
    */
-  def builder: ImageButtonBuilder = ImageButtonBuilder()
+  def withSource(source: Texture|ImageButtonStyle): ImageButtonBuilder = ImageButtonBuilder(source)
 
   given Conversion[ImageButtonBuilder, ImageButton] = _.build
 

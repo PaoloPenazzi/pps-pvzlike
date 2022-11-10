@@ -30,7 +30,7 @@ class GameOverScreen(stats: GameStatistics) extends ScreenBehavior:
     val fadeIn = FadeWidget(true, 1)
     val fadeOut = FadeWidget(false, 1)
     val width = ViewportWidth / 2
-    val button: Actor = ImageButtons.builder withTexture texture(NewGameButton) withBounds(ViewportWidth / 2 - width / 2, 0.2, width, HUDHeight * 2)
+    val button: Actor = ImageButtons withSource texture(NewGameButton) withBounds(ViewportWidth / 2 - width / 2, 0.2, width, HUDHeight * 2)
     button.addPulseOnTouch()
     button.onTouchUp(() =>
       fadeOut.play(() =>

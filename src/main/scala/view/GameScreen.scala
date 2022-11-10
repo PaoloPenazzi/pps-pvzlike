@@ -73,7 +73,7 @@ class GameScreen(viewActor: ActorRef[ViewMessage]) extends ScreenBehavior:
     for
       (troop, x) <- troops zip (0 to troops.size).map(_ * CardWidth)
     yield
-      val button: Actor = ImageButtons.builder withTexture texture(cardName(troop)) withBounds (x, ViewportHeight - HUDHeight, CardWidth, CardWidth)
+      val button: Actor = ImageButtons withSource texture(cardName(troop)) withBounds (x, ViewportHeight - HUDHeight, CardWidth, CardWidth)
       button.addPulseOnTouch()
       button.onTouchDown(_ => pendingPlant = Some(troop))
       button
@@ -83,7 +83,7 @@ class GameScreen(viewActor: ActorRef[ViewMessage]) extends ScreenBehavior:
     style.up = TextureRegionDrawable(texture(PauseButton))
     style.checked = TextureRegionDrawable(texture(ResumeButton))
 
-    val button: ImageButton = ImageButtons.builder withStyle style withBounds (13, 8, 3, 1)
+    val button: ImageButton = ImageButtons withSource style withBounds (13, 8, 3, 1)
     button.addPulseOnTouch()
     button.onTouchUp(() =>
       viewActor ! (if button.isChecked then SendPauseGame() else SendResumeGame())
@@ -95,7 +95,7 @@ class GameScreen(viewActor: ActorRef[ViewMessage]) extends ScreenBehavior:
     style.up = TextureRegionDrawable(texture(NormalButton))
     style.checked = TextureRegionDrawable(texture(FastButton))
 
-    val button: ImageButton = ImageButtons.builder withStyle style withBounds(13.5, 7, 2, 1)
+    val button: ImageButton = ImageButtons withSource style withBounds(13.5, 7, 2, 1)
     button.addPulseOnTouch()
     button.onTouchUp(() =>
       val speed = if button.isChecked then Fast else Normal
