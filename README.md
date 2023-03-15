@@ -1,6 +1,5 @@
 # pps-pvzlike
 
-![build](https://img.shields.io/github/workflow/status/PaoloPenazzi/pps-pvzlike/CI)
 ![license](https://img.shields.io/github/license/PaoloPenazzi/pps-pvzlike)
 [![Duplicated Lines (%)](https://sonarcloud.io/api/project_badges/measure?project=PaoloPenazzi_pps-pvzlike&metric=duplicated_lines_density)](https://sonarcloud.io/dashboard?id=PaoloPenazzi_pps-pvzlike)
 [![Bugs](https://sonarcloud.io/api/project_badges/measure?project=PaoloPenazzi_pps-pvzlike&metric=bugs)](https://sonarcloud.io/dashboard?id=PaoloPenazzi_pps-pvzlike)
