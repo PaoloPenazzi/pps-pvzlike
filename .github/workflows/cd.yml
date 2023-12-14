@@ -21,7 +21,7 @@ jobs:
         shell: bash
       - name: Upload jar
         id: create_release
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: pps-pvzlike
           path: target/scala-3.2.0/*.jar
