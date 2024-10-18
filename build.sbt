@@ -20,7 +20,7 @@ scalacOptions ++= Seq(
   "-feature"
 )
 
-ThisBuild / scalaVersion := "3.5.2"
+ThisBuild / scalaVersion := "3.6.0"
 
 lazy val root = (project in file("."))
   .settings(
