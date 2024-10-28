@@ -30,7 +30,7 @@ lazy val root = (project in file("."))
   )
 
 
-val akkaVersion = "2.8.7"
+val akkaVersion = "2.8.8"
 
 libraryDependencies ++= Seq(
   "it.unibo.alice.tuprolog" % "2p-core" % "4.1.1",
