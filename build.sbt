@@ -38,9 +38,9 @@ libraryDependencies ++= Seq(
   "com.typesafe.akka" %% "akka-actor-typed" % akkaVersion,
   "com.typesafe.akka" %% "akka-actor-testkit-typed" % akkaVersion % Test,
   "com.novocode" % "junit-interface" % "0.11" % Test, // sbt's test interface for JUnit 4
-  "org.junit.jupiter" % "junit-jupiter" % "5.12.2" % Test, // aggregator of junit-jupiter-api and junit-jupiter-engine (runtime)
-  "org.junit.jupiter" % "junit-jupiter-engine" % "5.12.2" % Test, // for org.junit.platform
-  "org.junit.vintage" % "junit-vintage-engine" % "5.12.2" % Test,
-  "org.junit.platform" % "junit-platform-launcher" % "1.12.2" % Test,
+  "org.junit.jupiter" % "junit-jupiter" % "5.13.0" % Test, // aggregator of junit-jupiter-api and junit-jupiter-engine (runtime)
+  "org.junit.jupiter" % "junit-jupiter-engine" % "5.13.0" % Test, // for org.junit.platform
+  "org.junit.vintage" % "junit-vintage-engine" % "5.13.0" % Test,
+  "org.junit.platform" % "junit-platform-launcher" % "1.13.0" % Test,
   "org.scalatest" %% "scalatest" % "3.2.19" % Test
 )
