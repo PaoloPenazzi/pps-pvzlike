@@ -41,6 +41,6 @@ libraryDependencies ++= Seq(
   "org.junit.jupiter" % "junit-jupiter" % "5.14.0" % Test, // aggregator of junit-jupiter-api and junit-jupiter-engine (runtime)
   "org.junit.jupiter" % "junit-jupiter-engine" % "5.14.0" % Test, // for org.junit.platform
   "org.junit.vintage" % "junit-vintage-engine" % "5.14.0" % Test,
-  "org.junit.platform" % "junit-platform-launcher" % "1.13.4" % Test,
+  "org.junit.platform" % "junit-platform-launcher" % "1.14.0" % Test,
   "org.scalatest" %% "scalatest" % "3.2.19" % Test
 )
