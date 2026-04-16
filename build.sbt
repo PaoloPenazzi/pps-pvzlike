@@ -42,5 +42,5 @@ libraryDependencies ++= Seq(
   "org.junit.jupiter" % "junit-jupiter-engine" % "5.14.3" % Test, // for org.junit.platform
   "org.junit.vintage" % "junit-vintage-engine" % "5.14.3" % Test,
   "org.junit.platform" % "junit-platform-launcher" % "1.14.3" % Test,
-  "org.scalatest" %% "scalatest" % "3.2.19" % Test
+  "org.scalatest" %% "scalatest" % "3.2.20" % Test
 )
